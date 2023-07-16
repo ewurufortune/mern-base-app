@@ -1,6 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { setName } from "state";
 
 
 const HomePage = () => {
@@ -26,9 +27,13 @@ console.log(user);
    console.log(data);
  console.log(firstname);
   };
+
+
+
   return (
     <Box>
    <h1>hellooo {firstname}</h1>
+   <button onClick={()=>dispatch(setName())}>+</button>
         {isNonMobileScreens && (
           <Box flexBasis="26%">
           

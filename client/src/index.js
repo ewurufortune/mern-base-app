@@ -17,11 +17,12 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
-
+import counterReducer from './features/counter/counterSlice'
+import Counter from "features/counter/Counter";
 const persistConfig = { key: "root", storage, version: 1 };
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistedReducer = persistReducer(persistConfig, authReducer,counterReducer);
 const store = configureStore({
-  reducer: persistedReducer,
+  reducer:persistedReducer, 
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -36,6 +37,7 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
         <App />
+        {/* <Counter /> */}
       </PersistGate>
     </Provider>
   

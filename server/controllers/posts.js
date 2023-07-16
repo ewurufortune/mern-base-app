@@ -46,6 +46,12 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
 /* UPDATE */
 export const likePost = async (req, res) => {
   try {
