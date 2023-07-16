@@ -1,8 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import AdvertWidget from "scenes/widgets/AdvertWidget";
-import FriendListWidget from "scenes/widgets/FriendListWidget";
+
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -34,7 +33,7 @@ console.log(user);
           <Box flexBasis="26%">
           
             <Box m="2rem 0" />
-            <FriendListWidget userId={_id} />
+           
           </Box>
         )}
       </Box>
