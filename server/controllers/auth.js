@@ -38,6 +38,26 @@ export const register = async (req, res) => {
   }
 };
 
+
+
+export const replace = async (req, res) => {
+  try {
+    const { id, firstName } = req.body; // Extract the firstName field from req.body
+    const user = await User.findById(id);
+    if (!user) return res.status(400).json({ msg: "User does not exist. " });
+    
+    user.firstName = firstName; // Update the firstName field
+    
+    console.log(user);
+    await user.save();
+    
+    res.status(200).json('successful');
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 /* LOGGING IN */
 export const login = async (req, res) => {
   try {

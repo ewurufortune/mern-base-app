@@ -15,6 +15,7 @@ const HomePage = () => {
   const user = useSelector((state) => state.user);
   const firstname= useSelector((state) => state.user.firstName);
 console.log(user);
+const clientId=user._id
   const getUser = async () => {
     const response = await fetch(
       `http://localhost:3001/users/${_id}`,
@@ -28,12 +29,33 @@ console.log(user);
  console.log(firstname);
   };
 
-
-
+  const replace = async (id) => {
+    const bodyData = {
+      id: id,
+      firstName: "mooney",
+    };
+  
+    const loggedInResponse = await fetch("http://localhost:3001/auth/replace", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData),
+    });
+  
+    const loggedIn = await loggedInResponse.json();
+    console.log(loggedIn);
+  };
+  
+  
+  const handleClick = async (values, onSubmitProps) => {
+     await replace(values, onSubmitProps);
+    
+  };
   return (
     <Box>
    <h1>hellooo {firstname}</h1>
    <button onClick={()=>dispatch(setName())}>+</button>
+   <button onClick={() => handleClick(clientId)}>Inject</button>
+
         {isNonMobileScreens && (
           <Box flexBasis="26%">
           
