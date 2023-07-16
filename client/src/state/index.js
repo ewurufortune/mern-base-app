@@ -45,10 +45,16 @@ export const authSlice = createSlice({
         return post;
       });
       state.posts = updatedPosts;
+    },setFirstname: (state, action) => {
+      if (state.user) {
+        state.user.firstName = action.payload.firstName;
+      } else {
+        console.error("user non-existent :(");
+      }
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname} =
   authSlice.actions;
 export default authSlice.reducer;

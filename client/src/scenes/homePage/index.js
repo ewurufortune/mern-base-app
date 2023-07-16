@@ -2,6 +2,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setName } from "state";
+import { setFirstname } from "state";
 
 
 const HomePage = () => {
@@ -43,6 +44,7 @@ const clientId=user._id
   
     const loggedIn = await loggedInResponse.json();
     console.log(loggedIn);
+    dispatch(setFirstname({ firstName: "mooney" }));
   };
   
   
