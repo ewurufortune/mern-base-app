@@ -13,6 +13,7 @@ const HomePage = () => {
  
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const firstname= useSelector((state) => state.user.firstName);
 console.log(user);
   const getUser = async () => {
     const response = await fetch(
@@ -24,10 +25,11 @@ console.log(user);
     );
     const data = await response.json();
    console.log(data);
+ console.log(firstname);
   };
   return (
     <Box>
-   
+   <h1>hellooo {firstname}</h1>
         {isNonMobileScreens && (
           <Box flexBasis="26%">
           
