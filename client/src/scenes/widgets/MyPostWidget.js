@@ -42,7 +42,7 @@ import {
       formData.append("description", post);
      
   
-      const response = await fetch(`https://baser-app.onrender.com/posts`, {
+      const response = await fetch(`http://localhost:3001/posts`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

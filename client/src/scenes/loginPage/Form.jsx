@@ -32,18 +32,18 @@ const loginSchema = yup.object().shape({
 });
 
 const initialValuesRegister = {
-  firstName: "y",
-  lastName: "y",
-  email: "y",
-  password: "y",
-  location: "y",
-  occupation: "y",
-  picture: "y",
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  location: "",
+  occupation: "",
+  picture: "",
 };
 
 const initialValuesLogin = {
-  email: "y",
-  password: "y",
+  email: "",
+  password: "",
 };
 
 const Form = () => {
@@ -64,7 +64,7 @@ const Form = () => {
     formData.append("picturePath", 'mark.jpg');
 
     const savedUserResponse = await fetch(
-      "https://baser-app.onrender.com/auth/register",
+      "http://localhost:3001/auth/register",
       {
         method: "POST",
         body: formData,
@@ -79,7 +79,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("https://baser-app.onrender.com/auth/login", {
+    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),

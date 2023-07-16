@@ -17,7 +17,7 @@ const HomePage = () => {
 console.log(user);
   const getUser = async () => {
     const response = await fetch(
-      `https://baser-app.onrender.com/users/${_id}`,
+      `http://localhost:3001/users/${_id}`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
