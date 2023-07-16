@@ -22,7 +22,7 @@ const registerSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
   location: yup.string().required("required"),
-  occupation: yup.string().required("required"),
+
   
 });
 
@@ -37,7 +37,7 @@ const initialValuesRegister = {
   email: "",
   password: "",
   location: "",
-  occupation: "",
+
   picture: "",
 };
 
@@ -162,18 +162,7 @@ const Form = () => {
                   helperText={touched.location && errors.location}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <TextField
-                  label="Occupation"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.occupation|| ""}
-                  name="occupation"
-                  error={
-                    Boolean(touched.occupation) && Boolean(errors.occupation)
-                  }
-                  helperText={touched.occupation && errors.occupation}
-                  sx={{ gridColumn: "span 4" }}
-                />
+                
                 <Box
                   gridColumn="span 4"
                   border={`1px solid ${palette.neutral.medium}`}
