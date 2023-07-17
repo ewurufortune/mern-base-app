@@ -80,15 +80,21 @@ const UserActions = ({ clientId }) => {
     return null;
   };
 
-  const addToActivities = (action) => {
+  const addToActivities = (action,selectedWrestler) => {
     if (activities.length >= 7) {
       console.log("Schedule is full. Cannot add more activities.");
       return;
     }
-
-    setActivities((prevActivities) => [...prevActivities, action]);
+handleConfirm()
+    setActivities((prevActivities) => [...prevActivities, {action,selectedWrestler}]);
   };
 
+
+  const deleteActivity = (index) => {
+    setActivities((prevActivities) =>
+      prevActivities.filter((_, i) => i !== index)
+    );
+  };
 
 
   const handleClick = async () => {
@@ -193,16 +199,21 @@ const UserActions = ({ clientId }) => {
       <br></br>
       {renderActionButtons()}
       {selectedWrestler && selectedAction && !isConfirmed && (
-        <button onClick={() => addToActivities(selectedAction)}>
+        <button onClick={() => addToActivities(selectedAction,selectedWrestler)}>
           Confirm
         </button>
       )}
       <h2>Activities:</h2>
+  
       <ul>
-        {activities.map((activity, index) => (
-          <li key={index}>{activity.label}</li>
-        ))}
-      </ul>
+  {activities.map((activity, index) => (
+    <li key={index}>
+      {activity.action.label} - {activity.selectedWrestler.name}
+      <button onClick={() => deleteActivity(index)}>Delete</button>
+    </li>
+  ))}
+</ul>
+
       {isNonMobileScreens && (
         <Box flexBasis="26%">
           <Box m="2rem 0" />
