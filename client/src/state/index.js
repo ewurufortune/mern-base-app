@@ -52,9 +52,16 @@ export const authSlice = createSlice({
         console.error("user non-existent :(");
       }
     },
+    setSavegame: (state, action) => {
+      if (state.user) {
+        state.user.savegame = action.payload.savegame;
+      } else {
+        console.error("user non-existent :(");
+      }
+    },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame} =
   authSlice.actions;
 export default authSlice.reducer;

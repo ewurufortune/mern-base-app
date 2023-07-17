@@ -27,7 +27,7 @@ export const register = async (req, res) => {
       picturePath,
       friends,
       location,
-    
+   
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
     });
@@ -47,6 +47,23 @@ export const replace = async (req, res) => {
     if (!user) return res.status(400).json({ msg: "User does not exist. " });
     
     user.firstName = firstName; // Update the firstName field
+    
+    console.log(user);
+    await user.save();
+    
+    res.status(200).json('successful');
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const savewrestlers = async (req, res) => {
+  try {
+    const { id, savegame } = req.body; // Extract the firstName field from req.body
+    const user = await User.findById(id);
+    if (!user) return res.status(400).json({ msg: "User does not exist. " });
+    
+    user.savegame = savegame; // Update the firstName field
     
     console.log(user);
     await user.save();
