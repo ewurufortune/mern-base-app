@@ -26,14 +26,14 @@ export const authSlice = createSlice({
       if (state.user) {
         state.user.friends = action.payload.friends;
       } else {
-        console.error("user friends non-existent :(");
+        console.error("User friends non-existent :(");
       }
     },
     setName: (state, action) => {
       if (state.user) {
         state.user.firstName = 'john';
       } else {
-        console.error("user friends non-existent :(");
+        console.error("User non-existent :(");
       }
     },
     setPosts: (state, action) => {
@@ -45,23 +45,36 @@ export const authSlice = createSlice({
         return post;
       });
       state.posts = updatedPosts;
-    },setFirstname: (state, action) => {
+    },
+    setFirstname: (state, action) => {
       if (state.user) {
         state.user.firstName = action.payload.firstName;
       } else {
-        console.error("user non-existent :(");
+        console.error("User non-existent :(");
       }
     },
     setSavegame: (state, action) => {
       if (state.user) {
         state.user.savegame = action.payload.savegame;
       } else {
-        console.error("user non-existent :(");
+        console.error("User non-existent :(");
+      }
+    },
+    setTraits: (state, action) => {
+      console.log(action.payload);
+      if (state.user) {
+        state.user.charisma = action.payload.charisma;
+        state.user.wealth = action.payload.wealth;
+        state.user.popularity = action.payload.popularity;
+        state.user.allignment = action.payload.allignment;
+      } else {
+        console.error("User non-existent :(");
       }
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame} =
+
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits} =
   authSlice.actions;
 export default authSlice.reducer;

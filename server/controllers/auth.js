@@ -42,20 +42,29 @@ export const register = async (req, res) => {
 
 export const replace = async (req, res) => {
   try {
-    const { id, firstName } = req.body; // Extract the firstName field from req.body
+    const { id, firstName, traits } = req.body; // Extract the firstName and traits fields from req.body
     const user = await User.findById(id);
-    if (!user) return res.status(400).json({ msg: "User does not exist. " });
-    
+    if (!user) return res.status(400).json({ msg: "User does not exist." });
+
     user.firstName = firstName; // Update the firstName field
-    
-    console.log(user);
+
+    // Update the traits
+    if (traits) {
+      const { charisma, wealth, popularity, allignment } = traits;
+      if (charisma) user.charisma = charisma;
+      if (wealth) user.wealth = wealth;
+      if (popularity) user.popularity = popularity;
+      if (allignment) user.allignment = allignment;
+    }
+
     await user.save();
-    
-    res.status(200).json('successful');
+
+    res.status(200).json('Successful');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 export const savewrestlers = async (req, res) => {
   try {

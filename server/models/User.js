@@ -44,25 +44,66 @@ const UserSchema = new mongoose.Schema(
     friends: {
       type: Array,
       default: [],
-    },  savegame: {
-      type: Array,
-      default: [{ id:1,name: "John Doe", allignment: "heel", popularity: 0, charisma: "menacing",relationship:0 },
-      {id:2, name: "Jane Smith", allignment: "heel", popularity: 0, charisma: "menacing",relationship:0 },
-      { id:3,name: "Mike Johnson", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:4, name: "Emily Davis", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      { id:5,name: "Alex Anderson", allignment: "heel", popularity: 0, charisma: "menacing",relationship:0 },
-      { id:6,name: "Sarah Thompson", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:7, name: "Ryan Clark", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:8, name: "Olivia Baker", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      { id:9,name: "Daniel Wright", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      { id:10,name: "Sophia Rodriguez", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:11, name: "Matthew Evans", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:12, name: "Ava Turner", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      {id:13, name: "William Harris", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      { id:14,name: "Chloe Adams", allignment: "heel", popularity: 0, charisma: "menacing" ,relationship:0},
-      { id:15,name: "Ethan King", allignment: "heel", popularity: 0, charisma: "menacing",relationship:0 }
-    ],
+    }, 
+    savegame: {
+      type: Object,
+      default: {
+        wrestlers: [
+          { id:1, name: "John Doe", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:2, name: "Jane Smith", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:3, name: "Mike Johnson", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:4, name: "Emily Davis", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:5, name: "Alex Anderson", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:6, name: "Sarah Thompson", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:7, name: "Ryan Clark", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:8, name: "Olivia Baker", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:9, name: "Daniel Wright", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:10, name: "Sophia Rodriguez", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:11, name: "Matthew Evans", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:12, name: "Ava Turner", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:13, name: "William Harris", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:14, name: "Chloe Adams", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 },
+          { id:15, name: "Ethan King", allignment: "heel", popularity: 0, charisma: "menacing", relationship: 0 }
+        ],
+        currentFeuds: [{
+                       faceId:[2], 
+                       heelId:[3],
+                       intensity:0,
+                       timeRemaining:5,
+                        requirementsMet:0.4,
+                        requiremants:{
+allignment:'face',
+popularity:5,
+charisma:'menacing',
+relationship:{
+  relationshipID:1,
+  relationshipRequirement:5
+}
+                     }}],
+
+
+        potentialFeuds: [{
+          opponentId:[1], 
+          partnerId:[],
+          multiple:false,
+          intensity:0,
+          timeRemaining:5,
+           requirementsMet:0.4,
+           requiremants:{
+allignment:'face',
+popularity:5,
+charisma:'menacing',
+relationship:{
+relationshipID:1,
+relationshipRequirement:5
+}
+        }}]
+      }, charisma: {
+      type: String,
+      default: "comedic",
     },
+    }
+    ,
     location: String,
    
     viewedProfile: Number,
