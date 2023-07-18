@@ -15,20 +15,66 @@ const UserActions = ({ clientId }) => {
   const popularity = useSelector((state) => state.user.popularity);
   const allignment = useSelector((state) => state.user.allignment);
   const savegame = useSelector((state) => state.user.savegame);
+  
   const dispatch = useDispatch();
 
   const [selectedWrestler, setSelectedWrestler] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [activities, setActivities] = useState([]);
+  const wrestlers = savegame.wrestlers;
 
+
+  
+  
   const actions = [
-    { label: "Help Wrestler", value: "help" },
-    { label: "Pander to Wrestler", value: "pander" },
+    {
+      label: "Help Wrestler",
+      value: {
+        actionText: 'Gave target some tips for improvement',
+        actionFunction: (wrestlerId) => {
+          
+          const selectedWrestler = wrestlers.find(wrestler => wrestler.id === wrestlerId);
+          if (selectedWrestler) {
+            const updatedName = `${selectedWrestler.name} Champion`;
+            const updatedRelationship = selectedWrestler.relationship + 13;
+            
+            // Update the name and relationship in the selectedWrestler object
+            const updatedWrestlers = wrestlers.map(wrestler => {
+              if (wrestler.id === wrestlerId) {
+                return { ...wrestler, name: updatedName, relationship: updatedRelationship };
+              }
+              return wrestler;
+            });
+            
+            
+            // Update the savegame with the modified wrestlers array
+            const updatedSavegame = { ...savegame, wrestlers: updatedWrestlers };
+            
+            // Dispatch an action to update the state with the updated savegame
+            dispatch(setSavegame({ savegame: updatedSavegame }));
+
+            
+
+            // Perform some action here using the updatedName
+            console.log(`Helping wrestler ${updatedName}...`);
+          }
+        }
+      }
+    },
+    { label: "Pander to Wrestler", value: {actionText:'Gave target preferential Treatment',      actionFunction: (wrestlerId) => {
+          
+      const selectedWrestler = wrestlers.find(wrestler => wrestler.id === wrestlerId);
+      if (selectedWrestler) {
+        const updatedName = `${selectedWrestler.name} Champion`;
+        // Perform some action here using the updatedName
+        console.log(`Helping wrestler ${updatedName}...`);
+      }
+    }} },
     // Add more actions based on your requirements
   ];
 
-  const wrestlers = savegame.wrestlers;
+  
 
   const wrestlerButtons = wrestlers.map((wrestler) => (
     <button
@@ -178,6 +224,19 @@ handleConfirm()
     }
   };
 
+  const triggerActionFunctions = async () => {
+    activities.forEach((activity) => {
+      const { action } = activity;
+      if (action.value && action.value.actionFunction) {
+        action.value.actionFunction(activity.selectedWrestler.id);
+      }
+    });
+  
+    // Empty the activities array
+    setActivities([]);
+  };
+  
+
   return (
     <Box>
       <h1>hellooo {firstname}</h1>
@@ -205,14 +264,15 @@ handleConfirm()
       )}
       <h2>Activities:</h2>
   
-      <ul>
+  <ul>
   {activities.map((activity, index) => (
     <li key={index}>
-      {activity.action.label} - {activity.selectedWrestler.name}
+      {activity.action.value.actionText.replace(/target/gi, activity.selectedWrestler.name)}
       <button onClick={() => deleteActivity(index)}>Delete</button>
     </li>
   ))}
 </ul>
+ <button onClick={triggerActionFunctions}>Next Week</button>
 
       {isNonMobileScreens && (
         <Box flexBasis="26%">
