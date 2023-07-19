@@ -3,7 +3,47 @@ import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { setName, setFirstname, setSavegame, setTraits } from "state";
 
+
+
+
+function UserResponseButton({ initialButtonText, onResponse }) {
+  const [showButton, setShowButton] = useState(true);
+  const [userResponse, setUserResponse] = useState('');
+  const [buttonText, setButtonText] = useState(initialButtonText);
+
+  const handleClick = () => {
+    setShowButton(false);
+    // Perform some action with the user response
+    onResponse(userResponse);
+  };
+
+  const handleInputChange = (e) => {
+    setUserResponse(e.target.value);
+  };
+
+  return (
+    <div>
+      {showButton ? (
+        <div>
+          <input type="text" onChange={handleInputChange} value={userResponse} />
+          <button onClick={handleClick}>{buttonText}</button>
+        </div>
+      ) : (
+        <p>Waiting for response...</p>
+      )}
+    </div>
+  );
+}
+
 const UserActions = ({ clientId }) => {
+
+  const handleUserResponse = (response) => {
+    // Perform action based on the user response
+    console.log('User response:', response);
+  };
+
+
+
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -15,66 +55,72 @@ const UserActions = ({ clientId }) => {
   const popularity = useSelector((state) => state.user.popularity);
   const allignment = useSelector((state) => state.user.allignment);
   const savegame = useSelector((state) => state.user.savegame);
-  
+  const [showNextActivityButton, setShowNextActivityButton] = useState(false);
+  const [showNextWeekButton, setShowNextWeekButton] = useState(true);
   const dispatch = useDispatch();
 
   const [selectedWrestler, setSelectedWrestler] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [activities, setActivities] = useState([]);
+
   const wrestlers = savegame.wrestlers;
 
-
-  
-  
   const actions = [
     {
       label: "Help Wrestler",
       value: {
-        actionText: 'Gave target some tips for improvement',
+        actionText: "Gave target some tips for improvement",
         actionFunction: (wrestlerId) => {
-          
-          const selectedWrestler = wrestlers.find(wrestler => wrestler.id === wrestlerId);
+          const selectedWrestler = wrestlers.find(
+            (wrestler) => wrestler.id === wrestlerId
+          );
           if (selectedWrestler) {
             const updatedName = `${selectedWrestler.name} Champion`;
             const updatedRelationship = selectedWrestler.relationship + 13;
-            
+
             // Update the name and relationship in the selectedWrestler object
-            const updatedWrestlers = wrestlers.map(wrestler => {
+            const updatedWrestlers = wrestlers.map((wrestler) => {
               if (wrestler.id === wrestlerId) {
-                return { ...wrestler, name: updatedName, relationship: updatedRelationship };
+                return {
+                  ...wrestler,
+                  name: updatedName,
+                  relationship: updatedRelationship,
+                };
               }
               return wrestler;
             });
-            
-            
+
             // Update the savegame with the modified wrestlers array
             const updatedSavegame = { ...savegame, wrestlers: updatedWrestlers };
-            
+
             // Dispatch an action to update the state with the updated savegame
             dispatch(setSavegame({ savegame: updatedSavegame }));
-
-            
 
             // Perform some action here using the updatedName
             console.log(`Helping wrestler ${updatedName}...`);
           }
-        }
-      }
+        },
+      },
     },
-    { label: "Pander to Wrestler", value: {actionText:'Gave target preferential Treatment',      actionFunction: (wrestlerId) => {
-          
-      const selectedWrestler = wrestlers.find(wrestler => wrestler.id === wrestlerId);
-      if (selectedWrestler) {
-        const updatedName = `${selectedWrestler.name} Champion`;
-        // Perform some action here using the updatedName
-        console.log(`Helping wrestler ${updatedName}...`);
-      }
-    }} },
+    {
+      label: "Pander to Wrestler",
+      value: {
+        actionText: "Gave target preferential Treatment",
+        actionFunction: (wrestlerId) => {
+          const selectedWrestler = wrestlers.find(
+            (wrestler) => wrestler.id === wrestlerId
+          );
+          if (selectedWrestler) {
+            const updatedName = `${selectedWrestler.name} Champion`;
+            // Perform some action here using the updatedName
+            console.log(`Helping wrestler ${updatedName}...`);
+          }
+        },
+      },
+    },
     // Add more actions based on your requirements
   ];
-
-  
 
   const wrestlerButtons = wrestlers.map((wrestler) => (
     <button
@@ -92,9 +138,6 @@ const UserActions = ({ clientId }) => {
   };
 
   const handleConfirm = () => {
-    // Perform the desired action based on the selected wrestler and action
-    // Add your own logic here
-
     setIsConfirmed(true);
   };
 
@@ -126,22 +169,23 @@ const UserActions = ({ clientId }) => {
     return null;
   };
 
-  const addToActivities = (action,selectedWrestler) => {
+  const addToActivities = (action, selectedWrestler) => {
     if (activities.length >= 7) {
       console.log("Schedule is full. Cannot add more activities.");
       return;
     }
-handleConfirm()
-    setActivities((prevActivities) => [...prevActivities, {action,selectedWrestler}]);
+    handleConfirm();
+    setActivities((prevActivities) => [
+      ...prevActivities,
+      { action, selectedWrestler },
+    ]);
   };
-
 
   const deleteActivity = (index) => {
     setActivities((prevActivities) =>
       prevActivities.filter((_, i) => i !== index)
     );
   };
-
 
   const handleClick = async () => {
     const traits = {
@@ -152,20 +196,20 @@ handleConfirm()
     };
     await replace(clientId, "mooney", traits);
   };
-  
+
   const replace = async (id, firstName, traits) => {
     const bodyData = {
       id: id,
       firstName: firstName,
       traits: traits,
     };
-  
+
     const loggedInResponse = await fetch("http://localhost:3001/auth/replace", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyData),
     });
-  
+
     const loggedIn = await loggedInResponse.json();
     console.log(loggedIn);
     dispatch(setFirstname({ firstName: firstName }));
@@ -178,36 +222,22 @@ handleConfirm()
       })
     );
   };
+
   const savewrestlers = async () => {
-    // Get a random index from the wrestlers array
     const randomIndex = Math.floor(Math.random() * savegame.wrestlers.length);
-
-    // Create a copy of the wrestlers array
     const updatedWrestlers = [...savegame.wrestlers];
-
-    // Create a copy of the selected object
     const updatedObject = { ...updatedWrestlers[randomIndex] };
-
-    // Increase the popularity of the random object by 1
     updatedObject.popularity += 1;
-
-    // Update the object in the copied wrestlers array
     updatedWrestlers[randomIndex] = updatedObject;
-
-    // Update the savegame with the modified wrestlers array
     const updatedSavegame = { ...savegame, wrestlers: updatedWrestlers };
-
-    // Update the state with the updated savegame
     dispatch(setSavegame({ savegame: updatedSavegame }));
 
-    // Prepare the data to send to the server
     const bodyData = {
       id: _id,
       savegame: updatedSavegame,
     };
 
     try {
-      // Send the updated savegame to the server
       const response = await fetch("http://localhost:3001/auth/savewrestlers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -225,20 +255,56 @@ handleConfirm()
   };
 
   const triggerActionFunctions = async () => {
-    activities.forEach((activity) => {
-      const { action } = activity;
-      if (action.value && action.value.actionFunction) {
-        action.value.actionFunction(activity.selectedWrestler.id);
-      }
-    });
+    setShowNextWeekButton(false);
+    if (activities.length > 0) {
+      const [firstActivity, ...remainingActivities] = activities;
   
-    // Empty the activities array
-    setActivities([]);
+      // Execute the action function for the first activity only if it is the first time the "Next Week" button is pressed
+      if (remainingActivities.length === activities.length - 1) {
+        const { action, selectedWrestler } = firstActivity;
+        if (action.value && action.value.actionFunction) {
+          action.value.actionFunction(selectedWrestler.id);
+        }
+      }
+  
+      // Update the activities array with the remaining activities
+      setActivities(remainingActivities);
+  
+      // Show the "Next Activity" button if there are remaining activities
+      setShowNextActivityButton(remainingActivities.length > 0);
+  
+      // Hide the "Next Week" button if there are remaining activities
+   
+      if (remainingActivities.length===0){
+        console.log('enter here');
+        setShowNextWeekButton(true);
+      }
+    } else {
+      // No more activities, hide the "Next Activity" button and show the "Next Week" button
+      setShowNextActivityButton(false);
+      setShowNextWeekButton(true);
+    }
   };
   
+  
+
+  const renderNextButton = () => {
+    if (activities.length > 0 && showNextActivityButton) {
+      return (
+        <button onClick={triggerActionFunctions}>Next Activity</button>
+      );
+    }
+    return null;
+  };
 
   return (
     <Box>
+      <div>
+      <h1>My Component</h1>
+      <UserResponseButton buttonText="Click Me" onResponse={handleUserResponse} />
+      <UserResponseButton buttonText="Submit" onResponse={handleUserResponse} />
+      <UserResponseButton buttonText="Confirm" onResponse={handleUserResponse} />
+    </div>
       <h1>hellooo {firstname}</h1>
       <p>{allignment}</p>
       <button onClick={() => dispatch(setName())}>+</button>
@@ -255,24 +321,29 @@ handleConfirm()
 
       <h2>Wrestler Selection:</h2>
       {wrestlerButtons}
-      <br></br>
+      <br />
       {renderActionButtons()}
       {selectedWrestler && selectedAction && !isConfirmed && (
-        <button onClick={() => addToActivities(selectedAction,selectedWrestler)}>
+        <button onClick={() => addToActivities(selectedAction, selectedWrestler)}>
           Confirm
         </button>
       )}
       <h2>Activities:</h2>
-  
-  <ul>
-  {activities.map((activity, index) => (
-    <li key={index}>
-      {activity.action.value.actionText.replace(/target/gi, activity.selectedWrestler.name)}
-      <button onClick={() => deleteActivity(index)}>Delete</button>
-    </li>
-  ))}
-</ul>
- <button onClick={triggerActionFunctions}>Next Week</button>
+      <ul>
+        {activities.map((activity, index) => (
+          <li key={index}>
+            {activity.action.value.actionText.replace(
+              /target/gi,
+              activity.selectedWrestler.name
+            )}
+            <button onClick={() => deleteActivity(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+      {renderNextButton()}
+      {showNextWeekButton && (
+        <button onClick={triggerActionFunctions}>Next Week</button>
+      )}
 
       {isNonMobileScreens && (
         <Box flexBasis="26%">
@@ -284,8 +355,3 @@ handleConfirm()
 };
 
 export default UserActions;
-
-
-
-
-
