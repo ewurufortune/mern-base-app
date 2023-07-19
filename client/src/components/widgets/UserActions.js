@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits } from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text } from "state";
 
 
 
-
-function UserResponseButton({ initialButtonText, onResponse }) {
+export function UserResponseButton({ initialButtonText, onResponse }) {
+  
   const [showButton, setShowButton] = useState(true);
   const [userResponse, setUserResponse] = useState('');
-  const [buttonText, setButtonText] = useState(initialButtonText);
+  const [button1Value, setButton1Value] = useState('Value 1');
+  const [button2Text, setButton2Text] = useState('Button 2');
+  const [button2Value, setButton2Value] = useState('Value 2');
+  const [showInput, setShowInput] = useState(false);
 
-  const handleClick = () => {
+  const button1Text = useSelector((state) => state.buttonText);
+
+  const handleClick = (value) => {
     setShowButton(false);
+    setShowInput(true);
+    setUserResponse('');
     // Perform some action with the user response
     onResponse(userResponse);
   };
@@ -26,7 +33,8 @@ function UserResponseButton({ initialButtonText, onResponse }) {
       {showButton ? (
         <div>
           <input type="text" onChange={handleInputChange} value={userResponse} />
-          <button onClick={handleClick}>{buttonText}</button>
+          <button onClick={() => handleClick(button1Value)}>{button1Text}</button>
+          <button onClick={() => handleClick(button2Value)}>{button2Text}</button>
         </div>
       ) : (
         <p>Waiting for response...</p>
@@ -35,12 +43,26 @@ function UserResponseButton({ initialButtonText, onResponse }) {
   );
 }
 
-const UserActions = ({ clientId }) => {
 
-  const handleUserResponse = (response) => {
-    // Perform action based on the user response
-    console.log('User response:', response);
+const UserActions = ({ clientId }) => {
+  const button1Text = useSelector((state) => state.buttonText);
+
+  const [result, setResult] = useState('');
+
+  const handleSendText = (text) => {
+    // Perform some action with the text received from UserResponseButton
+    // Update the result state
+   const luggage=text
+    dispatch(setButton1Text({ buttonText: luggage }));
   };
+
+  const handleSendButton = (option) => {
+    console.log(option);
+    // Send the option string to UserResponseButton
+    setResult(option);
+    handleSendText(option);
+  };
+
 
 
 
@@ -64,7 +86,9 @@ const UserActions = ({ clientId }) => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [activities, setActivities] = useState([]);
 
+
   const wrestlers = savegame.wrestlers;
+
 
   const actions = [
     {
@@ -276,7 +300,7 @@ const UserActions = ({ clientId }) => {
       // Hide the "Next Week" button if there are remaining activities
    
       if (remainingActivities.length===0){
-        console.log('enter here');
+        
         setShowNextWeekButton(true);
       }
     } else {
@@ -296,15 +320,18 @@ const UserActions = ({ clientId }) => {
     }
     return null;
   };
-
+console.log(button1Text);
   return (
     <Box>
       <div>
-      <h1>My Component</h1>
-      <UserResponseButton buttonText="Click Me" onResponse={handleUserResponse} />
-      <UserResponseButton buttonText="Submit" onResponse={handleUserResponse} />
-      <UserResponseButton buttonText="Confirm" onResponse={handleUserResponse} />
+      <h1>ComponentA</h1>
+      <UserResponseButton initialButtonText="Click Me" onResponse={handleSendText} />
+      <p>Result: {result}</p>
+      <button onClick={() => handleSendButton(button1Text)}>Send Option 1</button>
+      <button onClick={() => handleSendButton('option 2')}>Send Option 2</button>
     </div>
+
+    {/* DEMARCATE */}
       <h1>hellooo {firstname}</h1>
       <p>{allignment}</p>
       <button onClick={() => dispatch(setName())}>+</button>

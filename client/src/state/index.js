@@ -2,9 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: "light",
+  buttonText: 'First Button',
   user: null,
   token: null,
   posts: [],
+
 };
 
 export const authSlice = createSlice({
@@ -13,6 +15,13 @@ export const authSlice = createSlice({
   reducers: {
     setMode: (state) => {
       state.mode = state.mode === "light" ? "dark" : "light";
+    },
+    setButton1Text: (state, action) => {
+      if (state.buttonText) {
+        state.buttonText = action.payload.buttonText;
+      } else {
+        console.error("Button non-existent :(");
+      }
     },
     setLogin: (state, action) => {
       state.user = action.payload.user;
@@ -75,6 +84,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text} =
   authSlice.actions;
 export default authSlice.reducer;
