@@ -3,7 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   mode: "light",
   buttonText: 'First Button',
+  buttonTextValue:'',
+  buttonText2:'Second Button',
+  buttonText2Value:'',
   userResponse: '',
+  actionDescription:'',
   user: null,
   token: null,
   posts: [],
@@ -21,9 +25,26 @@ export const authSlice = createSlice({
       state.buttonText = action.payload.buttonText;
      
     },
+    setButton2Text: (state, action) => {
+      state.buttonText2 = action.payload.button2Text;
+     
+    },
+    setButton1TextValue: (state, action) => {
+      state.buttonTextValue = action.payload.buttonTextValue;
+     
+    },
+    setButton2TextValue: (state, action) => {
+      state.buttonText2Value = action.payload.button2TextValue;
+     
+    },
     setUserResponse: (state, action) => {
       console.log(action.payload.userResponse);
       state.userResponse = action.payload.userResponse;
+     
+    },
+    setActionDescription: (state, action) => {
+      console.log(action.payload.actionDescription);
+      state.actionDescription = action.payload.actionDescription;
      
     },
     setLogin: (state, action) => {
@@ -87,6 +108,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setUserResponse} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription} =
   authSlice.actions;
 export default authSlice.reducer;

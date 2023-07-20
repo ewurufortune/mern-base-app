@@ -1,26 +1,27 @@
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse} from "state";
-
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription} from "state";
+//button2Text is represented as buttonText2 in the reducer Slice
 
 
 export function UserResponseButton({ initialButtonText, onResponse }) {
   const dispatch=useDispatch()
   const [showButton, setShowButton] = useState(true);
-  const [button1Value, setButton1Value] = useState('Value 1');
-  const [button2Text, setButton2Text] = useState('Button 2');
-  const [button2Value, setButton2Value] = useState('Value 2');
   const [showInput, setShowInput] = useState(false);
 
   const button1Text = useSelector((state) => state.buttonText);
-  const userResponse = useSelector((state) => state.buttonText);
+  const button1Value = useSelector((state) => state.buttonTextValue);
+  const button2Value = useSelector((state) => state.buttonText2Value);
+  const button2Text = useSelector((state) => state.buttonText2);
+  const userResponse = useSelector((state) => state.userResponse);
 
   const handleClick = (value) => {
     setShowButton(false);
     setShowInput(true);
-    dispatch(setUserResponse({ userResponse: 'text' }));
+    dispatch(setUserResponse({ userResponse: button1Value }));
     // Perform some action with the user response
+    console.log(value);
     // onResponse(userResponse);
   };
 
@@ -41,24 +42,28 @@ export function UserResponseButton({ initialButtonText, onResponse }) {
 
 const UserActions = ({ clientId }) => {
   const userResponse = useSelector((state) => state.userResponse);
+  const actionDescription = useSelector((state) => state.actionDescription);
   const button1Text = useSelector((state) => state.buttonText);
-  console.log(button1Text);
+ 
 
 
   const handleSendText = (text) => {
     // Perform some action with the text received from UserResponseButton
     // Update the result state
-   const luggage=text
-   dispatch(setUserResponse({ userResponse: 'master' }));
+   console.log('massive');
+  
    
-  //  dispatch(setButton1Text({ buttonText: "last Button Text" }));
+  
 
   };
 
   const handleSendButton = (option) => {
-    console.log(option);
+  const {text1,text2,value1,value2}=option
     // Send the option string to UserResponseButton
-    dispatch(setUserResponse({ userResponse: option }));
+    dispatch(setButton1Text({ buttonText: text1 }));
+    dispatch(setButton1TextValue({ buttonTextValue: value1 }));
+     dispatch(setButton2Text({ button2Text: text2 }));
+     dispatch(setButton2TextValue({ button2TextValue: value2 }));
    
   };
 
@@ -325,9 +330,10 @@ const UserActions = ({ clientId }) => {
       <div>
       <h1>ComponentA</h1>
       <UserResponseButton initialButtonText="Click Me" onResponse={handleSendText} />
-      <p>Result: {userResponse}</p>
-      <button onClick={() => handleSendButton('response')}>Send Option 1</button>
-      <button onClick={() => handleSendButton('option 2')}>Send Option 2</button>
+      <p>Result Text:{actionDescription}</p>
+      <p>Result value: {userResponse}</p>
+      <button onClick={() => handleSendButton({text1:'help her',text2:'hinder them',value1:'good 1',value2:'bad 1'})}>Send Option 1</button>
+      <button onClick={() => handleSendButton({text1:'kill her',text2:'resutaitate her',value1:'good 2',value2:'bad 2'})}>Send Option 2</button>
     </div>
 
     {/* DEMARCATE */}
