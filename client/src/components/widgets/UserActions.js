@@ -2,7 +2,7 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
  
 import UserResponseButton from "./Options";
@@ -48,8 +48,10 @@ const UserActions = ({ clientId }) => {
   const allignment = useSelector((state) => state.user.allignment);
   const savegame = useSelector((state) => state.user.savegame);
   const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
+  const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
+  
 
-  const [showNextWeekButton, setShowNextWeekButton] = useState(true);
+ 
   const dispatch = useDispatch();
 
   const [selectedWrestler, setSelectedWrestler] = useState(null);
@@ -254,7 +256,7 @@ const UserActions = ({ clientId }) => {
   };
 
   const triggerActionFunctions = async () => {
-    setShowNextWeekButton(false);
+    dispatch(setShowNextWeekButton({showNextWeekButton: false}))
     if (activities.length > 0) {
       const [firstActivity, ...remainingActivities] = activities;
   
@@ -292,12 +294,12 @@ const UserActions = ({ clientId }) => {
    
       if (remainingActivities.length===0){
         
-        setShowNextWeekButton(true);
+        dispatch(setShowNextWeekButton({showNextWeekButton: true}))
       }
     } else {
       // No more activities, hide the "Next Activity" button and show the "Next Week" button
       dispatch(setShowNextActivityButton({showNextActivityButton: false}))
-      setShowNextWeekButton(true);
+      dispatch(setShowNextWeekButton({showNextWeekButton: true}))
     }
   };
 

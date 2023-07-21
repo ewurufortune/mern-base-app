@@ -18,6 +18,7 @@ const initialState = {
   showNextActivityButton:false,
   lastActivity:true,
   showNextWeekButton:true,
+  responseRecieved:true,
   user: null,
   token: null,
   posts: [],
