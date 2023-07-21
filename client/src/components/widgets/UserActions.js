@@ -17,11 +17,12 @@ const UserActions = ({ clientId }) => {
   const selectedDecision = useSelector((state) => state.selectedDecision);
 
 
-  const handleSendButton = (option) => {
-    console.log('Response');
+  const handleSendButton = (option,selectedWrestler) => {
+ 
     if (responseRecieved===true){
 
- 
+      console.log(selectedWrestler);
+
   const {options,description,decisionText1, decisionText2,text1,text2,value1,value2}=option
   const isOptions = options ? true : false;
   dispatch(setShowOptions({ showOptions: isOptions }));
@@ -278,13 +279,15 @@ const UserActions = ({ clientId }) => {
         if (action.value && action.value.actionFunction) {
           action.value.actionFunction(selectedWrestler.id);
         }
-        handleSendButton(action)
+        console.log(selectedWrestler);
+        handleSendButton(action,selectedWrestler)
       }else{
         const { action, selectedWrestler } = firstActivity;
         if (action.value && action.value.actionFunction) {
           action.value.actionFunction(selectedWrestler.id);
         }
-        handleSendButton(action)
+     
+        handleSendButton(action,selectedWrestler)
       }
   
 

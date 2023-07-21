@@ -19,6 +19,7 @@ const initialState = {
   lastActivity:true,
   showNextWeekButton:true,
   responseRecieved:true,
+  selectedWrestler:{},
   user: null,
   token: null,
   posts: [],

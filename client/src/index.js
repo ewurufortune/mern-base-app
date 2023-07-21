@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import GameLogic from "components/widgets/GameLogic";
 import App from "./App";
 import authReducer from "./state";
 import { configureStore } from "@reduxjs/toolkit";
@@ -36,8 +37,9 @@ root.render(
   
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
-        <App />
+        {/* <App /> */}
         {/* <Counter /> */}
+        <GameLogic/>
       </PersistGate>
     </Provider>
   
