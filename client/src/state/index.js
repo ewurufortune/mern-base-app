@@ -8,6 +8,14 @@ const initialState = {
   buttonText2Value:'',
   userResponse: '',
   actionDescription:'',
+  executeAction:'',
+  showOptions:false,
+  showDescription:false,
+  decisionText1:'',
+  decisionText2:'',
+  selectedDecision:'Hello',
+  showDecisionText:false,
+  showNextActivityButton:false,
   user: null,
   token: null,
   posts: [],
@@ -45,6 +53,46 @@ export const authSlice = createSlice({
     setActionDescription: (state, action) => {
       console.log(action.payload.actionDescription);
       state.actionDescription = action.payload.actionDescription;
+     
+    },
+      setExecuteAction: (state, action) => {
+      console.log(action.payload.executeAction);
+      state.executeAction = action.payload.executeAction;
+     
+    },
+    setShowOptions: (state, action) => {
+      console.log(action.payload.showOptions);
+      state.showOptions = action.payload.showOptions;
+     
+    },
+    setShowDescription: (state, action) => {
+      console.log(action.payload.showDescription);
+      state.showDescription = action.payload.showDescription;
+     
+    },
+    setDecisionText1: (state, action) => {
+      console.log(action.payload.decisionText1);
+      state.decisionText1 = action.payload.decisionText1;
+     
+    },
+    setDecisionText2: (state, action) => {
+      console.log(action.payload.decisionText2);
+      state.decisionText2 = action.payload.decisionText2;
+     
+    },
+    setSelectedDecision: (state, action) => {
+      console.log(action.payload.selectedDecision);
+      state.selectedDecision = action.payload.selectedDecision;
+     
+    },
+    setShowDecisionText: (state, action) => {
+      console.log(action.payload.showDecisionText);
+      state.showDecisionText = action.payload.showDecisionText;
+     
+    },
+    setShowNextActivityButton: (state, action) => {
+      
+      state.showNextActivityButton = action.payload.showNextActivityButton;
      
     },
     setLogin: (state, action) => {
@@ -108,6 +156,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton} =
   authSlice.actions;
 export default authSlice.reducer;

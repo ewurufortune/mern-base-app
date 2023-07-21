@@ -1,13 +1,14 @@
+import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
 
 
 export function UserResponseButton({ initialButtonText, onResponse }) {
   const dispatch=useDispatch()
-  const [showButton, setShowButton] = useState(true);
+  
   const [showInput, setShowInput] = useState(false);
 
   const button1Text = useSelector((state) => state.buttonText);
@@ -15,26 +16,57 @@ export function UserResponseButton({ initialButtonText, onResponse }) {
   const button2Value = useSelector((state) => state.buttonText2Value);
   const button2Text = useSelector((state) => state.buttonText2);
   const userResponse = useSelector((state) => state.userResponse);
+const actionDescription = useSelector((state) => state.actionDescription);
+const executeAction = useSelector((state) => state.executeAction);
+const showOptions = useSelector((state) => state.showOptions);
+const decisionText1 = useSelector((state) => state.decisionText1);
+const decisionText2 = useSelector((state) => state.decisionText2);
+const showDescription = useSelector((state) => state.showDescription);
 
-  const handleClick = (value) => {
-    setShowButton(false);
+
+  const handleClick = (value,decisionText) => {
+    dispatch(setShowOptions({showOptions: false}))
+    dispatch(setShowDescription({showDescription: false}))
     setShowInput(true);
-    dispatch(setUserResponse({ userResponse: button1Value }));
-    // Perform some action with the user response
-    console.log(value);
+   
+    dispatch(setUserResponse({ userResponse: value }));
+    dispatch(setSelectedDecision({ selectedDecision: decisionText }));
+    dispatch(setShowDecisionText({ showDecisionText: true }));
+    function isSerializedFunction(value) {
+      // Define a regular expression pattern for a serialized function
+      const functionPattern = /\bfunction\b/;
+    
+      // Use the test method of the regular expression to check for a match
+      return functionPattern.test(value);
+    }
+
+    const isSerialized = isSerializedFunction(value);
+    if (isSerialized) {
+      const deserializedFunction = eval("(" + value + ")");
+      // Now you have the deserialized function
+         // Perform some action with the user response
+      deserializedFunction(); 
+      
+    } else {
+      // It's a normal string, not a serialized function
+      console.log(value);
+    }
     // onResponse(userResponse);
   };
 
   return (
     <div>
-      {showButton ? (
+      {showOptions ? (
         <div>
-          <button onClick={() => handleClick(button1Value)}>{button1Text}</button>
-          <button onClick={() => handleClick(button2Value)}>{button2Text}</button>
+       
+        <p>title</p>
+          <button onClick={() => handleClick(button1Value,decisionText1)}>{button1Text}</button>
+          <button onClick={() => handleClick(button2Value,decisionText2)}>{button2Text}</button>
         </div>
       ) : (
         <p>Waiting for response...</p>
       )}
+      <br/>
     </div>
   );
 }
@@ -44,27 +76,25 @@ const UserActions = ({ clientId }) => {
   const userResponse = useSelector((state) => state.userResponse);
   const actionDescription = useSelector((state) => state.actionDescription);
   const button1Text = useSelector((state) => state.buttonText);
- 
+  const showDescription = useSelector((state) => state.showDescription);
+  const showDecisionText = useSelector((state) => state.showDecisionText);
+  const selectedDecision = useSelector((state) => state.selectedDecision);
 
-
-  const handleSendText = (text) => {
-    // Perform some action with the text received from UserResponseButton
-    // Update the result state
-   console.log('massive');
-  
-   
-  
-
-  };
 
   const handleSendButton = (option) => {
-  const {text1,text2,value1,value2}=option
+  const {options,description,decisionText1, decisionText2,text1,text2,value1,value2}=option
+  const isOptions = options ? true : false;
+  dispatch(setShowOptions({ showOptions: isOptions }));
+  dispatch(setShowDescription({ showDescription: true }));
+  dispatch(setShowDecisionText({ showDecisionText: false }));
     // Send the option string to UserResponseButton
+    dispatch(setActionDescription({ actionDescription: description }));
     dispatch(setButton1Text({ buttonText: text1 }));
     dispatch(setButton1TextValue({ buttonTextValue: value1 }));
      dispatch(setButton2Text({ button2Text: text2 }));
      dispatch(setButton2TextValue({ button2TextValue: value2 }));
-   
+     dispatch(setDecisionText1({ decisionText1: decisionText1 }));
+     dispatch(setDecisionText2({ decisionText2: decisionText2 }));
   };
 
 
@@ -81,7 +111,8 @@ const UserActions = ({ clientId }) => {
   const popularity = useSelector((state) => state.user.popularity);
   const allignment = useSelector((state) => state.user.allignment);
   const savegame = useSelector((state) => state.user.savegame);
-  const [showNextActivityButton, setShowNextActivityButton] = useState(false);
+  const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
+
   const [showNextWeekButton, setShowNextWeekButton] = useState(true);
   const dispatch = useDispatch();
 
@@ -96,6 +127,10 @@ const UserActions = ({ clientId }) => {
 
   const actions = [
     {
+      options:true,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'help her',text2:'hinder them',
+      value1:serialize(function sayHello() {
+              console.log("hello");
+            }),value2:'bad 1',
       label: "Help Wrestler",
       value: {
         actionText: "Gave target some tips for improvement",
@@ -293,14 +328,30 @@ const UserActions = ({ clientId }) => {
         if (action.value && action.value.actionFunction) {
           action.value.actionFunction(selectedWrestler.id);
         }
+        handleSendButton(action)
+      }else{
+        const { action, selectedWrestler } = firstActivity;
+        if (action.value && action.value.actionFunction) {
+          action.value.actionFunction(selectedWrestler.id);
+        }
+        handleSendButton(action)
       }
   
+
       // Update the activities array with the remaining activities
       setActivities(remainingActivities);
-  
-      // Show the "Next Activity" button if there are remaining activities
-      setShowNextActivityButton(remainingActivities.length > 0);
-  
+      const remainSize = remainingActivities.length > 0;
+
+
+       // Show the "Next Activity" button if there are remaining activities
+      if (remainSize) {
+        // There are remaining activities
+        dispatch(setShowNextActivityButton({showNextActivityButton: true}))
+    
+      } else {
+        dispatch(setShowNextActivityButton({showNextActivityButton: false}))
+      }
+     
       // Hide the "Next Week" button if there are remaining activities
    
       if (remainingActivities.length===0){
@@ -309,12 +360,11 @@ const UserActions = ({ clientId }) => {
       }
     } else {
       // No more activities, hide the "Next Activity" button and show the "Next Week" button
-      setShowNextActivityButton(false);
+      dispatch(setShowNextActivityButton({showNextActivityButton: false}))
       setShowNextWeekButton(true);
     }
   };
-  
-  
+
 
   const renderNextButton = () => {
     if (activities.length > 0 && showNextActivityButton) {
@@ -329,15 +379,31 @@ const UserActions = ({ clientId }) => {
     <Box>
       <div>
       <h1>ComponentA</h1>
-      <UserResponseButton initialButtonText="Click Me" onResponse={handleSendText} />
-      <p>Result Text:{actionDescription}</p>
-      <p>Result value: {userResponse}</p>
-      <button onClick={() => handleSendButton({text1:'help her',text2:'hinder them',value1:'good 1',value2:'bad 1'})}>Send Option 1</button>
-      <button onClick={() => handleSendButton({text1:'kill her',text2:'resutaitate her',value1:'good 2',value2:'bad 2'})}>Send Option 2</button>
+      <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
+    {showDescription && (
+            <>
+              <p>Result Text: {actionDescription}</p>
+              <p>Result value: {userResponse}</p>
+             
+            </>
+            
+          )}
+          {showDecisionText && (
+            <>
+             <p>Decision: {selectedDecision}</p>
+        
+            </>
+          )}
+       
+      <button onClick={() => handleSendButton({options:true,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'help her',text2:'hinder them',
+      value1:serialize(function sayHello() {
+              console.log("hello");
+            }),value2:'bad 1'})}>Send Option 1</button>
+      <button onClick={() => handleSendButton({options:false,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'kill her',text2:'resutaitate her',value1:'good 2',value2:'bad 2'})}>Send Option 2</button>
     </div>
 
     {/* DEMARCATE */}
-      <h1>hellooo {firstname}</h1>
+      {/* <h1>hellooo {firstname}</h1>
       <p>{allignment}</p>
       <button onClick={() => dispatch(setName())}>+</button>
       <Button onClick={handleClick}>Inject</Button>
@@ -349,7 +415,7 @@ const UserActions = ({ clientId }) => {
             {wrestler.name} {wrestler.popularity}
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       <h2>Wrestler Selection:</h2>
       {wrestlerButtons}

@@ -42,6 +42,7 @@
     "react-scripts": "5.0.1",
     "react-slide-fade-in": "^1.0.9",
     "redux-persist": "^6.0.0",
+    "serialize-javascript": "^6.0.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.2.0"
   },
