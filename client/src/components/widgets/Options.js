@@ -2,7 +2,7 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity,setResponseRecieved} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
 
 
@@ -53,6 +53,7 @@ const showDescription = useSelector((state) => state.showDescription);
       // It's a normal string, not a serialized function
       console.log(value);
     }
+    dispatch(setResponseRecieved({responseRecieved: true}))
     // onResponse(userResponse);
   };
 

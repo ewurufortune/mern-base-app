@@ -2,7 +2,7 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
  
 import UserResponseButton from "./Options";
@@ -18,6 +18,10 @@ const UserActions = ({ clientId }) => {
 
 
   const handleSendButton = (option) => {
+    console.log('Response');
+    if (responseRecieved===true){
+
+ 
   const {options,description,decisionText1, decisionText2,text1,text2,value1,value2}=option
   const isOptions = options ? true : false;
   dispatch(setShowOptions({ showOptions: isOptions }));
@@ -31,6 +35,9 @@ const UserActions = ({ clientId }) => {
      dispatch(setButton2TextValue({ button2TextValue: value2 }));
      dispatch(setDecisionText1({ decisionText1: decisionText1 }));
      dispatch(setDecisionText2({ decisionText2: decisionText2 }));
+    }else{
+      console.log('ERROR');
+    }
   };
 
 
@@ -49,6 +56,7 @@ const UserActions = ({ clientId }) => {
   const savegame = useSelector((state) => state.user.savegame);
   const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
   const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
+  const responseRecieved = useSelector((state) => state.responseRecieved);
   
 
  
@@ -256,6 +264,10 @@ const UserActions = ({ clientId }) => {
   };
 
   const triggerActionFunctions = async () => {
+    console.log('RES'+responseRecieved);
+  if(responseRecieved===true){
+
+  
     dispatch(setShowNextWeekButton({showNextWeekButton: false}))
     if (activities.length > 0) {
       const [firstActivity, ...remainingActivities] = activities;
@@ -301,6 +313,10 @@ const UserActions = ({ clientId }) => {
       dispatch(setShowNextActivityButton({showNextActivityButton: false}))
       dispatch(setShowNextWeekButton({showNextWeekButton: true}))
     }
+    dispatch(setResponseRecieved({responseRecieved: false}))
+  }else{
+    console.log('COMPLETE ACTION FIRST');
+  }
   };
 
 
