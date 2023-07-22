@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import weeklyAntics from './arrays/weeklyAntics';
 
-const Live = ({ activeFeud, eventType }) => {
+
+
+const Live = ({ activeFeud, eventType, week }) => {
   const [selectedOption, setSelectedOption] = useState('');
   const [optionDescription, setOptionDescription] = useState('');
   const [showActions, setShowActions] = useState(true);
   const [showEndDayButton, setShowEndDayButton] = useState(false);
+  const [currentWeeklyAntic, setCurrentWeeklyAntic] = useState({});
 
 
+  useEffect(() => {
+    // Generate a random index to select a weekly antic
+    const randomIndex = Math.floor(Math.random() * weeklyAntics.length);
+    // Set the currentWeeklyAntic to the randomly selected antic
+    setCurrentWeeklyAntic(weeklyAntics[randomIndex]);
+  }, [week]);
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
 
@@ -61,15 +71,20 @@ const Live = ({ activeFeud, eventType }) => {
         <p>No actions today.</p>
       ) : (
         <div>
-          <h2>Live Feud: {activeFeud.name}</h2>
-          {eventType === 'weeklyTV' && (
+        <h2>Live Feud: {activeFeud.name}</h2>
+          {eventType === "weeklyTV" && (
             <div>
               <p>Event Type: Weekly TV</p>
               <p>Choose an Action:</p>
+              <p>{currentWeeklyAntic.initialPrompt}</p>
               {showActions && (
                 <>
-                  <button onClick={() => handleOptionSelect('aggressive')}>1. Be Aggressive</button>
-                  <button onClick={() => handleOptionSelect('meek')}>2. Be Meek</button>
+                  <button onClick={() => handleOptionSelect("option1")}>
+                    1. {currentWeeklyAntic.option1text}
+                  </button>
+                  <button onClick={() => handleOptionSelect("option2")}>
+                    2. {currentWeeklyAntic.option2text}
+                  </button>
                 </>
               )}
               <p>{optionDescription}</p>

@@ -26,6 +26,7 @@ const GameLogic = () => {
     inRingSkill: 5,
     currentPotentialFeud:{},
     activeFeud:{},
+    pastFeuds:[],
     currentCompany:companies[0]
   });
 
@@ -40,6 +41,7 @@ const GameLogic = () => {
       inRingSkill: 8,
       company:'WWE',
       bookerRelationship:8,
+      relationship:8,
     },
     {
       id: 2,
@@ -49,6 +51,7 @@ const GameLogic = () => {
       popularity: 4,
       inRingSkill: 6,
       company:'WWE',
+      relationship:-7,
       bookerRelationship:8,
     },
     // Add more wrestlers here with their properties
@@ -146,7 +149,7 @@ const GameLogic = () => {
   // Function to update multipliers for all potential feuds based on player stats
   const updateMultipliers = () => {
     const updatedFeuds = feuds.map((feud) => {
-      const { requirements } = feud;
+      const { requirements, opponent, ally } = feud;
       let multiplier = 1;
   
       // Compare the player's stats with the feud's requirements and update the multiplier accordingly
@@ -167,6 +170,17 @@ const GameLogic = () => {
         multiplier -= Math.abs(popularityDifference) * 0.1;
       }
   
+      // Calculate average relationship value for all involved wrestlers
+      const allInvolvedWrestlers = [...opponent, ...ally, playerWrestler];
+      const totalRelationship = allInvolvedWrestlers.reduce(
+        (sum, wrestler) => sum + (wrestler.relationship || 0),
+        0
+      );
+      const averageRelationship = totalRelationship / allInvolvedWrestlers.length;
+  
+      // Adjust the multiplier based on the average relationship value
+      multiplier += averageRelationship * 0.05; // For example, add 0.05 for every point of average relationship
+  
       // Add more requirements checks and adjustments as needed
   
       return { ...feud, multiplier };
@@ -176,6 +190,76 @@ const GameLogic = () => {
   };
   
   
+  const updateActiveFeudMultiplier = () => {
+    // Check if there is an active feud
+    if (!playerWrestler.activeFeud.name) {
+      return; // No active feud, no need to update multipliers
+    }
+  
+    const { opponent, ally } = playerWrestler.activeFeud;
+  
+    // Calculate the existing multiplier (if any) from the active feud
+    let activeFeudMultiplier = playerWrestler.activeFeud.multiplier || 1;
+  
+    // Compare the player's stats with the active feud's requirements and update the multipliers accordingly
+    if (playerWrestler.alignment === playerWrestler.activeFeud.requirements.alignment) {
+      activeFeudMultiplier += 0.5;
+    }
+    if (playerWrestler.charisma === playerWrestler.activeFeud.requirements.charisma) {
+      activeFeudMultiplier += 0.3;
+    }
+  
+    // Popularity-based adjustment for opponents
+    const popularityDifference = playerWrestler.popularity - 5;
+    if (popularityDifference > 0) {
+      // Increase by 0.1 for every popularity point above 5
+      activeFeudMultiplier += popularityDifference * 0.1;
+    } else if (popularityDifference < 0) {
+      // Decrease by 0.1 for every popularity point below 3
+      activeFeudMultiplier -= Math.abs(popularityDifference) * 0.1;
+    }
+  
+    // Calculate average relationship value for opponents
+    if (opponent.length > 0) {
+      const totalOpponentRelationship = opponent.reduce(
+        (sum, wrestler) => sum + (wrestler.relationship || 0),
+        0
+      );
+      const averageOpponentRelationship = totalOpponentRelationship / opponent.length;
+  
+      // Adjust the activeFeudMultiplier based on the average relationship value for opponents
+      if (averageOpponentRelationship < 0) {
+        activeFeudMultiplier += Math.abs(averageOpponentRelationship) * 0.05; // Add 0.05 for every point of average negative relationship
+      }
+    }
+  
+    // Calculate average relationship value for allies
+    if (ally.length > 0) {
+      const totalAllyRelationship = ally.reduce(
+        (sum, wrestler) => sum + (wrestler.relationship || 0),
+        0
+      );
+      const averageAllyRelationship = totalAllyRelationship / ally.length;
+  
+      // Adjust the activeFeudMultiplier based on the average relationship value for allies
+      if (averageAllyRelationship < 0) {
+        activeFeudMultiplier += Math.abs(averageAllyRelationship) * 0.05;
+      }
+    }
+  
+    // Update the active feud's multiplier
+    setPlayerWrestler((prevState) => ({
+      ...prevState,
+      activeFeud: {
+        ...prevState.activeFeud,
+        multiplier: activeFeudMultiplier,
+      },
+    }));
+  };
+  
+
+  
+
   // Function to handle the "Next Week" button click
   const handleNextWeek = () => {
     if (week<4){
@@ -192,6 +276,7 @@ const GameLogic = () => {
     
     getRandomStatChange();
     updateMultipliers();
+    updateActiveFeudMultiplier()
     updateCompanyBenchmarks();
     setTimeToOpenSpot((prevTime) => prevTime - 1);
     // Check if there is a current potential feud
@@ -305,6 +390,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
           // Reset the active feud when its length is 0
           setPlayerWrestler((prevState) => ({
             ...prevState,
+            pastFeuds: [...prevState.pastFeuds, prevState.activeFeud],
             activeFeud: {},
           }));
         }
@@ -319,6 +405,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
   // Use useEffect to update multipliers when player stats change
   useEffect(() => {
     updateMultipliers();
+    updateActiveFeudMultiplier()
   }, [playerWrestler.alignment, playerWrestler.charisma]);
 
   return (
@@ -336,6 +423,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
       <div>
         <h3>Active Feud</h3>
         <p>Name: {playerWrestler.activeFeud.name}</p>
+        <p>intensity: {playerWrestler.activeFeud.multiplier}</p>
         {/* Display opponents */}
         <p>
           Opponents:{' '}
@@ -372,7 +460,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
 <p>{timeToOpenSpot}</p>
 
       <button onClick={handleNextWeek}>Next Week</button>
-      <Live activeFeud={playerWrestler.activeFeud} eventType={eventType}  />
+      <Live activeFeud={playerWrestler.activeFeud} eventType={eventType} week={week}  />
     </div>
   );
 };
