@@ -6,6 +6,9 @@ const GameLogic = () => {
   const [timeToOpenSpot, setTimeToOpenSpot] = useState(5);
   const [week,setWeek]= useState(1)
   const [eventType,setEventType]= useState('')
+  const [story, setStory] = useState('Welcome to the Wrestling World!');
+  const [isFeudActive, setIsFeudActive] = useState(false);
+
     // Company object with the parameters
     const [companies, setCompanies] = useState([
         {
@@ -18,6 +21,13 @@ const GameLogic = () => {
         // Add more companies here with their properties
         // ...
       ]);
+
+      const [championships, setChampionships] = useState([
+        {name:'WWE Championship',style:'WWE Champion',currentHolder:wrestlers[0],daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
+        {name:'World Heavyweight Championship',style:'World Heavyweight Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
+        {name:'Tag Team Championship',style:'Tag Team Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
+    
+      ])
   const [playerWrestler, setPlayerWrestler] = useState({
     name: 'Player',
     charisma: 'comedic',
@@ -27,7 +37,11 @@ const GameLogic = () => {
     currentPotentialFeud:{},
     activeFeud:{},
     pastFeuds:[],
-    currentCompany:companies[0]
+    champion:false,
+    currentChampionshipHeld:{},
+    titleReigns:[],
+    currentCompany:companies[0],
+    tags:[]
   });
 
 
@@ -40,8 +54,11 @@ const GameLogic = () => {
       popularity: 6,
       inRingSkill: 8,
       company:'WWE',
+      isChampion:true,
+      championshipHeld:[championships[0]],
       bookerRelationship:8,
       relationship:8,
+      tags:[]
     },
     {
       id: 2,
@@ -51,8 +68,11 @@ const GameLogic = () => {
       popularity: 4,
       inRingSkill: 6,
       company:'WWE',
+      isChampion:false,
+      championshipHeld:{},
       relationship:-7,
       bookerRelationship:8,
+      tags:[]
     },
     // Add more wrestlers here with their properties
     // ...
@@ -69,8 +89,11 @@ const GameLogic = () => {
         charisma: 'menacing',
       },
       length:2,
+      championshipFeud:true,
+      championshipTitle:wrestlers[0],
       multiplier: 1.2,
       isCurrentFeud: false,
+      tags:[]
     },
     {
       id: 2,
@@ -81,7 +104,10 @@ const GameLogic = () => {
         alignment: 'face',
         charisma: 'comedic',
       },
+      championshipFeud:false,
+      championshipTitle:{},
       length:2,
+      tags:[],
       multiplier: 1.5,
       isCurrentFeud: false,
     },
@@ -89,8 +115,8 @@ const GameLogic = () => {
     // ...
   ])
 
-  const [story, setStory] = useState('Welcome to the Wrestling World!');
-  const [isFeudActive, setIsFeudActive] = useState(false);
+
+
 
   // Function to get a random stat change for the player
   const getRandomStatChange = () => {
@@ -121,6 +147,9 @@ const GameLogic = () => {
       }));
     }
   };
+  useEffect(() => {
+    console.log("Feuds array updated:", feuds);
+  }, [feuds]);
 
   const updateCompanyBenchmarks = () => {
     const updatedCompanies = companies.map((company) => {
@@ -258,10 +287,44 @@ const GameLogic = () => {
   };
   
 
+  // Function to create a feud around a wrestler with requirements based on alignment and same charisma
+  const createFeud = (wrestler) => {
+    const alignmentRequirement = wrestler.alignment === 'face' ? 'heel' : 'face';
+    const charismaRequirement = wrestler.charisma;
+
+    const newFeud = {
+      id: feuds.length + 1, // Assign a unique ID for the new feud
+      name: `Feud with ${wrestler.name}`,
+      opponent: [wrestler],
+      ally: [],
+      requirements: {
+        alignment: alignmentRequirement,
+        charisma: charismaRequirement,
+      },
+      length: 2, // You can set the initial length as needed
+      tags: [], // Add tags if needed
+      multiplier: 1.2, // Set the initial multiplier as needed
+      isCurrentFeud: false,
+    };
+
+    // Add the new feud to the feuds array
+    setFeuds((prevFeuds) => [...prevFeuds, newFeud]);
+    
+    console.log('new feud added');
+    return newFeud;
+  };
   
 
   // Function to handle the "Next Week" button click
   const handleNextWeek = () => {
+    updateMultipliers();
+      // Check if the feuds array has less than 3 feuds and create a new feud
+  if (feuds.length < 5) {
+    const randomWrestler = wrestlers[Math.floor(Math.random() * wrestlers.length)];
+    createFeud(randomWrestler);
+  
+  }
+
     if (week<4){
         setWeek((prevWeek) => prevWeek + 1);
         
@@ -275,7 +338,7 @@ const GameLogic = () => {
     }
     
     getRandomStatChange();
-    updateMultipliers();
+  
     updateActiveFeudMultiplier()
     updateCompanyBenchmarks();
     setTimeToOpenSpot((prevTime) => prevTime - 1);
@@ -312,6 +375,11 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
       // Check if the random value is below the threshold to activate the feud
       if (randomValue <= threshold) {
         if (!playerWrestler.activeFeud.name) {
+          if (playerWrestler.currentPotentialFeud.name) {
+            // Find and remove the current potential feud from the feuds array
+            const updatedFeuds = feuds.filter((feud) => feud.id !== playerWrestler.currentPotentialFeud.id);
+            setFeuds(updatedFeuds);
+          }
         setPlayerWrestler((prevState) => ({
           ...prevState,
           currentPotentialFeud: {},
@@ -341,8 +409,9 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
     } else {
    
     }
-       // If there is no current potential feud, proceed as usual without checking the counter
+       // If there is no current potential feud.
        const randomFeud = feuds[Math.floor(Math.random() * feuds.length)];
+       console.log(feuds);
        const randomMultiplier = randomFeud.multiplier;
        const randomValue = Math.random() * 4; // Generates a random number between 0.0 and 3.99
  
