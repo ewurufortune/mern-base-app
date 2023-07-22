@@ -98,7 +98,8 @@ const eventType = useSelector((state) => state.eventType);
       },
       length:2,
       championshipFeud:true,
-      championshipTitle:wrestlers[0],
+      playerIsChallanger:true,
+      championshipTitle:wrestlers[0].championshipHeld,
       multiplier: 1.2,
       isCurrentFeud: false,
       tags:[]
@@ -113,6 +114,7 @@ const eventType = useSelector((state) => state.eventType);
         charisma: 'comedic',
       },
       championshipFeud:false,
+      playerIsChallanger:false,
       championshipTitle:{},
       length:2,
       tags:[],
@@ -318,7 +320,11 @@ const eventType = useSelector((state) => state.eventType);
  if (wrestler.isChampion) {
   newFeud.championshipFeud = true;
   newFeud.championshipTitle = wrestler.championshipHeld;
-} else {
+}else if (playerWrestler.champion===true){
+  newFeud.championshipFeud = true;
+  newFeud.championshipTitle = playerWrestler.currentChampionshipHeld;
+}
+ else {
   newFeud.championshipFeud = false;
   newFeud.championshipTitle = {};
 }
