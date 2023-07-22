@@ -20,6 +20,22 @@ const initialState = {
   showNextWeekButton:true,
   responseRecieved:true,
   selectedWrestler:{},
+
+  timeToOpenSpot:5,
+  week:1,
+  eventType:'',
+  story:'Welcome to the Wrestling World!',
+  isFeudActive:false,
+
+  selectedOption: '',
+  optionDescription: '',
+  showActions: true,
+  showEndDayButton: false,
+  currentWeeklyAntic: {},
+  currentMatchPlan: {},
+  showChampionship: false,
+
+
   user: null,
   token: null,
   posts: [],
@@ -114,6 +130,44 @@ export const authSlice = createSlice({
       state.responseRecieved = action.payload.responseRecieved;
      
     },
+    setWeek: (state, action) => {
+     state.week = action.payload.week;}
+    ,
+    setEventType: (state, action) => {
+     state.eventType = action.payload.eventType;}
+    ,
+    setTimeToOpenSpot: (state, action) => {
+      state.timeToOpenSpot = action.payload.timeToOpenSpot;
+    },
+   setStory: (state, action) => {
+     state.story = action.payload.story;
+   },
+   setIsFeudActive: (state, action) => {
+     state.isFeudActive = action.payload.isFeudActive;
+   },
+   setSelectedOption: (state, action) => {
+     state.selectedOption = action.payload;
+   },
+   setOptionDescription: (state, action) => {
+     state.optionDescription = action.payload;
+   },
+   setShowActions: (state, action) => {
+     state.showActions = action.payload;
+   },
+   setShowEndDayButton: (state, action) => {
+     state.showEndDayButton = action.payload;
+   },
+   setCurrentWeeklyAntic: (state, action) => {
+     state.currentWeeklyAntic = action.payload;
+   },
+   setCurrentMatchPlan: (state, action) => {
+     state.currentMatchPlan = action.payload;
+   }
+   ,
+   setShowChampionship: (state, action) => {
+     state.showChampionship = action.payload;
+   }
+   ,
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -175,6 +229,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,} =
   authSlice.actions;
 export default authSlice.reducer;

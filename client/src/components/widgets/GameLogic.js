@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import Live from './Live';
-const GameLogic = () => {
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek, setTimeToOpenSpot} from "state";
 
+
+
+
+const GameLogic = () => {
+  const dispatch = useDispatch();
     
-  const [timeToOpenSpot, setTimeToOpenSpot] = useState(5);
-  const [week,setWeek]= useState(1)
-  const [eventType,setEventType]= useState('')
-  const [story, setStory] = useState('Welcome to the Wrestling World!');
-  const [isFeudActive, setIsFeudActive] = useState(false);
+const timeToOpenSpot = useSelector((state) => state.timeToOpenSpot);
+const week = useSelector((state) => state.week);
+const story = useSelector((state) => state.story);
+const eventType = useSelector((state) => state.eventType);
+
 
     // Company object with the parameters
     const [companies, setCompanies] = useState([
@@ -21,13 +27,46 @@ const GameLogic = () => {
         // Add more companies here with their properties
         // ...
       ]);
-
       const [championships, setChampionships] = useState([
-        {name:'WWE Championship',style:'WWE Champion',currentHolder:wrestlers[0],daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
+        {name:'WWE Championship',style:'WWE Champion',currentHolder:'wrestlers[0]',daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
         {name:'World Heavyweight Championship',style:'World Heavyweight Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
         {name:'Tag Team Championship',style:'Tag Team Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
     
       ])
+      const [wrestlers, setWrestlers] = useState([
+        {
+          id: 1,
+          name: 'The Beast',
+          charisma: 'menacing',
+          alignment: 'heel',
+          popularity: 6,
+          inRingSkill: 8,
+          company:'WWE',
+          isChampion:true,
+          championshipHeld:championships[0],
+          bookerRelationship:8,
+          relationship:8,
+          tags:[]
+        },
+        {
+          id: 2,
+          name: 'The Jester',
+          charisma: 'comedic',
+          alignment: 'face',
+          popularity: 4,
+          inRingSkill: 6,
+          company:'WWE',
+          isChampion:false,
+          championshipHeld:{},
+          relationship:-7,
+          bookerRelationship:8,
+          tags:[]
+        },
+        // Add more wrestlers here with their properties
+        // ...
+      ]);
+
+  
   const [playerWrestler, setPlayerWrestler] = useState({
     name: 'Player',
     charisma: 'comedic',
@@ -45,38 +84,7 @@ const GameLogic = () => {
   });
 
 
-  const [wrestlers, setWrestlers] = useState([
-    {
-      id: 1,
-      name: 'The Beast',
-      charisma: 'menacing',
-      alignment: 'heel',
-      popularity: 6,
-      inRingSkill: 8,
-      company:'WWE',
-      isChampion:true,
-      championshipHeld:[championships[0]],
-      bookerRelationship:8,
-      relationship:8,
-      tags:[]
-    },
-    {
-      id: 2,
-      name: 'The Jester',
-      charisma: 'comedic',
-      alignment: 'face',
-      popularity: 4,
-      inRingSkill: 6,
-      company:'WWE',
-      isChampion:false,
-      championshipHeld:{},
-      relationship:-7,
-      bookerRelationship:8,
-      tags:[]
-    },
-    // Add more wrestlers here with their properties
-    // ...
-  ]);
+  
 
   const [feuds, setFeuds] = useState([
     {
@@ -306,7 +314,14 @@ const GameLogic = () => {
       multiplier: 1.2, // Set the initial multiplier as needed
       isCurrentFeud: false,
     };
-
+ // Check if the opponent wrestler is a champion
+ if (wrestler.isChampion) {
+  newFeud.championshipFeud = true;
+  newFeud.championshipTitle = wrestler.championshipHeld;
+} else {
+  newFeud.championshipFeud = false;
+  newFeud.championshipTitle = {};
+}
     // Add the new feud to the feuds array
     setFeuds((prevFeuds) => [...prevFeuds, newFeud]);
     
@@ -326,22 +341,29 @@ const GameLogic = () => {
   }
 
     if (week<4){
-        setWeek((prevWeek) => prevWeek + 1);
+      const prevWeek=week+1
+       dispatch(setWeek({ week: prevWeek  }));
+ 
         
     }else{
-        setWeek(1)
+      dispatch(setWeek({ week:1 }));
     }
     if (week===4){
-        setEventType('PPV')
+       dispatch(setEventType({ eventType: 'PPV' }));
+   
     }else{
-        setEventType('weeklyTV')
+       dispatch(setEventType({ eventType: 'weeklyTV' }));
+    
     }
     
     getRandomStatChange();
   
     updateActiveFeudMultiplier()
     updateCompanyBenchmarks();
-    setTimeToOpenSpot((prevTime) => prevTime - 1);
+const openSpot=timeToOpenSpot-1
+
+     dispatch(setTimeToOpenSpot({ timeToOpenSpot: openSpot }));
+   
     // Check if there is a current potential feud
     if (playerWrestler.currentPotentialFeud.name) {
       // Check if there are opponents and allies in the feud
@@ -386,25 +408,26 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
           activeFeud: { ...prevState.currentPotentialFeud,
          },
         }));
-        setStory(
-          `Congratulations! The booker picked up your feud with ${
-            playerWrestler.currentPotentialFeud.opponent[0].name
-          } and it has become an active feud.`
-        );
-        setIsFeudActive(true);
+         dispatch(setStory({ story:  `Congratulations! The booker picked up your feud with ${
+          playerWrestler.currentPotentialFeud.opponent[0].name
+        } and it has become an active feud.` }));
+     
+
+         dispatch(setIsFeudActive({ isFeudActive: true }));
+       
         // Reset the timeToOpenSpot counter to its initial value (e.g., 0) when the feud becomes active
-        setTimeToOpenSpot(5);
+      
+         dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
       }
       } else {
 
-        setStory(
-          `The booker didn't choose any feud for this week. The next spot will be open in ${
-            5 - timeToOpenSpot
-          } weeks.`
-        );
+        dispatch(setStory({ story:  `The booker didn't choose any feud for this week. The next spot will be open in ${
+          5 - timeToOpenSpot
+        } weeks.`}));
+      
         setIsFeudActive(false);
       }
-      setTimeToOpenSpot(5)
+      dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
     }
     } else {
    
@@ -438,10 +461,11 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
            ...prevState,
            currentPotentialFeud: randomFeud,
          }));
-         setStory(`Congratulations! The booker picked up your feud with ${randomFeud.opponent[0].name}.`);
+       
+     
          setIsFeudActive(true);
        } else {
-         setStory("The booker didn't choose any feud for this week.");
+        dispatch(setStory({ story: "The booker didn't choose any feud for this week."}));
          setIsFeudActive(false);
        }
        if (playerWrestler.activeFeud.name) {
@@ -466,7 +490,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
       }
     
     if (timeToOpenSpot<= 0){
-        setTimeToOpenSpot(5)
+      dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
     }
   };
 

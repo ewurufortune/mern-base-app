@@ -1,4 +1,6 @@
-const weeklyAntics = [
+import serialize from 'serialize-javascript';
+
+const nonSerializedWeeklyAntics = [
   {
     title: "After Match Attack",
     initialPrompt: "You've just won the match, what do you do?",
@@ -130,5 +132,14 @@ const weeklyAntics = [
     option2description: "You break the stare and taunt your opponent, trying to get into their head before the match.",
   },
 ];
+
+const weeklyAntics = nonSerializedWeeklyAntics.map((antic) => {
+  const serializedAntic = { ...antic }; // Create a shallow copy of the object
+  serializedAntic.option1function = serialize(antic.option1function);
+  serializedAntic.option2function = serialize(antic.option2function);
+  // Add similar lines for more options if needed
+
+  return serializedAntic;
+});
 
 export default weeklyAntics;

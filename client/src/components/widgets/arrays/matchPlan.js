@@ -1,4 +1,6 @@
-const matchPlan=[
+import serialize from 'serialize-javascript';
+
+const unserializedMatchPlan=[
 
    {title: "Call the match",
     initialPrompt: "how dominant do you work the match?",
@@ -31,5 +33,14 @@ const matchPlan=[
     
   },
 ]
+
+const matchPlan = unserializedMatchPlan.map((plan) => {
+  const serializedPlan = { ...plan }; // Create a shallow copy of the object
+  serializedPlan.option1function = serialize(plan.option1function);
+  serializedPlan.option2function = serialize(plan.option2function);
+  serializedPlan.option3function = serialize(plan.option3function);
+
+  return serializedPlan;
+});
 
 export default matchPlan
