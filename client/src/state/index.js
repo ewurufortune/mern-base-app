@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: "light",
@@ -147,6 +147,14 @@ export const authSlice = createSlice({
      state.user.savegame.companies = action.payload;
    }
    ,
+   addFeud: (state, action) => {
+    console.log(current(state.user.savegame.feuds));
+    state.user.savegame.feuds = [...state.user.savegame.feuds, action.payload];
+  },
+  setFeud: (state, action) => {
+state.user.savegame.feuds = action.payload;
+  }
+  ,
    setIsFeudActive: (state, action) => {
      state.isFeudActive = action.payload.isFeudActive;
    },
@@ -189,7 +197,49 @@ export const authSlice = createSlice({
     state.user.currentCompany = currentCompany;
     state.user.tags = tags;
   },
-
+  // setStats: (state, action) => {
+  //   // Update all the playerWrestler stats collectively
+  //   state.user = { ...state.user, ...action.payload };
+  // },
+  setFirstName: (state, action) => {
+    state.user.firstName = action.payload;
+  },
+  setCharisma: (state, action) => {
+    state.user.charisma = action.payload;
+  },
+  setAlignment: (state, action) => {
+    state.user.alignment = action.payload;
+  },
+  setPopularity: (state, action) => {
+    state.user.popularity = action.payload;
+  },
+  setInRingSkill: (state, action) => {
+    state.user.inRingSkill = action.payload;
+  },
+  setCurrentPotentialFeud: (state, action) => {
+    state.user.currentPotentialFeud = action.payload;
+  },
+  setActiveFeud: (state, action) => {
+    state.user.activeFeud = action.payload;
+  },
+  setPastFeuds: (state, action) => {
+    state.user.pastFeuds = action.payload;
+  },
+  setIsChampion: (state, action) => {
+    state.user.isChampion = action.payload;
+  },
+  setCurrentChampionshipHeld: (state, action) => {
+    state.user.currentChampionshipHeld = action.payload;
+  },
+  setTitleReigns: (state, action) => {
+    state.user.titleReigns = action.payload;
+  },
+  setCurrentCompany: (state, action) => {
+    state.user.currentCompany = action.payload;
+  },
+  setTags: (state, action) => {
+    state.user.tags = action.payload;
+  },
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -252,6 +302,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags} =
   authSlice.actions;
 export default authSlice.reducer;

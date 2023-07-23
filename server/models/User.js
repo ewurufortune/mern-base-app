@@ -89,7 +89,22 @@ const UserSchema = new mongoose.Schema(
           {name:'Tag Team Championship',style:'Tag Team Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[],company:'WWE'},
       
         ],
-        feuds:[],
+        feuds:[
+          {
+            id:  1, 
+            name: `The Shadow`,
+            opponent: [],
+            ally: [],
+            requirements: {
+              alignment: 'none',
+              charisma: 'none',
+            },
+            length: 2,
+            tags: [], 
+            multiplier: 1.2, 
+            isCurrentFeud: false,
+          }
+        ],
         currentFeuds: [{
                        faceId:[2], 
                        heelId:[3],
