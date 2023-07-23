@@ -1,36 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import Live from './Live';
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek, setTimeToOpenSpot} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek, setTimeToOpenSpot,setPlayerWrestler,setCurrentMatchPlan,setCompanies} from "state";
 
 
 
 
 const GameLogic = () => {
   const dispatch = useDispatch();
-    
+
+  const { _id } = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+  const firstName = useSelector((state) => state.user.firstName);
+
+  const charisma = useSelector((state) => state.user.charisma);
+  const wealth = useSelector((state) => state.user.wealth);
+  const user = useSelector((state) => state.user);
+  const popularity = useSelector((state) => state.user.popularity);
+  const alignment = useSelector((state) => state.user.alignment);
+  const inRingSkill = useSelector((state) => state.user.inRingSkill);
+  const currentPotentialFeud = useSelector((state) => state.user.currentPotentialFeud);
+  const pastFeuds = useSelector((state) => state.user.pastFeuds);
+  const activeFeud = useSelector((state) => state.user.activeFeud);
+  const isChampion = useSelector((state) => state.user.isChampion);
+  const currentChampionshipHeld = useSelector((state) => state.user.currentChampionshipHeld);
+  const titleReigns = useSelector((state) => state.user.titleReigns);
+  const currentCompany = useSelector((state) => state.user.currentCompany);
+  const tags = useSelector((state) => state.user.tags);
+  const savegame = useSelector((state) => state.user.savegame);
+  const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
+  const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
+  const responseRecieved = useSelector((state) => state.responseRecieved);
+  const companies = useSelector((state) => state.user.savegame.companies);
+  
 const timeToOpenSpot = useSelector((state) => state.timeToOpenSpot);
 const week = useSelector((state) => state.week);
 const story = useSelector((state) => state.story);
 const eventType = useSelector((state) => state.eventType);
 
 
-    // Company object with the parameters
-    const [companies, setCompanies] = useState([
-        {
-          name: 'WWE',
-          preferredCharisma: 'comedic',
-          inRingBenchmark: 3,
-          popularityBenchmark: 4,
-          bookerOpinion:7
-        },
-        // Add more companies here with their properties
-        // ...
-      ]);
+
       const [championships, setChampionships] = useState([
-        {name:'WWE Championship',style:'WWE Champion',currentHolder:'wrestlers[0]',daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
-        {name:'World Heavyweight Championship',style:'World Heavyweight Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
-        {name:'Tag Team Championship',style:'Tag Team Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[]},
+        {name:'WWE Championship',style:'WWE Champion',currentHolder:'wrestlers[0]',daysHeld:0,dateWon:'',dateLost:'',pastHolders:[],company:'WWE'},
+        {name:'World Heavyweight Championship',style:'World Heavyweight Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[],company:'WWE'},
+        {name:'Tag Team Championship',style:'Tag Team Champion',currentHolder:{},daysHeld:0,dateWon:'',dateLost:'',pastHolders:[],company:'WWE'},
     
       ])
       const [wrestlers, setWrestlers] = useState([
@@ -59,7 +72,7 @@ const eventType = useSelector((state) => state.eventType);
           isChampion:false,
           championshipHeld:{},
           relationship:-7,
-          bookerRelationship:8,
+          bookerationship:8,
           tags:[]
         },
         // Add more wrestlers here with their properties
@@ -67,6 +80,22 @@ const eventType = useSelector((state) => state.eventType);
       ]);
 
   
+  // const playerWrestler={
+  //   firstName,
+  //   charisma,
+  //   alignment,
+  //   popularity,
+  //   inRingSkill,
+  //   currentPotentialFeud,
+  //   activeFeud,
+  //   pastFeuds,
+  //   isChampion,
+  //   currentChampionshipHeld,
+  //   titleReigns,
+  //   currentCompany,
+  //   tags
+  // };
+
   const [playerWrestler, setPlayerWrestler] = useState({
     name: 'Player',
     charisma: 'comedic',
@@ -158,7 +187,7 @@ const eventType = useSelector((state) => state.eventType);
     }
   };
   useEffect(() => {
-    console.log("Feuds array updated:", feuds);
+
   }, [feuds]);
 
   const updateCompanyBenchmarks = () => {
@@ -182,7 +211,8 @@ const eventType = useSelector((state) => state.eventType);
       };
     });
 
-    setCompanies(updatedCompanies);
+     dispatch(setCompanies(updatedCompanies));
+  
   };
 
   // Function to update multipliers for all potential feuds based on player stats
@@ -331,7 +361,6 @@ const eventType = useSelector((state) => state.eventType);
     // Add the new feud to the feuds array
     setFeuds((prevFeuds) => [...prevFeuds, newFeud]);
     
-    console.log('new feud added');
     return newFeud;
   };
   
@@ -440,7 +469,6 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
     }
        // If there is no current potential feud.
        const randomFeud = feuds[Math.floor(Math.random() * feuds.length)];
-       console.log(feuds);
        const randomMultiplier = randomFeud.multiplier;
        const randomValue = Math.random() * 4; // Generates a random number between 0.0 and 3.99
  
@@ -468,7 +496,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
            currentPotentialFeud: randomFeud,
          }));
        
-     
+         dispatch(setStory({ story: `The booker is considering a feud against ${randomFeud.opponent[0].name}`}));
          setIsFeudActive(true);
        } else {
         dispatch(setStory({ story: "The booker didn't choose any feud for this week."}));

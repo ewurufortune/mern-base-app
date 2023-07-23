@@ -142,6 +142,11 @@ export const authSlice = createSlice({
    setStory: (state, action) => {
      state.story = action.payload.story;
    },
+   setCompanies: (state, action) => {
+    console.log(action.payload);
+     state.user.savegame.companies = action.payload;
+   }
+   ,
    setIsFeudActive: (state, action) => {
      state.isFeudActive = action.payload.isFeudActive;
    },
@@ -168,6 +173,23 @@ export const authSlice = createSlice({
      state.showChampionship = action.payload;
    }
    ,
+   setPlayerWrestler: (state, action) => {
+    const { firstname, charisma, alignment, popularity, inRingSkill, currentPotentialFeud, activeFeud, pastFeuds, isChampion, currentChampionshipHeld, titleReigns, currentCompany, tags } = action.payload;
+    state.user.firstname = firstname;
+    state.user.charisma = charisma;
+    state.user.alignment = alignment;
+    state.user.popularity = popularity;
+    state.user.inRingSkill = inRingSkill;
+    state.user.currentPotentialFeud = currentPotentialFeud;
+    state.user.activeFeud = activeFeud;
+    state.user.pastFeuds = pastFeuds;
+    state.user.isChampion = isChampion;
+    state.user.currentChampionshipHeld = currentChampionshipHeld;
+    state.user.titleReigns = titleReigns;
+    state.user.currentCompany = currentCompany;
+    state.user.tags = tags;
+  },
+
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -183,6 +205,7 @@ export const authSlice = createSlice({
         console.error("User friends non-existent :(");
       }
     },
+
     setName: (state, action) => {
       if (state.user) {
         state.user.firstName = 'john';
@@ -229,6 +252,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies} =
   authSlice.actions;
 export default authSlice.reducer;

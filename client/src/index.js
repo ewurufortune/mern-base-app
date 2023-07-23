@@ -37,9 +37,9 @@ root.render(
   
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
-        {/* <App /> */}
+        <App />
         {/* <Counter /> */}
-        <GameLogic/>
+        {/* <GameLogic/> */}
       </PersistGate>
     </Provider>
   

@@ -10,6 +10,20 @@ const Live = ({ activeFeud, eventType, week }) => {
 
 const dispatch = useDispatch();
 
+const { _id } = useSelector((state) => state.user);
+const token = useSelector((state) => state.token);
+const firstname = useSelector((state) => state.user.firstName);
+
+const charisma = useSelector((state) => state.user.charisma);
+const wealth = useSelector((state) => state.user.wealth);
+const user = useSelector((state) => state.user);
+const popularity = useSelector((state) => state.user.popularity);
+const allignment = useSelector((state) => state.user.allignment);
+const savegame = useSelector((state) => state.user.savegame);
+const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
+const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
+const responseRecieved = useSelector((state) => state.responseRecieved);
+
 const selectedOption = useSelector((state) => state.selectedOption);
 const optionDescription = useSelector((state) => state.optionDescription);
 const showActions = useSelector((state) => state.showActions);
