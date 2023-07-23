@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import Feud from "./Feuds.js";
+import Company from "./Company.js";
+
+const { Schema } = mongoose;
 
 const UserSchema = new mongoose.Schema(
   {
@@ -163,13 +167,42 @@ relationshipRequirement:5
       default: 4,
     },
     currentPotentialFeud: {
-      type: Object,
-      default: {},
-    },
-    activeFeud: {
-      type: Object,
-      default: {},
-    },
+    
+      type:Object,
+      default:{
+        name: "Higgins",
+        opponent: [ { id:15, name: "Ethan King", alignment: "heel", popularity: 0, inRingSkill:0,charisma: "menacing", relationship: 0 ,tags:[],company:'WWE',bookerRelationship:7}],
+        ally: [],
+        requirements: {
+          alignment: 'face',
+          charisma: 'menacing',
+        },
+        length: 2,
+        tags: [],
+        multiplier: 1.2,
+        isCurrentFeud: false,
+  
+      }
+
+  },
+  activeFeud: {
+    type:Object,
+    default:{
+      name: "Higgins",
+      opponent: [ { id:15, name: "Ethan King", alignment: "heel", popularity: 0, inRingSkill:0,charisma: "menacing", relationship: 0 ,tags:[],company:'WWE',bookerRelationship:7}],
+      ally: [],
+      requirements: {
+        alignment: 'face',
+        charisma: 'menacing',
+      },
+      length: 2,
+      tags: [],
+      multiplier: 1.2,
+      isCurrentFeud: false,
+
+    }
+    
+  },
     currentChampionshipHeld: {
       type: Object,
       default: {},
@@ -184,7 +217,15 @@ relationshipRequirement:5
     },
     currentCompany: {
       type: Object,
-      default: {},
+     
+      default: 
+        {
+          name: 'WWE',
+          preferredCharisma: 'comedic',
+          inRingBenchmark: 3,
+          popularityBenchmark: 5,
+          bookerOpinion:7
+      },
     },
     
     location: String,

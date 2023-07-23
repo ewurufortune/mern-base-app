@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import Live from './Live';
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek, setTimeToOpenSpot,setPlayerWrestler,setCurrentMatchPlan,setCompanies,addFeud,setFeud} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek, setTimeToOpenSpot,setPlayerWrestler,setCurrentMatchPlan,setCompanies,addFeud,setFeud,setStats,setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setActiveFeudLength,setActiveFeudMultiplier} from "state";
 
 
 
@@ -35,6 +35,7 @@ const GameLogic = () => {
   const championships = useSelector((state) => state.user.savegame.championships);
   const wrestlers = useSelector((state) => state.user.savegame.wrestlers);
   const feuds = useSelector((state) => state.user.savegame.feuds);
+  const playerWrestler = useSelector((state) => state.user);
   
 const timeToOpenSpot = useSelector((state) => state.timeToOpenSpot);
 const week = useSelector((state) => state.week);
@@ -42,39 +43,6 @@ const story = useSelector((state) => state.story);
 const eventType = useSelector((state) => state.eventType);
 
 
-
-  
-  // const playerWrestler={
-  //   firstName,
-  //   charisma,
-  //   alignment,
-  //   popularity,
-  //   inRingSkill,
-  //   currentPotentialFeud,
-  //   activeFeud,
-  //   pastFeuds,
-  //   isChampion,
-  //   currentChampionshipHeld,
-  //   titleReigns,
-  //   currentCompany,
-  //   tags
-  // };
-
-  const [playerWrestler, setPlayerWrestler] = useState({
-    name: 'Player',
-    charisma: 'comedic',
-    alignment: 'face',
-    popularity: 5,
-    inRingSkill: 5,
-    currentPotentialFeud:{},
-    activeFeud:{},
-    pastFeuds:[],
-    champion:false,
-    currentChampionshipHeld:{},
-    titleReigns:[],
-    currentCompany:companies[0],
-    tags:[]
-  });
 
 
   
@@ -111,6 +79,7 @@ const eventType = useSelector((state) => state.eventType);
   newFeud.championshipFeud = false;
   newFeud.championshipTitle = {};
 }
+console.log(newFeud);
     // Add the new feud to the feuds array
     dispatch(addFeud(newFeud));
     
@@ -133,23 +102,17 @@ const eventType = useSelector((state) => state.eventType);
     if (randomStat === 'alignment') {
       // Randomly change the player's alignment
       const newAlignment = Math.random() > 0.5 ? 'face' : 'heel';
-      setPlayerWrestler((prevState) => ({
-        ...prevState,
-        alignment: newAlignment,
-      }));
+      dispatch(setAlignment(newAlignment))
     } else if (randomStat === 'charisma') {
       // Randomly change the player's charisma
       const newCharisma = Math.random() > 0.5 ? 'comedic' : 'menacing';
-      setPlayerWrestler((prevState) => ({
-        ...prevState,
-        charisma: newCharisma,
-      }));
+      dispatch(setCharisma(newCharisma))
     } else {
-      // Change the player's popularity or in-ring skill
-      setPlayerWrestler((prevState) => ({
-        ...prevState,
-        [randomStat]: Math.min(10, Math.max(1, prevState[randomStat] + randomChange)),
-      }));
+      if (randomStat === 'popularity') {
+        dispatch(setPopularity(randomChange));
+      } else if (randomStat === 'inRingSkill') {
+        dispatch(setInRingSkill(randomChange));
+      }
     }
   };
  
@@ -225,7 +188,11 @@ const eventType = useSelector((state) => state.eventType);
  
   const updateActiveFeudMultiplier = () => {
     // Check if there is an active feud
-    if (!playerWrestler.activeFeud.name) {
+    if (!playerWrestler.activeFeud.name || playerWrestler.activeFeud.name ==='Higgins') {
+      if(playerWrestler.activeFeud.name ==='Higgins'){
+         dispatch(setActiveFeud({}));
+          dispatch(setCurrentPotentialFeud({}));
+      }
       return; // No active feud, no need to update multipliers
     }
   
@@ -279,15 +246,10 @@ const eventType = useSelector((state) => state.eventType);
         activeFeudMultiplier += Math.abs(averageAllyRelationship) * 0.05;
       }
     }
-  
+ 
     // Update the active feud's multiplier
-    setPlayerWrestler((prevState) => ({
-      ...prevState,
-      activeFeud: {
-        ...prevState.activeFeud,
-        multiplier: activeFeudMultiplier,
-      },
-    }));
+    dispatch(setActiveFeudMultiplier(activeFeudMultiplier));
+  
   };
   
 
@@ -329,6 +291,7 @@ const openSpot=timeToOpenSpot-1
    
     // Check if there is a current potential feud
     if (playerWrestler.currentPotentialFeud.name) {
+      if (playerWrestler.currentPotentialFeud.name==='Higgins') {  dispatch(setCurrentPotentialFeud({}));}
       // Check if there are opponents and allies in the feud
       const { opponent, ally } = playerWrestler.currentPotentialFeud;
       const allInvolvedWrestlers = [...opponent, ...ally];
@@ -365,12 +328,9 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
             const updatedFeuds = feuds.filter((feud) => feud.id !== playerWrestler.currentPotentialFeud.id);
             dispatch(setFeud(updatedFeuds));
           }
-        setPlayerWrestler((prevState) => ({
-          ...prevState,
-          currentPotentialFeud: {},
-          activeFeud: { ...prevState.currentPotentialFeud,
-         },
-        }));
+
+          dispatch(setActiveFeud(playerWrestler.currentPotentialFeud))
+          dispatch(setCurrentPotentialFeud({}));
          dispatch(setStory({ story:  `Congratulations! The booker picked up your feud with ${
           playerWrestler.currentPotentialFeud.opponent[0].name
         } and it has become an active feud.` }));
@@ -396,7 +356,7 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
    
     }
     if(feuds[0].opponent.length!==0){
-      console.log(feuds[0].opponent.length);
+   
       // If there is no current potential feud.
       const randomFeud = feuds[Math.floor(Math.random() * feuds.length)];
       const randomMultiplier = randomFeud.multiplier;
@@ -407,37 +367,37 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
       const playerCharisma = playerWrestler.charisma;
       const companyPreferredCharisma = playerWrestler.currentCompany.preferredCharisma;
       if (playerCharisma === companyPreferredCharisma) {
-        additionalWeeks = 3; // If player's charisma matches company's preferred, add 2 weeks
+        additionalWeeks = 6; // If player's charisma matches company's preferred, add 6 weeks
+        updateFeudLengthWithAdditionalWeeks(randomFeud,additionalWeeks)
+
       } else if (
         (playerCharisma === 'comedic' && companyPreferredCharisma === 'menacing') ||
         (playerCharisma === 'menacing' && companyPreferredCharisma === 'comedic')
       ) {
-        additionalWeeks = 2; // If player's charisma is opposite to company's preferred, add 1 week
+        additionalWeeks = 4; // If player's charisma is opposite to company's preferred, add 4 week
+        updateFeudLengthWithAdditionalWeeks(randomFeud,additionalWeeks)
       }
 
-      console.log(randomFeud);
-      // Update the feud length with additional weeks
-      const updatedFeuds = [...feuds]; // Create a copy of the feuds array
-      // Find the index of the randomFeud object in the updatedFeuds array
-      const randomFeudIndex = updatedFeuds.findIndex((feud) => feud.id === randomFeud.id);
-      // Create a copy of the randomFeud object and update its length property
-      const updatedRandomFeud = { ...randomFeud };
-      const lengthUpdate = (updatedRandomFeud.length = additionalWeeks);
-      console.log('LU '+lengthUpdate);
-      // Update the length property of the randomFeud object
-      updatedRandomFeud.length = lengthUpdate;
+      function updateFeudLengthWithAdditionalWeeks( randomFeud, additionalWeeks) {
+        // Create a copy of the feuds array
+        const updatedFeuds = [...feuds];
       
-      // Update the updatedFeuds array with the updatedRandomFeud object at the randomFeudIndex
-      updatedFeuds[randomFeudIndex] = updatedRandomFeud;
-
-      dispatch(setFeud(updatedFeuds));
+        // Find the index of the randomFeud object in the updatedFeuds array
+        const randomFeudIndex = updatedFeuds.findIndex((feud) => feud.id === randomFeud.id);
+      
+        // Create a copy of the randomFeud object and update its length property
+        const updatedRandomFeud = { ...randomFeud, length: additionalWeeks };
+      
+        // Update the updatedFeuds array with the updatedRandomFeud object at the randomFeudIndex
+        updatedFeuds[randomFeudIndex] = updatedRandomFeud;
+        // dispatch(setFeud(updatedFeuds));
+        // Return the updated feuds array
+        return updatedFeuds;
+      }
       console.log('chance ' + randomMultiplier);
       console.log(randomValue);
       if (randomValue <= randomMultiplier) {
-        setPlayerWrestler((prevState) => ({
-          ...prevState,
-          currentPotentialFeud: randomFeud,
-        }));
+         dispatch(setCurrentPotentialFeud(randomFeud));
       
         dispatch(setStory({ story: `The booker is considering a feud against ${randomFeud.opponent[0].name}`}));
         setIsFeudActive(true);
@@ -447,22 +407,14 @@ const totalBookerOpinion = allInvolvedWrestlers.reduce(
       }
       if (playerWrestler.activeFeud.name) {
        // Subtract 1 from the length of the active feud each week
-       setPlayerWrestler((prevState) => ({
-         ...prevState,
-         activeFeud: {
-           ...prevState.activeFeud,
-           length: Math.max(0, prevState.activeFeud.length - 1),
-         },
-       }));
+       dispatch(setActiveFeudLength());
+      
    
        // Check if the active feud's length has reached 0
        if (playerWrestler.activeFeud.length === 0) {
          // Reset the active feud when its length is 0
-         setPlayerWrestler((prevState) => ({
-           ...prevState,
-           pastFeuds: [...prevState.pastFeuds, prevState.activeFeud],
-           activeFeud: {},
-         }));
+         dispatch(setPastFeuds([...user.pastFeuds, playerWrestler.activeFeud]));
+         dispatch(setActiveFeud({}));
        }
      }
     }else{
@@ -491,7 +443,7 @@ console.log(feuds);
     <p> week: {week}</p>
       <p>{story}</p>
       <h3>Player Wrestler</h3>
-      <p>Name: {playerWrestler.name}</p>
+      <p>Name: {playerWrestler.firstName}</p>
       <p>Charisma: {playerWrestler.charisma}</p>
       <p>Alignment: {playerWrestler.alignment}</p>
       <p>Popularity: {playerWrestler.popularity}</p>
@@ -502,6 +454,7 @@ console.log(feuds);
         <h3>Active Feud</h3>
         <p>Name: {playerWrestler.activeFeud.name}</p>
         <p>intensity: {playerWrestler.activeFeud.multiplier}</p>
+        <p>Weeks Remaining: {playerWrestler.activeFeud.length}</p>
         {/* Display opponents */}
         <p>
           Opponents:{' '}

@@ -334,80 +334,81 @@ const UserActions = ({ clientId }) => {
   };
 
   return (
+    
+    <Box>
     <GameLogic />
-    // <Box>
-    //   <div>
-    //   <h1>ComponentA</h1>
-    //   <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
-    // {showDescription && (
-    //         <>
-    //           <p>Result Text: {actionDescription}</p>
-    //           <p>Result value: {userResponse}</p>
+      <div>
+      <h1>ComponentA</h1>
+      <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
+    {showDescription && (
+            <>
+              <p>Result Text: {actionDescription}</p>
+              <p>Result value: {userResponse}</p>
              
-    //         </>
+            </>
             
-    //       )}
-    //       {showDecisionText && (
-    //         <>
-    //          <p>Decision: {selectedDecision}</p>
+          )}
+          {showDecisionText && (
+            <>
+             <p>Decision: {selectedDecision}</p>
         
-    //         </>
-    //       )}
+            </>
+          )}
        
-    //   <button onClick={() => handleSendButton({options:true,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'help her',text2:'hinder them',
-    //   value1:serialize(function sayHello() {
-    //           console.log("hello");
-    //         }),value2:'bad 1'})}>Send Option 1</button>
-    //   <button onClick={() => handleSendButton({options:false,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'kill her',text2:'resutaitate her',value1:'good 2',value2:'bad 2'})}>Send Option 2</button>
-    // </div>
+      <button onClick={() => handleSendButton({options:true,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'help her',text2:'hinder them',
+      value1:serialize(function sayHello() {
+              console.log("hello");
+            }),value2:'bad 1'})}>Send Option 1</button>
+      <button onClick={() => handleSendButton({options:false,description:'you have a chance to do this',decisionText1:'this is what you decided to do',decisionText2:'you followed an unauthodox path',text1:'kill her',text2:'resutaitate her',value1:'good 2',value2:'bad 2'})}>Send Option 2</button>
+    </div>
 
-    // {/* DEMARCATE */}
-    //   {/* <h1>hellooo {firstname}</h1>
-    //   <p>{allignment}</p>
-    //   <button onClick={() => dispatch(setName())}>+</button>
-    //   <Button onClick={handleClick}>Inject</Button>
-    //   <Button onClick={savewrestlers}>Increase Random popularity</Button>
-    //   <h2>Wrestler Names:</h2>
-    //   <ul>
-    //     {savegame.wrestlers.map((wrestler) => (
-    //       <li key={wrestler.id}>
-    //         {wrestler.name} {wrestler.popularity}
-    //       </li>
-    //     ))}
-    //   </ul> */}
+    {/* DEMARCATE */}
+      {/* <h1>hellooo {firstname}</h1>
+      <p>{allignment}</p>
+      <button onClick={() => dispatch(setName())}>+</button>
+      <Button onClick={handleClick}>Inject</Button>
+      <Button onClick={savewrestlers}>Increase Random popularity</Button>
+      <h2>Wrestler Names:</h2>
+      <ul>
+        {savegame.wrestlers.map((wrestler) => (
+          <li key={wrestler.id}>
+            {wrestler.name} {wrestler.popularity}
+          </li>
+        ))}
+      </ul> */}
 
-    //   <h2>Wrestler Selection:</h2>
-    //   {wrestlerButtons}
-    //   <br />
-    //   {renderActionButtons()}
-    //   {selectedWrestler && selectedAction && !isConfirmed && (
-    //     <button onClick={() => addToActivities(selectedAction, selectedWrestler)}>
-    //       Confirm
-    //     </button>
-    //   )}
-    //   <h2>Activities:</h2>
-    //   <ul>
-    //     {activities.map((activity, index) => (
-    //       <li key={index}>
-    //         {activity.action.value.actionText.replace(
-    //           /target/gi,
-    //           activity.selectedWrestler.name
-    //         )}
-    //         <button onClick={() => deleteActivity(index)}>Delete</button>
-    //       </li>
-    //     ))}
-    //   </ul>
-    //   {renderNextButton()}
-    //   {showNextWeekButton && (
-    //     <button onClick={triggerActionFunctions}>Next Week</button>
-    //   )}
+      <h2>Wrestler Selection:</h2>
+      {wrestlerButtons}
+      <br />
+      {renderActionButtons()}
+      {selectedWrestler && selectedAction && !isConfirmed && (
+        <button onClick={() => addToActivities(selectedAction, selectedWrestler)}>
+          Confirm
+        </button>
+      )}
+      <h2>Activities:</h2>
+      <ul>
+        {activities.map((activity, index) => (
+          <li key={index}>
+            {activity.action.value.actionText.replace(
+              /target/gi,
+              activity.selectedWrestler.name
+            )}
+            <button onClick={() => deleteActivity(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+      {renderNextButton()}
+      {showNextWeekButton && (
+        <button onClick={triggerActionFunctions}>Next Week</button>
+      )}
 
-    //   {isNonMobileScreens && (
-    //     <Box flexBasis="26%">
-    //       <Box m="2rem 0" />
-    //     </Box>
-    //   )}
-    // </Box>
+      {isNonMobileScreens && (
+        <Box flexBasis="26%">
+          <Box m="2rem 0" />
+        </Box>
+      )}
+    </Box>
   );
 };
 

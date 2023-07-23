@@ -148,13 +148,17 @@ export const authSlice = createSlice({
    }
    ,
    addFeud: (state, action) => {
-    console.log(current(state.user.savegame.feuds));
+    console.log(action.payload);
     state.user.savegame.feuds = [...state.user.savegame.feuds, action.payload];
+   
   },
   setFeud: (state, action) => {
 state.user.savegame.feuds = action.payload;
   }
   ,
+  setActiveFeudLength(state, action) {
+    state.user.activeFeud.length = Math.max(0, state.user.activeFeud.length - 1);
+  },
    setIsFeudActive: (state, action) => {
      state.isFeudActive = action.payload.isFeudActive;
    },
@@ -197,10 +201,11 @@ state.user.savegame.feuds = action.payload;
     state.user.currentCompany = currentCompany;
     state.user.tags = tags;
   },
-  // setStats: (state, action) => {
-  //   // Update all the playerWrestler stats collectively
-  //   state.user = { ...state.user, ...action.payload };
-  // },
+  setStats: (state, action) => {
+    // Update all the playerWrestler stats collectively
+    (console.log(action.payload))
+    state.user = { ...state.user, ...action.payload };
+  },
   setFirstName: (state, action) => {
     state.user.firstName = action.payload;
   },
@@ -224,6 +229,9 @@ state.user.savegame.feuds = action.payload;
   },
   setPastFeuds: (state, action) => {
     state.user.pastFeuds = action.payload;
+  },
+  setActiveFeudMultiplier(state, action) {
+    state.user.activeFeud.multiplier = action.payload;
   },
   setIsChampion: (state, action) => {
     state.user.isChampion = action.payload;
@@ -302,6 +310,6 @@ state.user.savegame.feuds = action.payload;
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier} =
   authSlice.actions;
 export default authSlice.reducer;
