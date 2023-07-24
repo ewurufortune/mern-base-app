@@ -182,7 +182,7 @@ relationshipRequirement:5
         multiplier: 1.2,
         isCurrentFeud: false,
   
-      }
+      } 
 
   },
   activeFeud: {

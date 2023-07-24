@@ -126,7 +126,7 @@ export const authSlice = createSlice({
      
     },
     setResponseRecieved: (state, action) => {
-      
+      console.log(action.payload.responseRecieved);
       state.responseRecieved = action.payload.responseRecieved;
      
     },

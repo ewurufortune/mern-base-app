@@ -490,7 +490,7 @@ console.log(feuds);
       )}
 <p>{timeToOpenSpot}</p>
 
-      <button onClick={handleNextWeek}>Next Week</button>
+      {/* <button onClick={handleNextWeek}>Next Week</button> */}
       <Live activeFeud={playerWrestler.activeFeud} eventType={eventType} week={week}  />
     </div>
   );
