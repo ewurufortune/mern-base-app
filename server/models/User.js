@@ -207,6 +207,10 @@ relationshipRequirement:5
       type: Object,
       default: {},
     },
+    responseRecieved:{
+      type: Boolean,
+      default: true,
+    },
     titleReigns: {
       type: Array,
       default: [],

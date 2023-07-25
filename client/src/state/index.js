@@ -18,7 +18,6 @@ const initialState = {
   showNextActivityButton:false,
   lastActivity:true,
   showNextWeekButton:true,
-  responseRecieved:true,
   selectedWrestler:{},
 
   timeToOpenSpot:5,
@@ -127,12 +126,15 @@ export const authSlice = createSlice({
     },
     setResponseRecieved: (state, action) => {
       console.log(action.payload.responseRecieved);
-      state.responseRecieved = action.payload.responseRecieved;
+      state.user.responseRecieved = action.payload.responseRecieved;
      
     },
     setWeek: (state, action) => {
      state.week = action.payload.week;}
     ,
+    setOtherFeuds: (state, action) => {
+      state.user.savegame.otherFeuds = action.payload.otherFeuds;}
+     ,
     setEventType: (state, action) => {
      state.eventType = action.payload.eventType;}
     ,
@@ -245,6 +247,9 @@ state.user.savegame.feuds = action.payload;
   setCurrentCompany: (state, action) => {
     state.user.currentCompany = action.payload;
   },
+  setWrestlers: (state, action) => {
+    state.user.savegame.wrestlers = action.payload.wrestlers;
+  },
   setTags: (state, action) => {
     state.user.tags = action.payload;
   },
@@ -310,6 +315,6 @@ state.user.savegame.feuds = action.payload;
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier, setOtherFeuds,setWrestlers} =
   authSlice.actions;
 export default authSlice.reducer;

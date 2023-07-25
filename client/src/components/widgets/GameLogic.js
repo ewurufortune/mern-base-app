@@ -30,7 +30,7 @@ const GameLogic = () => {
   const savegame = useSelector((state) => state.user.savegame);
   const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
   const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
-  const responseRecieved = useSelector((state) => state.responseRecieved);
+  const responseRecieved = useSelector((state) => state.user.responseRecieved);
   const companies = useSelector((state) => state.user.savegame.companies);
   const championships = useSelector((state) => state.user.savegame.championships);
   const wrestlers = useSelector((state) => state.user.savegame.wrestlers);

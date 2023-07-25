@@ -63,6 +63,7 @@ import UserResponseButton from "./Options";
 
 
 const UserActions = ({ clientId }) => {
+ 
   const userResponse = useSelector((state) => state.userResponse);
   const actionDescription = useSelector((state) => state.actionDescription);
   const button1Text = useSelector((state) => state.buttonText);
@@ -70,6 +71,7 @@ const UserActions = ({ clientId }) => {
   const showDecisionText = useSelector((state) => state.showDecisionText);
   const selectedDecision = useSelector((state) => state.selectedDecision);
 const playerWrestler=useSelector((state) => state.user);
+
 
   const handleSendButton = (option,selectedWrestler) => {
  
@@ -111,7 +113,7 @@ const playerWrestler=useSelector((state) => state.user);
   const savegame = useSelector((state) => state.user.savegame);
   const showNextActivityButton = useSelector((state) => state.showNextActivityButton);
   const showNextWeekButton = useSelector((state) => state.showNextWeekButton);
-  const responseRecieved = useSelector((state) => state.responseRecieved);
+  const responseRecieved = useSelector((state) => state.user.responseRecieved);
   
   const feuds = useSelector((state) => state.user.savegame.feuds);
   
@@ -120,8 +122,10 @@ const week = useSelector((state) => state.week);
 const story = useSelector((state) => state.story);
 const eventType = useSelector((state) => state.eventType);
 const companies = useSelector((state) => state.user.savegame.companies);
- 
+
+
   const dispatch = useDispatch();
+
 
   const [selectedWrestler, setSelectedWrestler] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -499,6 +503,48 @@ console.log(newFeud);
     );
   };
 
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      alignment: user.alignment,
+      popularity: user.popularity,
+      wealth: user.wealth,
+      friends: user.friends,
+      savegame: user.savegame,
+      charisma: user.charisma,
+      isChampion: user.isChampion,
+      pastFeuds: user.pastFeuds,
+      inRingSkill: user.inRingSkill,
+      currentPotentialFeud: user.currentPotentialFeud,
+      activeFeud: user.activeFeud,
+      currentChampionshipHeld: user.currentChampionshipHeld,
+      titleReigns: user.titleReigns,
+      tags: user.tags,
+      currentCompany: user.currentCompany,
+      location: user.location,
+      viewedProfile: user.viewedProfile,
+      impressions: user.impressions,
+    };
+  
+    try {
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error replacing user:", error);
+    }
+  };
+  
+  
+
   const savewrestlers = async () => {
     const randomIndex = Math.floor(Math.random() * savegame.wrestlers.length);
     const updatedWrestlers = [...savegame.wrestlers];
@@ -766,7 +812,14 @@ console.log(newFeud);
       dispatch(setShowNextActivityButton({showNextActivityButton: false}))
       dispatch(setShowNextWeekButton({showNextWeekButton: true}))
     }
-    dispatch(setResponseRecieved({responseRecieved: false}))
+    if(activities.length===0){
+      dispatch(setResponseRecieved({responseRecieved: true}))
+      await replaceUser(user);
+    }else{
+      dispatch(setResponseRecieved({responseRecieved: false}))
+    }
+  
+    
   }else{
     console.log('COMPLETE ACTION FIRST');
   }
@@ -862,9 +915,9 @@ console.log(newFeud);
             </>
           )}
        
-     
-     
     </div>
+
+
 
     {/* DEMARCATE */}
       {/* <h1>hellooo {firstname}</h1>

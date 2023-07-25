@@ -6,6 +6,45 @@ import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserRe
 //button2Text is represented as buttonText2 in the reducer Slice
 
 
+const replaceUser = async (user) => {
+  const bodyData = {
+    id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    alignment: user.alignment,
+    popularity: user.popularity,
+    wealth: user.wealth,
+    friends: user.friends,
+    savegame: user.savegame,
+    charisma: user.charisma,
+    isChampion: user.isChampion,
+    pastFeuds: user.pastFeuds,
+    inRingSkill: user.inRingSkill,
+    currentPotentialFeud: user.currentPotentialFeud,
+    activeFeud: user.activeFeud,
+    currentChampionshipHeld: user.currentChampionshipHeld,
+    titleReigns: user.titleReigns,
+    tags: user.tags,
+    currentCompany: user.currentCompany,
+    location: user.location,
+    viewedProfile: user.viewedProfile,
+    impressions: user.impressions,
+  };
+
+  try {
+    const response = await fetch("http://localhost:3001/auth/replace", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData),
+    });
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error replacing user:", error);
+  }
+};
 
 
 export default function UserResponseButton({ initialButtonText, onResponse }) {
@@ -24,38 +63,44 @@ const showOptions = useSelector((state) => state.showOptions);
 const decisionText1 = useSelector((state) => state.decisionText1);
 const decisionText2 = useSelector((state) => state.decisionText2);
 const showDescription = useSelector((state) => state.showDescription);
+const user = useSelector((state) => state.user);
 
 
-  const handleClick = (value,decisionText) => {
-    dispatch(setShowOptions({showOptions: false}))
-    dispatch(setShowDescription({showDescription: false}))
-    setShowInput(true);
-   
-    dispatch(setUserResponse({ userResponse: value }));
-    dispatch(setSelectedDecision({ selectedDecision: decisionText }));
-    dispatch(setShowDecisionText({ showDecisionText: true }));
-    function isSerializedFunction(value) {
-      // Define a regular expression pattern for a serialized function
-      const functionPattern = /\bfunction\b/;
-    
-      // Use the test method of the regular expression to check for a match
-      return functionPattern.test(value);
-    }
+const handleClick = async (value, decisionText) => {
+  dispatch(setShowOptions({ showOptions: false }));
+  dispatch(setShowDescription({ showDescription: false }));
+  setShowInput(true);
 
-    const isSerialized = isSerializedFunction(value);
-    if (isSerialized) {
-      const deserializedFunction = eval("(" + value + ")");
-      // Now you have the deserialized function
-         // Perform some action with the user response
-      deserializedFunction(); 
-      
-    } else {
-      // It's a normal string, not a serialized function
-      console.log(value);
-    }
-    dispatch(setResponseRecieved({responseRecieved: true}))
-    // onResponse(userResponse);
-  };
+  dispatch(setUserResponse({ userResponse: value }));
+  dispatch(setSelectedDecision({ selectedDecision: decisionText }));
+  dispatch(setShowDecisionText({ showDecisionText: true }));
+
+  function isSerializedFunction(value) {
+    // Define a regular expression pattern for a serialized function
+    const functionPattern = /\bfunction\b/;
+
+    // Use the test method of the regular expression to check for a match
+    return functionPattern.test(value);
+  }
+
+  const isSerialized = isSerializedFunction(value);
+  if (isSerialized) {
+    const deserializedFunction = eval("(" + value + ")");
+    // Now you have the deserialized function
+    // Perform some action with the user response
+    deserializedFunction();
+  } else {
+    // It's a normal string, not a serialized function
+    console.log(value);
+  }
+
+  dispatch(setResponseRecieved({ responseRecieved: true }));
+  await replaceUser(user);
+
+ 
+
+};
+
 
   return (
     <div>
