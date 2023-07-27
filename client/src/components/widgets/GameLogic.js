@@ -53,20 +53,26 @@ const eventType = useSelector((state) => state.eventType);
     const alignmentRequirement = wrestler.alignment === 'face' ? 'heel' : 'face';
     const charismaRequirement = wrestler.charisma;
 
-    const newFeud = {
-      id: feuds.length + 1, // Assign a unique ID for the new feud
-      name: `Feud with ${wrestler.name}`,
-      opponent: [wrestler],
-      ally: [],
-      requirements: {
-        alignment: alignmentRequirement,
-        charisma: charismaRequirement,
-      },
-      length: 2, // You can set the initial length as needed
-      tags: [], // Add tags if needed
-      multiplier: 1.2, // Set the initial multiplier as needed
-      isCurrentFeud: false,
-    };
+    const maxFeudsPerCompany = 4; // Set the maximum number of feuds per company
+  const wweFeudsCount = feuds.filter((feud) => feud.company === 'WWE').length;
+  const aewFeudsCount = feuds.filter((feud) => feud.company === 'AEW').length;
+  const newFeudCompany = wweFeudsCount < maxFeudsPerCompany ? 'WWE' : 'AEW';
+
+  const newFeud = {
+    id: feuds.length + 1, // Assign a unique ID for the new feud
+    name: `Feud with ${wrestler.name}`,
+    opponent: [wrestler],
+    ally: [],
+    requirements: {
+      alignment: alignmentRequirement,
+      charisma: charismaRequirement,
+    },
+    company: newFeudCompany,
+    length: 2, // You can set the initial length as needed
+    tags: [], // Add tags if needed
+    multiplier: 1.2, // Set the initial multiplier as needed
+    isCurrentFeud: false,
+  };
  // Check if the opponent wrestler is a champion
  if (wrestler.isChampion) {
   newFeud.championshipFeud = true;
@@ -109,9 +115,9 @@ console.log(newFeud);
       dispatch(setCharisma(newCharisma))
     } else {
       if (randomStat === 'popularity') {
-        dispatch(setPopularity(randomChange));
+        dispatch(setPopularity(8));
       } else if (randomStat === 'inRingSkill') {
-        dispatch(setInRingSkill(randomChange));
+        dispatch(setInRingSkill(8));
       }
     }
   };

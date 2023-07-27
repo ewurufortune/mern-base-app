@@ -133,7 +133,7 @@ export const authSlice = createSlice({
      state.week = action.payload.week;}
     ,
     setOtherFeuds: (state, action) => {
-      state.user.savegame.otherFeuds = action.payload.otherFeuds;}
+      state.user.savegame.otherFeuds = action.payload;}
      ,
     setEventType: (state, action) => {
      state.eventType = action.payload.eventType;}
@@ -167,6 +167,10 @@ state.user.savegame.feuds = action.payload;
    setSelectedOption: (state, action) => {
      state.selectedOption = action.payload;
    },
+   setCurrentCompany: (state, action) => {
+     state.user.currentCompany = action.payload;
+   }
+   ,
    setOptionDescription: (state, action) => {
      state.optionDescription = action.payload;
    },
@@ -248,7 +252,7 @@ state.user.savegame.feuds = action.payload;
     state.user.currentCompany = action.payload;
   },
   setWrestlers: (state, action) => {
-    state.user.savegame.wrestlers = action.payload.wrestlers;
+    state.user.savegame.wrestlers = action.payload;
   },
   setTags: (state, action) => {
     state.user.tags = action.payload;
