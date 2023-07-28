@@ -179,7 +179,7 @@ const Form = () => {
             )}
 
             <TextField
-              label="Email"
+              label="Username"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.email|| ""}

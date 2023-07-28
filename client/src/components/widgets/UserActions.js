@@ -56,6 +56,7 @@ import {
   setTitleReigns,
   setCurrentCompany,
   setTags,
+  setActionTarget,
   setActiveFeudLength,
   setActiveFeudMultiplier,
 } from "state";
@@ -72,6 +73,18 @@ const UserActions = ({ clientId }) => {
   const showDecisionText = useSelector((state) => state.showDecisionText);
   const selectedDecision = useSelector((state) => state.selectedDecision);
   const playerWrestler = useSelector((state) => state.user);
+  const wrestlers= useSelector((state) => state.user.savegame.wrestlers);
+
+  const [selectedCompany, setSelectedCompany] = useState('all');
+const [selectedCharisma, setSelectedCharisma] = useState('all');
+const [selectedAlignment, setSelectedAlignment] = useState('all');
+
+const uniqueCompanies = [...new Set(wrestlers.map((wrestler) => wrestler.company))];
+const uniqueCharisma = [...new Set(wrestlers.map((wrestler) => wrestler.charisma))];
+const uniqueAlignments = [...new Set(wrestlers.map((wrestler) => wrestler.alignment))];
+
+const [optionsPresent, setOptionsPresent] = useState(false);
+
 
   const handleSendButton = (option, selectedWrestler) => {
     if (responseRecieved === true) {
@@ -87,7 +100,9 @@ const UserActions = ({ clientId }) => {
         value1,
         value2,
       } = option;
+       dispatch(setActionTarget(selectedWrestler));
       const isOptions = options ? true : false;
+    
       dispatch(setShowOptions({ showOptions: isOptions }));
       dispatch(setShowDescription({ showDescription: true }));
       dispatch(setShowDecisionText({ showDecisionText: false }));
@@ -99,6 +114,14 @@ const UserActions = ({ clientId }) => {
       dispatch(setButton2TextValue({ button2TextValue: value2 }));
       dispatch(setDecisionText1({ decisionText1: decisionText1 }));
       dispatch(setDecisionText2({ decisionText2: decisionText2 }));
+      if(options=== false){
+        console.log('options are absent');
+        setOptionsPresent(false)
+        dispatch(setResponseRecieved({ responseRecieved: true }));
+      }else{
+        console.log('options are present');
+        setOptionsPresent(true)
+      }
     } else {
       console.log("ERROR");
     }
@@ -122,6 +145,7 @@ const UserActions = ({ clientId }) => {
   const [matchLogAEW, setMatchLogAEW] = useState([]);
 const   activeFeud=useSelector((state) => state.user.activeFeud);
 const allWrestlers= useSelector((state) => state.user.savegame.wrestlers);
+
 const playerCompanyName = useSelector((state) => state.user.currentCompany.name);
   const showNextActivityButton = useSelector(
     (state) => state.showNextActivityButton
@@ -145,7 +169,7 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [activities, setActivities] = useState([]);
 
-  const wrestlers = savegame.wrestlers;
+
 
   const createFeud = (wrestler) => {
     const alignmentRequirement =
@@ -259,6 +283,138 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
       return { ...feud, multiplier };
     });
     dispatch(setFeud(updatedFeuds));
+  };
+  const createOtherFeuds = () => {
+    // Check if the 'feuds' array is empty or if the only feud has 'opponent.length' > 0
+    if (feuds.length === 0 || feuds[0].name === "") {
+      console.log(
+        "Feuds array is empty or feud has no name. Cannot create otherFeuds."
+      );
+      return;
+    }
+
+    // Filter feuds to exclude feuds with no opponent or where the opponent's length is zero
+    const filteredFeuds = feuds.filter((feud) => feud.opponent.length > 0);
+
+  // Choose a random feud from the filtered list
+  const randomFeudIndex = Math.floor(Math.random() * filteredFeuds.length);
+  const randomFeud = filteredFeuds[randomFeudIndex];
+
+  const updatedFeuds = filteredFeuds.filter((feud, index) => index !== randomFeudIndex);
+
+  // Update the feuds array with the filtered array
+  dispatch(setFeud(updatedFeuds));
+    // Check the alignment of the selected feud's opponent
+    const { alignment } = randomFeud.opponent[0];
+const{ company}=randomFeud
+
+    // Filter wrestlers array to get a random wrestler with the opposite alignment and not currently feuding
+    const opposingAlignment = alignment === "face" ? "heel" : "face";
+    const availableWrestlers = user.savegame.wrestlers.filter(
+      (wrestler) =>
+        wrestler.alignment === opposingAlignment &&
+        wrestler.company === randomFeud.company &&
+        !wrestler.isFeuding
+    );
+    console.log(company);
+    console.log(availableWrestlers);
+    // If there are no available wrestlers with the opposite alignment, we can't create otherFeuds
+    if (availableWrestlers.length === 0) {
+      console.log(
+        `No available wrestlers with ${opposingAlignment} alignment and not currently feuding. Cannot create otherFeuds.`
+      );
+      return;
+    }
+
+    // Select a random wrestler from the available wrestlers
+    const randomWrestler =
+      availableWrestlers[Math.floor(Math.random() * availableWrestlers.length)];
+
+    let totalPopularity = 0;
+    let totalWrestlers = 0;
+
+    if (randomFeud.opponent && randomFeud.opponent.length > 0) {
+      randomFeud.opponent.forEach((wrestler) => {
+        if (wrestler.popularity) {
+          totalPopularity += wrestler.popularity;
+          totalWrestlers++;
+        }
+      });
+    }
+
+    // Add the popularity of the randomWrestler to the totalPopularity
+    if (randomWrestler.popularity) {
+      totalPopularity += randomWrestler.popularity;
+      totalWrestlers++;
+    }
+
+    // Calculate the average popularity (ranging from 0 to 10)
+    const averagePopularity =
+      totalWrestlers > 0
+        ? Math.min(10, Math.ceil(totalPopularity / totalWrestlers))
+        : 0;
+
+    // Set the length property of the otherFeud based on the average popularity
+    const maxLength = 10; // Maximum length is 10
+    const minLength = 1; // Minimum length is 1
+
+    // Scale the averagePopularity to the range of minLength to maxLength
+    const length =
+      minLength +
+      Math.round((maxLength - minLength) * (averagePopularity / 10));
+    const multiplier =
+      minLength +
+      Math.round((maxLength - minLength) * (averagePopularity / 100));
+
+    let intensity = "";
+    if (averagePopularity > 9) {
+      intensity = "Volcanic";
+    }
+    if (averagePopularity > 8) {
+      intensity = "Boiling";
+    }
+    if (averagePopularity > 7) {
+      intensity = "Mainstream";
+    } else if (averagePopularity > 6) {
+      intensity = "hot";
+    } else if (averagePopularity > 5) {
+      intensity = "warm";
+    } else {
+      intensity = "stale";
+    }
+    console.log(length);
+    console.log(multiplier);
+    // Create the otherFeuds object
+    const newOtherFeud = {
+      id: randomFeud.id, // You can use the feud's ID or assign a new ID here
+      name: randomFeud.name,
+      face: alignment === "face" ? randomFeud.opponent : [randomWrestler],
+      heel: alignment === "heel" ? randomFeud.opponent : [randomWrestler],
+      championshipFeud: randomFeud.championshipFeud,
+      championship: randomFeud.championship || {},
+      company:company,
+      multiplier,
+      intensity,
+      length,
+    };
+
+      // Update the isFeuding property for the wrestlers involved in the feud
+  const updatedWrestlers = user.savegame.wrestlers.map((wrestler) => {
+    if (newOtherFeud.face.some((w) => w.id === wrestler.id) || newOtherFeud.heel.some((w) => w.id === wrestler.id)) {
+      return {
+        ...wrestler,
+        isFeuding: true,
+      };
+    } else {
+      return wrestler;
+    }
+  });
+
+    dispatch(setWrestlers(updatedWrestlers));
+
+    const updatedOtherFeuds = [...otherFeuds, newOtherFeud];
+    dispatch(setOtherFeuds(updatedOtherFeuds));
+    console.log(otherFeuds);
   };
 
   const updateAndEliminateOtherFeuds = () => {
@@ -491,7 +647,8 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
       decisionText2: "you followed an unauthodox path",
       text1: "help her",
       text2: "hinder them",
-      value1: serialize(function sayHello() {
+      value1: serialize(function sayHello(actionTarget) {
+        console.log(actionTarget);
         console.log("hello");
       }),
       value2: "bad 1",
@@ -534,7 +691,7 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
       },
     },
     {
-      options: true,
+      options: false,
       description: "you have a chance to do something",
       decisionText1: "you chose to do this",
       decisionText2: "you followed an alternate route",
@@ -585,7 +742,29 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
     // Add more actions based on your requirements
   ];
 
-  const wrestlerButtons = wrestlers.map((wrestler) => (
+ const wrestlerButtons = wrestlers
+  .filter((wrestler) => {
+    // Filter by selected company
+    if (selectedCompany !== 'all') {
+      return wrestler.company === selectedCompany;
+    }
+    return true;
+  })
+  .filter((wrestler) => {
+    // Filter by selected charisma
+    if (selectedCharisma !== 'all') {
+      return wrestler.charisma === selectedCharisma;
+    }
+    return true;
+  })
+  .filter((wrestler) => {
+    // Filter by selected alignment
+    if (selectedAlignment !== 'all') {
+      return wrestler.alignment === selectedAlignment;
+    }
+    return true;
+  })
+  .map((wrestler) => (
     <button
       key={wrestler.id}
       onClick={() => setSelectedWrestler(wrestler)}
@@ -594,6 +773,7 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
       {wrestler.name}
     </button>
   ));
+
 
   const handleActionSelection = (action) => {
     setSelectedAction(action);
@@ -706,19 +886,40 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
 
   const triggerActionFunctions = async () => {
     const handleNextWeek = () => {
+
+      function increaseBookerOpinion() {
+       
+        const companyIndex = companies.findIndex(
+          (company) => company.id === playerWrestler.currentCompany.id
+        );
+        // If playerWrestler.currentCompany is found in the companies array
+        if (companyIndex !== -1) {
+          // Create a copy of playerWrestler.currentCompany to avoid modifying the original object directly
+          const updatedCurrentCompany = { ...playerWrestler.currentCompany };
+      
+          // Increase the bookerOpinion by 0.1
+          updatedCurrentCompany.bookerOpinion += 0.1;
+      
+          // Update the companies array with the updatedCurrentCompany
+          const updatedCompanies = [...companies];
+          updatedCompanies[companyIndex] = updatedCurrentCompany;
+      
+          // Now you can dispatch the updatedCompanies or update the state with it
+          dispatch(setCompanies(updatedCompanies));
+           dispatch(setCurrentCompany(updatedCurrentCompany)); // If using Redux
+          // setCompanies(updatedCompanies); // If using React state
+        }
+      }
+      increaseBookerOpinion()
       const playerCompanyFeuds = otherFeuds.filter((feud) => 
       feud.company === playerCompany.name);
       const numberOfCompanyFeuds = playerCompanyFeuds.length;
 
       updateAndEliminateOtherFeuds()
    
-      const maxFeud = 4 - feuds.length;
+    
 
-      // Check if the feuds array has less than 3 feuds and create a new feud
-      for (let i = 0; i < maxFeud; i++) {
-        const randomWrestler =
-          wrestlers[Math.floor(Math.random() * wrestlers.length)];
-      }
+  
       updateMultipliers();
       // Check if the feuds array has less than 3 feuds and create a new feud
 
@@ -1033,11 +1234,17 @@ if (timeToOpenSpot <= 0) {
         }
       };
       selectRandomWrestlers();
-    };
+    
+     
+      const maxOtherFeud = 10 - otherFeuds.length;
 
-    ///
-    // dispatch(setResponseRecieved({ responseRecieved: true }));
-   
+      // Check if the feuds array has less than 3 feuds and create a new feud
+      for (let i = 0; i < maxOtherFeud; i++) {
+        createOtherFeuds()
+      }
+     };
+
+
 
     if (responseRecieved === true) {
       handleNextWeek();
@@ -1090,7 +1297,13 @@ if (timeToOpenSpot <= 0) {
         dispatch(setResponseRecieved({ responseRecieved: true }));
         await replaceUser(user);
       } else {
-        dispatch(setResponseRecieved({ responseRecieved: false }));
+     
+        if(optionsPresent=== false){
+          console.log('its false');
+          dispatch(setResponseRecieved({ responseRecieved: true }));
+        }else{
+          dispatch(setResponseRecieved({ responseRecieved: false }));
+        }
       }
     } else {
       console.log("COMPLETE ACTION FIRST");
@@ -1159,9 +1372,9 @@ if (timeToOpenSpot <= 0) {
 
   return (
     <Box>
-      <GameLogic />
-      <Testing />
-      {/* <div>
+      {/* <GameLogic />
+      <Testing /> */}
+      <div>
       <h1>ComponentA</h1>
       <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
     {showDescription && (
@@ -1179,25 +1392,57 @@ if (timeToOpenSpot <= 0) {
             </>
           )}
        
-    </div> */}
+    </div>
 
-      {/* DEMARCATE */}
-      {/* <h1>hellooo {firstname}</h1>
-      <p>{allignment}</p>
-      <button onClick={() => dispatch(setName())}>+</button>
-      <Button onClick={handleClick}>Inject</Button>
-      <Button onClick={savewrestlers}>Increase Random popularity</Button>
-      <h2>Wrestler Names:</h2>
-      <ul>
-        {savegame.wrestlers.map((wrestler) => (
-          <li key={wrestler.id}>
-            {wrestler.name} {wrestler.popularity}
-          </li>
-        ))}
-      </ul> */}
+  
+    
+      <div>
+  <h2>Wrestler Selection:</h2>
+  {/* Filter buttons for Company */}
+  <label>Filter by Company:</label>
+  <select
+    value={selectedCompany}
+    onChange={(e) => setSelectedCompany(e.target.value)}
+  >
+    <option value="all">All Companies</option>
+    {uniqueCompanies.map((company) => (
+      <option key={company} value={company}>
+        {company}
+      </option>
+    ))}
+  </select>
 
-      {/* <h2>Wrestler Selection:</h2>
-      {wrestlerButtons}
+  {/* Filter buttons for Charisma */}
+  <label>Filter by Charisma:</label>
+  <select
+    value={selectedCharisma}
+    onChange={(e) => setSelectedCharisma(e.target.value)}
+  >
+    <option value="all">All Charisma</option>
+    {uniqueCharisma.map((charisma) => (
+      <option key={charisma} value={charisma}>
+        {charisma}
+      </option>
+    ))}
+  </select>
+
+  {/* Filter buttons for Alignment */}
+  <label>Filter by Alignment:</label>
+  <select
+    value={selectedAlignment}
+    onChange={(e) => setSelectedAlignment(e.target.value)}
+  >
+    <option value="all">All Alignments</option>
+    {uniqueAlignments.map((alignment) => (
+      <option key={alignment} value={alignment}>
+        {alignment}
+      </option>
+    ))}
+  </select>
+
+  {wrestlerButtons}
+</div>
+
       <br />
       {renderActionButtons()}
       {selectedWrestler && selectedAction && !isConfirmed && (
@@ -1216,7 +1461,7 @@ if (timeToOpenSpot <= 0) {
             <button onClick={() => deleteActivity(index)}>Delete</button>
           </li>
         ))}
-      </ul> */}
+      </ul>
 
       {renderNextButton()}
       {showNextWeekButton && (

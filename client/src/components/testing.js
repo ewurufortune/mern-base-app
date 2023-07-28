@@ -599,7 +599,7 @@ function generateTagTeamText(faceWrestlers, heelWrestlers, length,intensity) {
       </ul>
 
       <div>
-      <JoinCompanyButton companies={companies} />
+      {/* <JoinCompanyButton companies={companies} /> */}
       </div>
     </div>
 
@@ -608,8 +608,8 @@ function generateTagTeamText(faceWrestlers, heelWrestlers, length,intensity) {
 
 
     </div>
-      <button onClick={handleCreateOtherFeuds}>Create Other Feuds</button>
-      <button onClick={handleUpdateAndEliminate}>UpdateFeuds</button>
+      {/* <button onClick={handleCreateOtherFeuds}>Create Other Feuds</button>
+      <button onClick={handleUpdateAndEliminate}>UpdateFeuds</button> */}
     </div>
   );
 }

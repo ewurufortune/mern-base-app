@@ -2,7 +2,7 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity,setResponseRecieved} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity,setResponseRecieved,setActionTarget} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
 
 
@@ -64,6 +64,8 @@ const decisionText1 = useSelector((state) => state.decisionText1);
 const decisionText2 = useSelector((state) => state.decisionText2);
 const showDescription = useSelector((state) => state.showDescription);
 const user = useSelector((state) => state.user);
+const actionTarget = useSelector((state) => state.actionTarget);
+
 
 
 const handleClick = async (value, decisionText) => {
@@ -88,7 +90,7 @@ const handleClick = async (value, decisionText) => {
     const deserializedFunction = eval("(" + value + ")");
     // Now you have the deserialized function
     // Perform some action with the user response
-    deserializedFunction();
+    deserializedFunction(actionTarget);
   } else {
     // It's a normal string, not a serialized function
     console.log(value);

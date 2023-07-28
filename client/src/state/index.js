@@ -34,6 +34,7 @@ const initialState = {
   currentMatchPlan: {},
   showChampionship: false,
 
+  actionTarget:[],
 
   user: null,
   token: null,
@@ -236,6 +237,9 @@ state.user.savegame.feuds = action.payload;
   setPastFeuds: (state, action) => {
     state.user.pastFeuds = action.payload;
   },
+  setActionTarget: (state, action) => {
+    state.actionTarget = action.payload;
+  },
   setActiveFeudMultiplier(state, action) {
     state.user.activeFeud.multiplier = action.payload;
   },
@@ -319,6 +323,6 @@ state.user.savegame.feuds = action.payload;
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier, setOtherFeuds,setWrestlers} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier, setOtherFeuds,setWrestlers,setActionTarget} =
   authSlice.actions;
 export default authSlice.reducer;
