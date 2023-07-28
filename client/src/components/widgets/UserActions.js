@@ -2,6 +2,12 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+
+
 import GameLogic from "./GameLogic";
 import Testing from "components/testing";
 import {
@@ -66,6 +72,15 @@ import {
 import UserResponseButton from "./Options";
 
 const UserActions = ({ clientId }) => {
+// TABS
+const [value, setValue] = useState('one');
+
+const handleChange = (event, newValue) => {
+  setValue(newValue);
+};
+
+
+
   const userResponse = useSelector((state) => state.userResponse);
   const actionDescription = useSelector((state) => state.actionDescription);
   const button1Text = useSelector((state) => state.buttonText);
@@ -84,6 +99,13 @@ const uniqueCharisma = [...new Set(wrestlers.map((wrestler) => wrestler.charisma
 const uniqueAlignments = [...new Set(wrestlers.map((wrestler) => wrestler.alignment))];
 
 const [optionsPresent, setOptionsPresent] = useState(false);
+const [snackbarOpen, setSnackbarOpen] = useState(false);
+const [successMessage, setSuccessMessage] = useState("");
+const [errorMessage, setErrorMessage] = useState("");
+
+const handleSnackbarClose = () => {
+  setSnackbarOpen(false);
+};
 
 
   const handleSendButton = (option, selectedWrestler) => {
@@ -878,9 +900,18 @@ const{ company}=randomFeud
       });
 
       const data = await response.json();
+      // Show the Snackbar when the API call succeeds
+      setErrorMessage("");
+    setSuccessMessage("Data replaced successfully!");
+    setSnackbarOpen(true);
       console.log(data);
     } catch (error) {
+      setSuccessMessage("");
+      setErrorMessage("Failed to replace data!");
+      setSnackbarOpen(true);
       console.error("Error replacing user:", error);
+       // Show the Snackbar when the API call fails
+    
     }
   };
 
@@ -1463,11 +1494,42 @@ if (timeToOpenSpot <= 0) {
         ))}
       </ul>
 
+      <div>
+      <Snackbar
+       anchorOrigin={ {vertical:'top',horizontal: 'center'} }
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleSnackbarClose}
+          severity={errorMessage ? "error" : "success"}
+        >
+          {errorMessage || successMessage}
+        </MuiAlert>
+      </Snackbar>
+      {/* Your content here */}
+    </div>
+
       {renderNextButton()}
       {showNextWeekButton && (
         <button onClick={triggerActionFunctions}>Next Week</button>
       )}
-
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        aria-label="wrapped label tabs example"
+      >
+        <Tab
+          value="one"
+          label="Dashboard "
+          wrapped
+        />
+        <Tab value="two" label="Company" />
+        <Tab value="three" label="Achievements" />
+      </Tabs>
       {isNonMobileScreens && (
         <Box flexBasis="26%">
           <Box m="2rem 0" />
