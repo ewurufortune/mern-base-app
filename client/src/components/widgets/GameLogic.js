@@ -36,6 +36,10 @@ const GameLogic = () => {
   const wrestlers = useSelector((state) => state.user.savegame.wrestlers);
   const feuds = useSelector((state) => state.user.savegame.feuds);
   const playerWrestler = useSelector((state) => state.user);
+  const playerCompany = useSelector((state) => state.user.playerCompany);
+  const otherFeuds = useSelector((state) => state.user.savegame.otherFeuds);
+  
+  
   
 const timeToOpenSpot = useSelector((state) => state.timeToOpenSpot);
 const week = useSelector((state) => state.week);
@@ -260,185 +264,6 @@ console.log(newFeud);
   
 
 
-
-  // Function to handle the "Next Week" button click
-  const handleNextWeek = () => {
-    updateMultipliers();
-      // Check if the feuds array has less than 3 feuds and create a new feud
-  if (feuds.length < 5) {
-    const randomWrestler = wrestlers[Math.floor(Math.random() * wrestlers.length)];
-    createFeud(randomWrestler);
-  
-  }
-
-    if (week<4){
-      const prevWeek=week+1
-       dispatch(setWeek({ week: prevWeek  }));
- 
-        
-    }else{
-      dispatch(setWeek({ week:1 }));
-    }
-    if (week===4){
-       dispatch(setEventType({ eventType: 'PPV' }));
-   
-    }else{
-       dispatch(setEventType({ eventType: 'weeklyTV' }));
-    
-    }
-    
-    getRandomStatChange();
-  
-    updateActiveFeudMultiplier()
-    updateCompanyBenchmarks();
-const openSpot=timeToOpenSpot-1
-
-     dispatch(setTimeToOpenSpot({ timeToOpenSpot: openSpot }));
-   
-    // Check if there is a current potential feud
-    if (playerWrestler.currentPotentialFeud.name) {
-      if (playerWrestler.currentPotentialFeud.name==='Higgins') {  dispatch(setCurrentPotentialFeud({}));}
-      // Check if there are opponents and allies in the feud
-      const { opponent, ally } = playerWrestler.currentPotentialFeud;
-      const allInvolvedWrestlers = [...opponent, ...ally];
-      const company = playerWrestler.currentCompany;
-      
-   // Calculate average booker opinion for all involved wrestlers
-const totalBookerOpinion = allInvolvedWrestlers.reduce(
-    (sum, wrestler) => sum + (wrestler.company === company.name ? (company.bookerOpinion || 0) : (wrestler.bookerRelationship || 0)),
-    0
-  );
-  
-
-  // Calculate average booker relationship for all involved wrestlers
-  const totalBookerRelationship = allInvolvedWrestlers.reduce(
-    (sum, wrestler) => sum + (wrestler.bookerRelationship || 0),
-    0
-  );
-  const averageBookerOpinion = totalBookerOpinion +totalBookerRelationship
-  const allInvolvedWrestlersAndPlayer=allInvolvedWrestlers.length+1
-  const averageBookerRelationship = averageBookerOpinion / allInvolvedWrestlersAndPlayer;
-  
-
-      // Calculate the random value and the threshold based on the booker opinion and relationship
-      const randomValue = Math.random() * 10; // Generates a random number between 0.0 and 9.99
-      const threshold = averageBookerRelationship;
-
-   
-      if (timeToOpenSpot===0){
-      // Check if the random value is below the threshold to activate the feud
-      if (randomValue <= threshold) {
-        if (!playerWrestler.activeFeud.name) {
-          if (playerWrestler.currentPotentialFeud.name) {
-            // Find and remove the current potential feud from the feuds array
-            const updatedFeuds = feuds.filter((feud) => feud.id !== playerWrestler.currentPotentialFeud.id);
-            dispatch(setFeud(updatedFeuds));
-          }
-
-          dispatch(setActiveFeud(playerWrestler.currentPotentialFeud))
-          dispatch(setCurrentPotentialFeud({}));
-         dispatch(setStory({ story:  `Congratulations! The booker picked up your feud with ${
-          playerWrestler.currentPotentialFeud.opponent[0].name
-        } and it has become an active feud.` }));
-     
-
-         dispatch(setIsFeudActive({ isFeudActive: true }));
-       
-        // Reset the timeToOpenSpot counter to its initial value (e.g., 0) when the feud becomes active
-      
-         dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
-      }
-      } else {
-
-        dispatch(setStory({ story:  `The booker didn't choose any feud for this week. The next spot will be open in ${
-          5 - timeToOpenSpot
-        } weeks.`}));
-      
-        setIsFeudActive(false);
-      }
-      dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
-    }
-    } else {
-   
-    }
-    if(feuds[0].opponent.length!==0){
-   
-      // If there is no current potential feud.
-      const randomFeud = feuds[Math.floor(Math.random() * feuds.length)];
-      const randomMultiplier = randomFeud.multiplier;
-      const randomValue = Math.random() * 4; // Generates a random number between 0.0 and 3.99
-
-      // Calculate additional weeks for feud length based on charisma comparison
-      let additionalWeeks = 0;
-      const playerCharisma = playerWrestler.charisma;
-      const companyPreferredCharisma = playerWrestler.currentCompany.preferredCharisma;
-      if (playerCharisma === companyPreferredCharisma) {
-        additionalWeeks = 6; // If player's charisma matches company's preferred, add 6 weeks
-        updateFeudLengthWithAdditionalWeeks(randomFeud,additionalWeeks)
-
-      } else if (
-        (playerCharisma === 'comedic' && companyPreferredCharisma === 'menacing') ||
-        (playerCharisma === 'menacing' && companyPreferredCharisma === 'comedic')
-      ) {
-        additionalWeeks = 4; // If player's charisma is opposite to company's preferred, add 4 week
-        updateFeudLengthWithAdditionalWeeks(randomFeud,additionalWeeks)
-      }
-
-      function updateFeudLengthWithAdditionalWeeks( randomFeud, additionalWeeks) {
-        // Create a copy of the feuds array
-        const updatedFeuds = [...feuds];
-      
-        // Find the index of the randomFeud object in the updatedFeuds array
-        const randomFeudIndex = updatedFeuds.findIndex((feud) => feud.id === randomFeud.id);
-      
-        // Create a copy of the randomFeud object and update its length property
-        const updatedRandomFeud = { ...randomFeud, length: additionalWeeks };
-      
-        // Update the updatedFeuds array with the updatedRandomFeud object at the randomFeudIndex
-        updatedFeuds[randomFeudIndex] = updatedRandomFeud;
-        // dispatch(setFeud(updatedFeuds));
-        // Return the updated feuds array
-        return updatedFeuds;
-      }
-      console.log('chance ' + randomMultiplier);
-      console.log(randomValue);
-      if (randomValue <= randomMultiplier) {
-         dispatch(setCurrentPotentialFeud(randomFeud));
-      
-        dispatch(setStory({ story: `The booker is considering a feud against ${randomFeud.opponent[0].name}`}));
-        setIsFeudActive(true);
-      } else {
-       dispatch(setStory({ story: "The booker didn't choose any feud for this week."}));
-        setIsFeudActive(false);
-      }
-      if (playerWrestler.activeFeud.name) {
-       // Subtract 1 from the length of the active feud each week
-       dispatch(setActiveFeudLength());
-      
-   
-       // Check if the active feud's length has reached 0
-       if (playerWrestler.activeFeud.length === 0) {
-         // Reset the active feud when its length is 0
-         dispatch(setPastFeuds([...user.pastFeuds, playerWrestler.activeFeud]));
-         dispatch(setActiveFeud({}));
-       }
-     }
-    }else{
-      const updatedFeuds = [...feuds.slice(1)];
-      const randomWrestler = wrestlers[Math.floor(Math.random() * wrestlers.length)];
-     
-      dispatch(setFeud(updatedFeuds));
-      createFeud(randomWrestler);
-console.log(feuds);
-    }
-       
-    
-    if (timeToOpenSpot<= 0){
-      dispatch(setTimeToOpenSpot({ timeToOpenSpot: 5 }));
-    }
-  };
-
-
   // Use useEffect to update multipliers when player stats change
   useEffect(() => {
     updateActiveFeudMultiplier()
@@ -450,6 +275,7 @@ console.log(feuds);
       <p>{story}</p>
       <h3>Player Wrestler</h3>
       <p>Name: {playerWrestler.firstName}</p>
+      <p>Company:{playerWrestler.currentCompany.name}</p>
       <p>Charisma: {playerWrestler.charisma}</p>
       <p>Alignment: {playerWrestler.alignment}</p>
       <p>Popularity: {playerWrestler.popularity}</p>

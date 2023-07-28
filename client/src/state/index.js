@@ -299,7 +299,7 @@ state.user.savegame.feuds = action.payload;
     },
     setSavegame: (state, action) => {
       if (state.user) {
-        state.user.savegame = action.payload.savegame;
+        state.user.savegame = action.payload;
       } else {
         console.error("User non-existent :(");
       }
