@@ -630,6 +630,10 @@ const UserSchema = new mongoose.Schema(
             bookerRelationship: 7,
           }
         ],
+        availablility: {
+          type: Object,
+          default: {available:true,timeRemaining:0},
+        },
         championships: [
           {id:1,
             name: "WWE Championship",
@@ -816,6 +820,14 @@ const UserSchema = new mongoose.Schema(
         bookerOpinion: 7,
       },
     },
+   size:{
+    type: String,
+    default:'large',
+   },
+   pronoun:{
+    type:String,
+    default:'he'
+   },
 
     location: String,
 

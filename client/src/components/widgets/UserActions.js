@@ -4,9 +4,8 @@ import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
+import TabComponent from "./TabsComponent";
+import OverallTab from "./OverallTab";
 
 import GameLogic from "./GameLogic";
 import Testing from "components/testing";
@@ -72,12 +71,7 @@ import {
 import UserResponseButton from "./Options";
 
 const UserActions = ({ clientId }) => {
-// TABS
-const [value, setValue] = useState('one');
 
-const handleChange = (event, newValue) => {
-  setValue(newValue);
-};
 
 
 
@@ -1403,8 +1397,8 @@ if (timeToOpenSpot <= 0) {
 
   return (
     <Box>
-      {/* <GameLogic />
-      <Testing /> */}
+      <GameLogic />
+      <Testing />
       <div>
       <h1>ComponentA</h1>
       <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
@@ -1517,19 +1511,8 @@ if (timeToOpenSpot <= 0) {
       {showNextWeekButton && (
         <button onClick={triggerActionFunctions}>Next Week</button>
       )}
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="wrapped label tabs example"
-      >
-        <Tab
-          value="one"
-          label="Dashboard "
-          wrapped
-        />
-        <Tab value="two" label="Company" />
-        <Tab value="three" label="Achievements" />
-      </Tabs>
+
+     <OverallTab />
       {isNonMobileScreens && (
         <Box flexBasis="26%">
           <Box m="2rem 0" />
