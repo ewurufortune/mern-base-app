@@ -36,6 +36,11 @@ const initialState = {
 
   actionTarget:[],
 
+  messages:[],
+  decisionButtonClicked:false,
+
+  activeTab:undefined,
+
   user: null,
   token: null,
   posts: [],
@@ -159,6 +164,10 @@ export const authSlice = createSlice({
 state.user.savegame.feuds = action.payload;
   }
   ,
+  setMessages: (state, action) => {
+    state.messages = action.payload;
+  }
+  ,
   setActiveFeudLength(state, action) {
     state.user.activeFeud.length = Math.max(0, state.user.activeFeud.length - 1);
   },
@@ -168,10 +177,6 @@ state.user.savegame.feuds = action.payload;
    setSelectedOption: (state, action) => {
      state.selectedOption = action.payload;
    },
-   setCurrentCompany: (state, action) => {
-     state.user.currentCompany = action.payload;
-   }
-   ,
    setOptionDescription: (state, action) => {
      state.optionDescription = action.payload;
    },
@@ -208,7 +213,7 @@ state.user.savegame.feuds = action.payload;
     state.user.currentCompany = currentCompany;
     state.user.tags = tags;
   },
-  setStats: (state, action) => {
+  setTraits: (state, action) => {
     // Update all the playerWrestler stats collectively
     (console.log(action.payload))
     state.user = { ...state.user, ...action.payload };
@@ -233,6 +238,9 @@ state.user.savegame.feuds = action.payload;
   },
   setActiveFeud: (state, action) => {
     state.user.activeFeud = action.payload;
+  },
+  setDecisionButtonClicked: (state, action) => {
+    state.decisionButtonClicked = action.payload;
   },
   setPastFeuds: (state, action) => {
     state.user.pastFeuds = action.payload;
@@ -261,6 +269,10 @@ state.user.savegame.feuds = action.payload;
   setTags: (state, action) => {
     state.user.tags = action.payload;
   },
+  setUser: (state, action) => {
+    state.user = action.payload;
+  }
+  ,
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -301,6 +313,10 @@ state.user.savegame.feuds = action.payload;
         console.error("User non-existent :(");
       }
     },
+    setActiveTab: (state, action) => {
+      state.activeTab = action.payload;
+    }
+    ,
     setSavegame: (state, action) => {
       if (state.user) {
         state.user.savegame = action.payload;
@@ -308,21 +324,28 @@ state.user.savegame.feuds = action.payload;
         console.error("User non-existent :(");
       }
     },
-    setTraits: (state, action) => {
+    setStats: (state, action) => {
       console.log(action.payload);
       if (state.user) {
-        state.user.charisma = action.payload.charisma;
-        state.user.wealth = action.payload.wealth;
-        state.user.popularity = action.payload.popularity;
-        state.user.allignment = action.payload.allignment;
+        state.user = {
+          ...state.user,
+          ...(action.payload.charisma && { charisma: action.payload.charisma }),
+          ...(action.payload.wealth && { wealth: action.payload.wealth }),
+          ...(action.payload.popularity && { popularity: action.payload.popularity }),
+          ...(action.payload.alignment && { alignment: action.payload.alignment }),
+          ...(action.payload.activeFeud && { activeFeud: action.payload.activeFeud }),
+          ...(action.payload.inRingSkill && { inRingSkill: action.payload.inRingSkill }),
+          ...(action.payload.wrestlers && { savegame: { ...state.user.savegame, wrestlers: action.payload.wrestlers } })
+        };
       } else {
         console.error("User non-existent :(");
       }
     },
+    
   },
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier, setOtherFeuds,setWrestlers,setActionTarget} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost ,setName, setFirstname,setSavegame,setTraits,setButton1Text,setButton2Text,setUserResponse,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setLastActivity,setShowNextWeekButton,setResponseRecieved,setEventType,setIsFeudActive,setStory,setWeek,setTimeToOpenSpot,setCurrentMatchPlan,setCurrentWeeklyAntic,setOptionDescription,setSelectedOption,setShowActions,setShowChampionship,setShowEndDayButton,setPlayerWrestler,setCompanies,addFeud,setFeud,setFirstName, setCharisma, setAlignment, setPopularity, setInRingSkill, setCurrentPotentialFeud, setActiveFeud, setPastFeuds, setIsChampion, setCurrentChampionshipHeld, setTitleReigns, setCurrentCompany, setTags,setStats,setActiveFeudLength,setActiveFeudMultiplier, setOtherFeuds,setWrestlers,setActionTarget,setMessages,setDecisionButtonClicked,setUser,setActiveTab} =
   authSlice.actions;
 export default authSlice.reducer;

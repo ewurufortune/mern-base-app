@@ -554,6 +554,88 @@ function generateTagTeamText(faceWrestlers, heelWrestlers, length,intensity) {
   };
 
 
+  const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// 
+// Function to create a feud object
+const createFeudElement = (opponents) => {
+  const sameCompanyOpponents = opponents.filter((wrestler) => !wrestler.isFeuding && wrestler.company === player.company);
+  const opponent = sameCompanyOpponents[Math.floor(Math.random() * sameCompanyOpponents.length)];
+
+  if (!opponent) {
+    console.log('No available opponents for feud');
+    return ; 
+  }
+const format=['getting over', 'putting over', 'rivalry'][getRandomNumber(0, 3)]
+  const length = 2; // Default length of the feud
+  const opponentPopularity = opponent.popularity;
+  const playerPopularity = player.popularity;
+  const defaultMultiplier = (opponentPopularity + playerPopularity) / 2;
+  const multiplier = defaultMultiplier; // Default multiplier based on average popularity
+  const intensity =
+    multiplier < 20
+      ? 'stale'
+      : multiplier < 40
+      ? 'cold'
+      : multiplier < 50
+      ? 'tepid'
+      : multiplier < 60
+      ? 'warm'
+      : multiplier < 70
+      ? 'hot'
+      : multiplier < 80
+      ? 'boiling'
+      : multiplier < 90
+      ? 'mainstream'
+      : 'volcanic';
+
+
+  // Generate random values for the requirements
+  const requirements = {
+    alignment: opponent.alignment,
+    style: opponent.style,
+    relationshipOpponentRelationship: getRandomNumber(6, 10), // Random number between 6 and 10
+    inTeam: false,
+    inFaction: false,
+    championshipFeud: opponent.isChampion || Math.random() < 0.2, // 20% chance if opponent is not champion
+    championshipName: opponent.isChampion ? opponent.championshipHeld : '',
+    role: 'wrestler',
+    gimmick: ['supernatural', 'monster', 'anti-establishment', 'superhero', 'showman'][getRandomNumber(0, 4)],
+    gender: opponent.gender,
+    bodytype: ['muscular', 'athletic', 'fat', 'slim'][getRandomNumber(0, 3)],
+    inRingSkill: format === 'getting over' ? opponent.inRingSkill - getRandomNumber(5, 15) : opponent.inRingSkill + getRandomNumber(5, 15),
+    ringPsycholgy: opponent.ringPsycholgy,
+    popularity: format === 'getting over' ? opponent.popularity - getRandomNumber(5, 15) : opponent.popularity + getRandomNumber(5, 15),
+    age: format === 'getting over' ? opponent.age - getRandomNumber(5, 15) : opponent.age + getRandomNumber(5, 15),
+  };
+
+  // Use opponent's company and contract
+  const company = opponent.company;
+  const contract = opponent.contract;
+
+  // Create the feud object
+  const feudObject = {
+    id: feuds.length + 1, 
+    name: `Feud with ${opponent.name}`,
+    opponents: [opponent],
+    format,
+    length,
+    multiplier,
+    intensity,
+    requirements,
+    company,
+    contract,
+    isCurrentFeud: false,
+  tags: [], 
+  };
+
+  // Mark the opponent as feuding
+  opponent.isFeuding = true;
+ dispatch(addFeud(feudObject));
+  return feudObject;
+};
+
+
 
   
 
@@ -574,13 +656,13 @@ function generateTagTeamText(faceWrestlers, heelWrestlers, length,intensity) {
       </div>
       <div>
       <button onClick={handleGenerateMatchLog}>Generate Match Log</button>
-      {/* <ul>
+      <ul>
         {matchLog.map((log, index) => (
           <li key={index} style={{ color: index < 3 ? 'blue' : 'red' }}>
             {log}
           </li>
         ))}
-      </ul> */}
+      </ul>
       <ul>
       <h3>AEW</h3>
         {matchLogAEW.map((log, index) => (

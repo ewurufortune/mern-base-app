@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-
+import wrestlers from "../wrestlerDatabaseLocal/CreateWrestlers.js";
+import { companies } from "../wrestlerDatabaseLocal/CreateWrestlers.js";
 /* REGISTER USER */
 export const register = async (req, res) => {
   try {
@@ -27,17 +28,23 @@ export const register = async (req, res) => {
       picturePath,
       friends,
       location,
-   
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
+      // Append the generated wrestler array to the user's savegame.wrestlers
+      savegame: {
+        companies:companies,
+        feuds:[],
+        otherFeuds:[],
+        wrestlers: wrestlers,
+      },
     });
+
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (err) {
     res.status(500).json({ error: 'err.message 000000'  });
   }
 };
-
 
 
 // export const replace = async (req, res) => {
@@ -50,11 +57,11 @@ export const register = async (req, res) => {
 
 //     // Update the traits
 //     if (traits) {
-//       const { charisma, wealth, popularity, allignment } = traits;
+//       const { charisma, wealth, popularity, alignment } = traits;
 //       if (charisma) user.charisma = charisma;
 //       if (wealth) user.wealth = wealth;
 //       if (popularity) user.popularity = popularity;
-//       if (allignment) user.allignment = allignment;
+//       if (alignment) user.alignment = alignment;
 //     }
 
 //     await user.save();

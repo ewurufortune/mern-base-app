@@ -51,7 +51,7 @@ const Live = ({ activeFeud, eventType, week }) => {
   const wealth = useSelector((state) => state.user.wealth);
   const user = useSelector((state) => state.user);
   const popularity = useSelector((state) => state.user.popularity);
-  const allignment = useSelector((state) => state.user.allignment);
+  const alignment = useSelector((state) => state.user.alignment);
   const savegame = useSelector((state) => state.user.savegame);
   const showNextActivityButton = useSelector(
     (state) => state.showNextActivityButton
@@ -381,61 +381,7 @@ const Live = ({ activeFeud, eventType, week }) => {
 
   return (
     <div>
-      {Object.keys(activeFeud).length === 0 ? (
-        <p>No actions today.</p>
-      ) : (
-        <div>
-          <h2>Live Feud: {activeFeud.name}</h2>
-          {eventType === "weeklyTV" && (
-            <div>
-              <p>Event Type: Weekly TV</p>
-              <p>Choose an Action:</p>
-              <p>{currentWeeklyAntic.initialPrompt}</p>
-              {showActions && (
-                <>
-                  <button onClick={() => handleOptionSelect("option1")}>
-                    1. {currentWeeklyAntic.option1text}
-                  </button>
-                  <button onClick={() => handleOptionSelect("option2")}>
-                    2. {currentWeeklyAntic.option2text}
-                  </button>
-                </>
-              )}
-              <p>{optionDescription}</p>
-            </div>
-          )}
-          {eventType === "PPV" && (
-            <div>
-              {showChampionship && (
-                <div>
-                  <h2>Championship Match</h2>
-                  {/* Display additional championship match information here */}
-                  {/* You can access the championship details from `matchPlan[0].championship` */}
-                </div>
-              )}
-              <p>Event Type: PPV</p>
-              <p>Opponent Description: {activeFeud.opponent[0].name}</p>
-              <p>Choose an Action:</p>
-              <p>{currentMatchPlan.initialPrompt}</p>
-              {showActions && (
-                <>
-                  <button onClick={() => handleOptionSelect("option1")}>
-                    1. {currentMatchPlan.option1text}
-                  </button>
-                  <button onClick={() => handleOptionSelect("option2")}>
-                    2. {currentMatchPlan.option2text}
-                  </button>
-                  <button onClick={() => handleOptionSelect("option3")}>
-                    3. {currentMatchPlan.option3text}
-                  </button>
-                </>
-              )}
-              <p>{optionDescription}</p>
-            </div>
-          )}
-          {showEndDayButton && <button onClick={handleEndDay}>End Day</button>}
-        </div>
-      )}
+    
     </div>
   );
 };

@@ -21,6 +21,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import counterReducer from './features/counter/counterSlice'
 import Counter from "features/counter/Counter";
 const persistConfig = { key: "root", storage, version: 1 };
+
 const persistedReducer = persistReducer(persistConfig, authReducer,counterReducer);
 const store = configureStore({
   reducer:persistedReducer, 
@@ -31,7 +32,10 @@ const store = configureStore({
       },
     }),
 });
-
+const persistor = persistStore(store);
+// persistor.purge().then(() => {
+//   console.log('Persisted state has been cleared.');
+// });
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   

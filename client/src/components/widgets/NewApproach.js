@@ -2,24 +2,37 @@ import React, { useState } from 'react';
 import { isEqual } from 'lodash';
 import { getDifferencesAndParameters, calculateStatChange} from './gameFunctions/GameFunctions';
 import { useDispatch, useSelector } from 'react-redux';
-
-
-
+import {setMessages,setEventType,setDecisionButtonClicked, setActiveFeud, setTags,setFirstName,setCurrentCompany,setCompanies, setAlignment,setPopularity,setActiveTab, setWrestlers, setInRingSkill} from 'state'
+import { setStats } from 'state';
 
 
 
 const Game = () => {
-const wrestlers = useSelector((state) => state.user.savegame.wrestlers);
 
 
+    const dispatch = useDispatch();
+  
+const currentCompanyName = useSelector((state) => state.user.currentCompany.name);
+const baseWrestlers = useSelector((state) => state.user.savegame.wrestlers);
+const activeFeud = useSelector((state) => state.user.activeFeud);
+const player = useSelector((state) => state.user);
+const playerTags = useSelector((state) => state.user.tags);
 
-  const [messages, setMessages] = useState([]);
-  const [eventType, setEventType] = useState('weeklyTv');
-    // Create a state variable to track if a button has been clicked
-    const [buttonClicked, setButtonClicked] = useState(false);
+console.log(activeFeud);
+
+
+  const wrestlers = baseWrestlers.filter((wrestler) => wrestler.company !== currentCompanyName);
+
+const messages = useSelector((state) => state.messages);
+const eventType = useSelector((state) => state.eventType);
+const decisionButtonClicked = useSelector((state) => state.decisionButtonClicked);
+
+
+ 
+  
   const toggleEventType = () => {
     setEventType(prevEventType => (prevEventType === 'weeklyTv' ? 'PPV' : 'weeklyTv'));
-    setButtonClicked(prevCicked=>prevCicked===true?false:true)
+   
   };
 
 
@@ -33,239 +46,211 @@ function isLower(value, threshold) {
 
 
     function removePlayerTag(tagToRemove) {
-        setPlayer(prevPlayer => ({
-          ...prevPlayer,
-          tags: prevPlayer.tags.filter(tag => !isEqual(tag, tagToRemove)),
-        }));
+      const mirrorTags = [...playerTags];
+      const updatedMirrorTags = mirrorTags.filter((tag) => !isEqual(tag, tagToRemove));
+      dispatch(setTags(updatedMirrorTags));
       }
       
-      function removeCurrentStorylineTag(tagToRemove) {
-        setCurrentStoryline(prevStoryline => ({
-          ...prevStoryline,
-          tags: prevStoryline.tags.filter(tag => !isEqual(tag, tagToRemove)),
-        }));
+      function removeActiveFeudTag(tagToRemove) {
+        const mirrorActiveFeud = { ...activeFeud };
+        const updatedTags = mirrorActiveFeud.tags.filter((tag) => !isEqual(tag, tagToRemove));
+        mirrorActiveFeud.tags = updatedTags;
+    
+        // Dispatch the setActiveFeud action to update the original activeFeud object
+        dispatch(setActiveFeud(mirrorActiveFeud));
       }
 
- function updateStats(stat, change, modifier, isPlayerStat = true) {
-  // Check if the stat represents a tag
-  const isTagStat = typeof stat === 'object' && stat !== null;
+    
+    
 
-  // Apply the modifier based on the isPlayerStat parameter
-  const totalChange = isPlayerStat ? change + modifier : change - modifier;
 
-  if (isPlayerStat) {
-    console.log(`Player's ${stat} updated by ${totalChange}.`);
-    // Add logic to update the player's stat in the state or wherever it's stored
 
-    // For example, if stat is 'name', update player's name directly
-    if (stat === 'name') {
-      setPlayer(prevPlayer => ({
-        ...prevPlayer,
-        [stat]: totalChange,
-      }));
+
+
+
+const handleAngle = (action) => {
+  setMessages([]);
+
+  // Define player stats object with default values
+  const playerStats = {
+    playerPopularity: player.popularity, // affected by 'Get Over'/'Put Over'
+    feudMultiplier: activeFeud.multiplier, // affected by 'Bad Ass','Mysterious','Egomaniac','Business Minded','Political Schemer','Inspiring','Lone Wolf','Protege','Prodigy','Authority','Lover Boy','Veteran','Heroic','Unstable'
+    opponentRelationship: activeFeud.opponent[0].relationship, // 'Dominant', 'Underdog'
+    opponentPopularity:  activeFeud.opponent[0].popularity,
+    feudLength: activeFeud.length, // affected by 'face'/ 'heel'
+    inRingSkill: activeFeud.requirements.inRingSkill, // affected by 'highflyer', 'brawler', 'technical'
+    bookerRelationship:player.currentCompany.bookerOpinion,
+    lockerroomRelationshipChange:0,
+  };
+
+    const requirements = Object.values(activeFeud.requirements);
+  const storylineTags = activeFeud.storyline.role;
+  const checks = [
+    ...activeFeud.format,
+    ...storylineTags,
+    ...requirements,
+    ...activeFeud.aim,
+    ...player.activeFeud?.tags,
+    ...player.tags,
+  ];
+console.log(requirements);
+  // Helper function to update player stats based on the presence of tags and checks
+  const updateStatsForTag = (tag) => {
+    if (action.tags.includes(tag)) {
+
+      
+      // If the tag is present in action.tags, increase the related stat by 1
+      if (tag === 'Get Over' ) {
+        playerStats.playerPopularity = (playerStats.playerPopularity || 0) + 1;
+      } 
+      if (tag === 'Burial' ) {
+        playerStats.lockerroomRelationshipChange = (playerStats.lockerroomRelationshipChange || 0) -3;
+        playerStats.playerPopularity=(playerStats.playerPopularity||0)-5
+      } 
+        if ( tag === 'Put Over') {
+        playerStats.playerPopularity = (playerStats.playerPopularity || 0) - 1;
+        playerStats.opponentRelationship = (playerStats.opponentRelationship || 0) + 1;
+
+      } 
+       if (['Bad Ass', 'Mysterious', 'Egomaniac', 'Business Minded', 'Political Schemer', 'Inspiring', 'Lone Wolf', 'Protege', 'Prodigy', 'Authority', 'Lover Boy', 'Veteran', 'Heroic', 'Unstable'].includes(tag)) {
+        playerStats.feudMultiplier = (playerStats.feudMultiplier || 0) + 1;
+      } 
+       if (['Dominant', 'Underdog'].includes(tag)) {
+        playerStats.opponentRelationship = (playerStats.opponentRelationship || 0) + 1;
+      } 
+
+      // check for matching and  mismatched alignments
+       if (tag === 'face' && player.alignment === 'face') {
+        playerStats.feudLength = (playerStats.feudLength || 0) + 1;
+      } 
+        if (tag === 'heel' && player.alignment === 'heel') {
+        playerStats.feudLength = (playerStats.feudLength || 0) + 1;
+      } 
+        if (tag === 'face' && player.alignment === 'heel') {
+        playerStats.feudLength = (playerStats.feudLength || 0) + 1;
+      } 
+        if (tag === 'heel' && player.alignment === 'face') {
+        playerStats.feudLength = (playerStats.feudLength || 0) + 1;
+      } 
+       if (['highflyer', 'brawler', 'technical'].includes(tag)) {
+        if (tag === player.Style) {
+          playerStats.inRingSkill = (playerStats.inRingSkill || 0) + 1;
+        } else {
+          playerStats.inRingSkill = (playerStats.inRingSkill || 0) -1;
+
+        }
+      }
     }
 
-    // If it's a tag stat and the change is true (add tag)
-    else if (isTagStat && change) {
-        addPlayerTag(stat);
+    if (action.tags.includes(tag) && checks.includes(tag)) {
+      // If the tag is present in both action.tags and checks, increase the related stat by 5
+      if (['Bad Ass', 'Mysterious', 'Egomaniac', 'Business Minded', 'Political Schemer', 'Inspiring', 'Lone Wolf', 'Protege', 'Prodigy', 'Authority', 'Lover Boy', 'Veteran', 'Heroic', 'Unstable'].includes(tag)) {
+        playerStats.feudMultiplier = (playerStats.feudMultiplier || 0) + 5;
+      }
+      if (['Dominant', 'Underdog', ].includes(tag)) {
+        playerStats.feudMultiplier = (playerStats.feudMultiplier || 0) + 1;
+      }
     }
 
-    // If it's a tag stat and the change is false (remove tag)
-    else if (isTagStat && !change) {
-      removePlayerTag(stat);
-    }
 
-    // Update alignment stat
-    else if (stat === 'alignment') {
-      setPlayer(prevPlayer => ({
-        ...prevPlayer,
-        alignment: totalChange,
-      }));
+    if (!action.tags.includes(tag) && checks.includes(tag)) {
+      // If the tag is in checks but not in action.tags, decrease the related stat by 2
+      if (['Get Over', 'Put Over'].includes(tag)) {
+        playerStats.playerPopularity = (playerStats.playerPopularity || 0) - 2;
+      } 
+       if (['Bad Ass', 'Mysterious', 'Egomaniac', 'Business Minded', 'Political Schemer', 'Inspiring', 'Lone Wolf', 'Protege', 'Prodigy', 'Authority', 'Lover Boy', 'Veteran', 'Heroic', 'Unstable'].includes(tag)) {
+        playerStats.feudMultiplier = (playerStats.feudMultiplier || 0) - 2;
+      } 
+       if (['Dominant', 'Underdog'].includes(tag)) {
+        playerStats.opponentRelationship = (playerStats.opponentRelationship || 0) - 2;
+      } 
+       if (['face', 'heel'].includes(tag)) {
+        playerStats.feudLength = (playerStats.feudLength || 0) - 2;
+      } 
+       if (['highflyer', 'brawler', 'technical'].includes(tag)) {
+        playerStats.inRingSkill = (playerStats.inRingSkill || 0) - 2;
+      }
     }
+  };
 
-    // Update popularity stat
-    else if (stat === 'popularity') {
-      setPlayer(prevPlayer => ({
-        ...prevPlayer,
-        popularity: prevPlayer.popularity + totalChange,
-      }));
-    }
-    // Add more numeric stats as needed
-  } else {
-    console.log(`Current storyline ${stat} updated by ${totalChange}.`);
-    // Update the current storyline state
+  // Check each angleAction's tags and update player stats accordingly
+  angleActions.forEach((action) => {
+    action.tags.forEach((tag) => {
+      updateStatsForTag(tag);
+    });
+  });
 
-    // If it's a tag stat and the change is true (add tag)
-    if (isTagStat && change) {
-      addCurrentStorylineTag(stat);
-    }
+  // Dispatch the updated player stats to your state management system
+   const{
+    playerPopularity,
+    feudMultiplier, 
+    feudLength,
+    bookerRelationship,
+    inRingSkill,
+    opponentRelationship,
+    lockerroomRelationshipChange
+  }= playerStats
 
-    // If it's a tag stat and the change is false (remove tag)
-    else if (isTagStat && !change) {
-      removeCurrentStorylineTag(stat);
-    }
 
-    else {
-      setCurrentStoryline(prevStoryline => ({
-        ...prevStoryline,
-        [stat]: prevStoryline[stat] + totalChange,
-      }));
-    }
+  const newCompany = { ...player.currentCompany };
+
+  // Update the bookerOpinion property in the mirror
+  newCompany.bookerOpinion += bookerRelationship; // Create a mirror of the wrestlers array and find the opponent mirror by ID
+  dispatch(setCurrentCompany(newCompany));
+
+// Create a mirror of player.savegame.companies
+const newCompanies = player.savegame.companies.map((company) =>
+  company.id === newCompany.id ? newCompany : company
+);
+
+
+
+ dispatch(setCompanies(newCompanies));
+
+ 
+  const mirroredWrestlers = wrestlers.map(wrestler => {
+  if (wrestler.id === activeFeud.opponent[0]?.id) {
+    return {
+      ...wrestler,
+      relationship: opponentRelationship
+    };
   }
-}
+  return wrestler;
+});
+const updatedWrestlers = mirroredWrestlers.map((wrestler) => ({
+  ...wrestler,
+  relationship: wrestler.relationship + lockerroomRelationshipChange,
+}));
 
-      // Function to add a tag to player's tags array
-      function addPlayerTag(tag) {
-        setPlayer(prevPlayer => ({
-          ...prevPlayer,
-          tags: [...prevPlayer.tags, tag],
-        }));
-      }
-    
-    
-      // Function to add a tag to current storyline's tags array
-      function addCurrentStorylineTag(tag) {
-        setCurrentStoryline(prevStoryline => ({
-          ...prevStoryline,
-          tags: [...prevStoryline.tags, tag],
-        }));
-      }
-    
-    
-    
-  // Step 1: Create a player object
-  const [player, setPlayer] = useState({
-    name: 'Aiden',
-    alignment: 'face',
-    popularity:6,
-    inRingSkill:5,
-    tags: [
-      { lockerroomRep: 'loved' },
-      { bookerRelationship: 'good' },
-      { fanFavorite: true },
-      { highFlyer: true }
-      // Add more tags as needed
-    ],
-    deletedTags: [] 
-  });
+const intensity =
+feudMultiplier < 20
+  ? 'stale'
+  : feudMultiplier < 40
+  ? 'cold'
+  : feudMultiplier < 50
+  ? 'tepid'
+  : feudMultiplier < 60
+  ? 'warm'
+  : feudMultiplier < 70
+  ? 'hot'
+  : feudMultiplier < 80
+  ? 'boiling'
+  : feudMultiplier < 90
+  ? 'mainstream'
+  : 'volcanic';
 
-  const handlePlayerTagChange = () => {
-    const { tags, deletedTags } = player;
-    if (deletedTags.length > 0 && Math.random() < 0.5) {
-      // Restore a previously deleted tag
-      const restoredTag = deletedTags.pop();
-      setPlayer(prevPlayer => ({
-        ...prevPlayer,
-        tags: [...tags, restoredTag],
-        deletedTags: [...deletedTags]
-      }));
-    } else {
-      // Randomly delete a tag and add it to the deletedTags array
-      const tagIndexToDelete = Math.floor(Math.random() * tags.length);
-      const deletedTag = tags.splice(tagIndexToDelete, 1)[0];
-      setPlayer(prevPlayer => ({
-        ...prevPlayer,
-        tags: [...tags],
-        deletedTags: [...deletedTags, deletedTag]
-      }));
-    }
+  const activeFeudMirror = {
+    ...player.activeFeud,
+    length:feudLength,
+    multiplier: feudMultiplier,
+    intensity:intensity
   };
+  dispatch(setWrestlers(updatedWrestlers))
+  dispatch(setStats({popularity:playerPopularity,activeFeud:activeFeudMirror,inRingSkill:inRingSkill},))
+  // Continue with the rest of y,r handleAngle function
+  dispatch(setDecisionButtonClicked(true));
+};
 
-  const [currentStoryline, setCurrentStoryline] = useState({
-    title: 'Feud with Haiden',
-    length: 10,
-    opponent: [
-      { name: 'Haiden', relationship: 10 }
-      // Add more opponents as needed
-    ],
-    intensity: 40,
-    tags: [
-      { championship: 'Heavy Weight' },
-      { plan: 'long term' },
-      { billing: 'main event' },
-      { rivalTagTeam: 'The Dominators' },
-      { underdogStory: true },
-  
-    ], 
-     deletedTags: [] 
-  });
-
-  const handleStorylineTagChange = () => {
-    const { tags, deletedTags } = currentStoryline;
-    if (deletedTags.length > 0 && Math.random() < 0.5) {
-      // Restore a previously deleted tag
-      const restoredTag = deletedTags.pop();
-      setCurrentStoryline(prevStoryline => ({
-        ...prevStoryline,
-        tags: [...tags, restoredTag],
-        deletedTags: [...deletedTags]
-      }));
-    } else {
-      // Randomly delete a tag and add it to the deletedTags array
-      const tagIndexToDelete = Math.floor(Math.random() * tags.length);
-      const deletedTag = tags.splice(tagIndexToDelete, 1)[0];
-      setCurrentStoryline(prevStoryline => ({
-        ...prevStoryline,
-        tags: [...tags],
-        deletedTags: [...deletedTags, deletedTag]
-      }));
-    }
-  };
-
-  // Step 3: Create the handleAngle function
-  const handleAngle = (action) => {
-    setMessages([])
-    const differencesAndParameters = getDifferencesAndParameters(player, currentStoryline, wrestlers);
-
-
-    switch (action) {
-      case 'useWorkersPrivateDirt':
-
-      const popularityChange = calculateStatChange(differencesAndParameters, 'popularity', 4, -4, true);
-      const inRingSkillChange = calculateStatChange(differencesAndParameters, 'inRingSkill', 5, -9, true);
-      const decisionText = angleActions.find(actionItem => actionItem.action === 'useWorkersPrivateDirt').decision;
-      setMessages(prevMessages => [...prevMessages, decisionText]);
-        setMessages(prevMessages => [...prevMessages, popularityChange.message,inRingSkillChange.message]);
-
-        // Implement logic for this action
-        const loadUseDirt = [
-          { stat: 'popularity', change: popularityChange.statChange, modifier: 2 },
-           { stat: 'inRingSkill', change: inRingSkillChange.statChange, modifier: 2 },
-          { stat: { fanFavorite: true }, change: true },
-          { stat: { highFlyer: false }, change: false }, 
-        ];
-        loadUseDirt.forEach(load => {
-          updateStats(load.stat, load.change, load.modifier);
-        });
-        break;
-      case 'overshadowWorker':
-        // Implement logic for this action
-        const loadOvershadow = [
-        //   { stat: 'popularity', change: 3, modifier: 1 },
-        //   { stat: { underdogStory: true }, change: true }, // Add the 'underdogStory' tag
-          { stat: { highFlyer: false }, change: true },
-        ];
-        loadOvershadow.forEach(load => {
-          updateStats(load.stat, load.change, load.modifier);
-        });
-        break;
-      case 'befriendWorker':
-        // Implement logic for this action
-        const loadBefriend = [
-          { stat: 'popularity', change: 10, modifier: 5 },
-          { stat: { fanFavorite: true, highFlyer: true }, change: true }, // Add the 'fanFavorite' and 'highFlyer' tags
-        ];
-        loadBefriend.forEach(load => {
-          updateStats(load.stat, load.change, load.modifier);
-        });
-        break;
-      // Add more cases for other actions as needed
-      default:
-        console.log('Unknown action.');
-        break;
-    }
-    setButtonClicked(true);};
-  
 
 
 
@@ -274,44 +259,59 @@ function isLower(value, threshold) {
     {
       text: 'Use worker\'s private dirt',
       action: 'useWorkersPrivateDirt',
+      tags:['Egomaniac','Business Minded','Lone Wolf','Get Over'],
       show: true,
+      decision:'You air your target dirty laundry.',
+      question: 'You have a chance to expose your opponent by using their private dirt. Will you take advantage of this opportunity?'
+    },
+    {
+      text: 'Use worker\'s private dirt',
+      action: 'useWorkersPrivateDirt',
+      tags:['Egomaniac','Business Minded','Lone Wolf','Get Over'],
+      show: activeFeud.storyline.title==='Sacrifice for a Cause',
       decision:'You air your target dirty laundry.',
       question: 'You have a chance to expose your opponent by using their private dirt. Will you take advantage of this opportunity?'
     },
     {
       text: 'Try to Dominate target',
       action: 'overshadowWorker',
+      tags:['Egomaniac','Business Minded',],
       show: eventType === 'weeklyTv', // Set show to true if eventType is 'weeklyTv'
       question: 'You can try to overshadow your opponent and gain more attention. How do you plan to do it?',
     },
     {
       text: 'Befriend worker',
       action: 'befriendWorker',
-      show: player.tags.some(tag => tag?.fanFavorite && tag?.highFlyer),
+      tags:['Egomaniac','Business Minded',],
+      show: player.tags?.some(tag => 'storyline' && 'storyline2'),
       question: 'Your fan-favorite status and high-flying abilities could help you befriend the worker. How will you approach them?'
     },
     {
       text: 'Throw promo attack on worker',
       action: 'throwPromoAttack',
-      show: currentStoryline.tags.some(tag => tag?.underdogStory),
+      tags:['Egomaniac','Business Minded',],
+      show: activeFeud.tags?.some(tag => 'storyline3'),
       question: 'Your storyline as an underdog opens an opportunity to throw a promo attack. How will you cut your promo?'
     },
     {
       text: 'Form tag team with worker',
       action: 'formTagTeam',
-      show: currentStoryline.tags.some(tag => tag?.rivalTagTeam === 'The Dominators'),
+      tags:['Egomaniac','Business Minded',],
+      show: activeFeud.tags?.some(tag => tag === 'The Dominators'),
       question: 'Your rivalry with The Dominators presents a chance to form a tag team with the worker. Will you take this path?'
     },
     {
       text: 'Challenge worker to a match',
       action: 'challengeWorker',
-      show: currentStoryline.tags.some(tag => tag?.championship === 'Heavy Weight' || tag.billing === 'main event'),
+      tags:['Egomaniac','Business Minded',],
+      show: activeFeud.tags?.some(tag => tag?.championship === 'Heavy Weight' || tag.billing === 'main event'),
       question: 'Your opportunity for a Heavy Weight Championship match or main event billing allows you to challenge the worker. Will you do it?'
     }
     // Add more actions as needed
   ];
 
   const handleEndGame = () => {
+     dispatch(setActiveTab(undefined));
     console.log('send to tab 1 and disable this tab');
   }
 
@@ -321,36 +321,35 @@ function isLower(value, threshold) {
       <h1>Text-Based Game</h1>
       {/* Display player information */}
       <h2>Player</h2>
-      <p>Name: {player.name}</p>
+      <p>Name: {player.firstName}</p>
       <p>Alignment: {player.alignment}</p>
       <p>Popularity: {player.popularity}</p>
       <p>Tags:</p>
       <ul>
-        {player.tags.map((tag, index) => (
+        {player.tags?.map((tag, index) => (
           <li key={index}>{JSON.stringify(tag)}</li>
         ))}
       </ul>
-      <button onClick={handlePlayerTagChange}>Change Player Tags</button>
-
+  
       <div>
-    
-    {messages.map((message, index) => (
-      <p key={index}>{message.replace(/target/g, currentStoryline.opponent[0]?.name || 'opponent')}</p>    ))}
-  </div>
+        {messages.map((message, index) => (
+          <p key={index}>{message.replace(/target/g, activeFeud?.opponent?.[0]?.name || 'opponent')}</p>
+        ))}
+      </div>
       <h2>Choose How to Handle the Angle Personally:</h2>
-      {!buttonClicked &&
+      {!decisionButtonClicked &&
         angleActions.filter(actionItem => actionItem.show).map((actionItem, index) => (
           <div key={index}>
             <p>{actionItem.question}</p>
             <button
-              onClick={() => handleAngle(actionItem.action)}
+              onClick={() => handleAngle(actionItem)}
             >
-              {actionItem.text.replace('target', currentStoryline.opponent[0]?.name || 'opponent')}
+              {actionItem.text.replace('target', activeFeud?.opponent?.[0]?.name || 'opponent')}
             </button>
           </div>
         ))}
-
-        {buttonClicked && (
+  
+      {decisionButtonClicked && (
         <div>
           <p>Game Over! You have reached the end of the game.</p>
           <button onClick={handleEndGame}>End Game</button>
@@ -359,28 +358,32 @@ function isLower(value, threshold) {
       <button onClick={toggleEventType}>
         Toggle Event Type ({eventType === 'weeklyTv' ? 'Weekly TV' : 'PPV'})
       </button>
-    
+  
       {/* Display current storyline information */}
       <h2>Current Storyline</h2>
-      <p>Title: {currentStoryline.title}</p>
-      <p>Length: {currentStoryline.length}</p>
-      <p>Opponents:</p>
-      <ul>
-        {currentStoryline.opponent.map((opponent, index) => (
-          <li key={index}>
-            Name: {opponent.name}, Relationship: {opponent.relationship}
-          </li>
-        ))}
-      </ul>
-      <p>Intensity: {currentStoryline.intensity}</p>
-      <p>Tags:</p>
-      <ul>
-        {currentStoryline.tags.map((tag, index) => (
-          <li key={index}>{JSON.stringify(tag)}</li>
-        ))}
-      </ul>
-      <button onClick={handleStorylineTagChange}>Change Storyline Tags</button>
-
+      {Object.keys(activeFeud).length > 0 ? ( // Add a check to see if activeFeud has been set
+        <>
+          <p>Title: {activeFeud.name}</p>
+          <p>Length: {activeFeud.length}</p>
+          <p>Opponents:</p>
+          <ul>
+            {activeFeud.opponent?.map((opponent, index) => (
+              <li key={index}>
+                Name: {opponent.name}, Relationship: {opponent.relationship}
+              </li>
+            ))}
+          </ul>
+          <p>Intensity: {activeFeud.multiplier}</p>
+          <p>Tags:</p>
+          <ul>
+            {activeFeud.tags?.map((tag, index) => (
+              <li key={index}>{JSON.stringify(tag)}</li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>No active feud currently available.</p>
+      )}
     </div>
   );
 };
