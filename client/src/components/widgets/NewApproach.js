@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { isEqual } from 'lodash';
 import { getDifferencesAndParameters, calculateStatChange} from './gameFunctions/GameFunctions';
 import { useDispatch, useSelector } from 'react-redux';
@@ -268,7 +268,7 @@ feudMultiplier < 20
       text: 'Use worker\'s private dirt',
       action: 'useWorkersPrivateDirt',
       tags:['Egomaniac','Business Minded','Lone Wolf','Get Over'],
-      show: activeFeud.storyline.title==='Sacrifice for a Cause',
+      show: player.activeFeud?.storyline?.title==='Sacrifice for a Cause',
       decision:'You air your target dirty laundry.',
       question: 'You have a chance to expose your opponent by using their private dirt. Will you take advantage of this opportunity?'
     },
@@ -283,32 +283,53 @@ feudMultiplier < 20
       text: 'Befriend worker',
       action: 'befriendWorker',
       tags:['Egomaniac','Business Minded',],
-      show: player.tags?.some(tag => 'storyline' && 'storyline2'),
+      show: player.tags?.includes('storyline') && player.tags?.includes('storyline2'), 
       question: 'Your fan-favorite status and high-flying abilities could help you befriend the worker. How will you approach them?'
     },
     {
       text: 'Throw promo attack on worker',
       action: 'throwPromoAttack',
       tags:['Egomaniac','Business Minded',],
-      show: activeFeud.tags?.some(tag => 'storyline3'),
+      show:player.tags?.includes('storyline') , 
       question: 'Your storyline as an underdog opens an opportunity to throw a promo attack. How will you cut your promo?'
     },
     {
       text: 'Form tag team with worker',
       action: 'formTagTeam',
       tags:['Egomaniac','Business Minded',],
-      show: activeFeud.tags?.some(tag => tag === 'The Dominators'),
+      show: player.activeFeud?.tags?.includes('storyline'), 
       question: 'Your rivalry with The Dominators presents a chance to form a tag team with the worker. Will you take this path?'
     },
     {
       text: 'Challenge worker to a match',
       action: 'challengeWorker',
       tags:['Egomaniac','Business Minded',],
-      show: activeFeud.tags?.some(tag => tag?.championship === 'Heavy Weight' || tag.billing === 'main event'),
+      show: player.tags?.includes('storyline'),
       question: 'Your opportunity for a Heavy Weight Championship match or main event billing allows you to challenge the worker. Will you do it?'
     }
     // Add more actions as needed
   ];
+
+
+  const [randomActions, setRandomActions] = useState([]);
+  // Filter the actions whose 'show' property returns true
+  const actionsToShow = angleActions.filter((action) => action.show);
+  // Function to generate a random number between min and max
+  const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  useEffect(() => {
+    // Shuffle the angleActions array to randomize the order
+    const shuffledActions = actionsToShow.sort(() => 0.5 - Math.random());
+
+    // Calculate the number of actions to display (maximum 5 or the length of angleActions)
+    const numActionsToShow = Math.min(5, shuffledActions.length);
+
+    // Select the first numActionsToShow actions from the shuffled array
+    const selectedActions = shuffledActions.slice(0, numActionsToShow);
+
+    // Update the state with the randomly selected actions
+    setRandomActions(selectedActions);
+  }, []);
+
 
   const handleEndGame = () => {
      dispatch(setActiveTab(undefined));
@@ -338,12 +359,10 @@ feudMultiplier < 20
       </div>
       <h2>Choose How to Handle the Angle Personally:</h2>
       {!decisionButtonClicked &&
-        angleActions.filter(actionItem => actionItem.show).map((actionItem, index) => (
+        randomActions.map((actionItem, index) => (
           <div key={index}>
             <p>{actionItem.question}</p>
-            <button
-              onClick={() => handleAngle(actionItem)}
-            >
+            <button onClick={() => handleAngle(actionItem)}>
               {actionItem.text.replace('target', activeFeud?.opponent?.[0]?.name || 'opponent')}
             </button>
           </div>
@@ -355,9 +374,7 @@ feudMultiplier < 20
           <button onClick={handleEndGame}>End Game</button>
         </div>
       )}
-      <button onClick={toggleEventType}>
-        Toggle Event Type ({eventType === 'weeklyTv' ? 'Weekly TV' : 'PPV'})
-      </button>
+    
   
       {/* Display current storyline information */}
       <h2>Current Storyline</h2>
