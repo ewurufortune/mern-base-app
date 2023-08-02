@@ -115,6 +115,7 @@ const njpwWrestlerNames = [
     const inRingSkill = getRandomNumber(1, 100);
     const popularity = getRandomNumber(1, 100);
     const age = getRandomNumber(16, 90);
+    const experience= getRandomNumber(5, 18);
     const isChampion = Math.random() < 0.1;
     const championshipHeld = isChampion ? 'WWE Championship' : '';
     const daysAsChampion = isChampion ? getRandomNumber(0, 400) : 0;
@@ -144,6 +145,7 @@ const njpwWrestlerNames = [
       inRingSkill,
       popularity,
       age,
+      experience,
       isFeuding,
       isChampion,
       championshipHeld,
@@ -202,6 +204,7 @@ const njpwWrestlerNames = [
       inRingBenchmark: 3,
       popularityBenchmark: 2,
       bookerOpinion: 2,
+      inRingStyle:'Modern',
     },
     {
       id:2,
@@ -210,14 +213,16 @@ const njpwWrestlerNames = [
       inRingBenchmark: 2,
       popularityBenchmark: 3,
       bookerOpinion: 7,
+      inRingStyle:'Strong Style',
     },
     {
       id:3,
       name: "NJPW",
-      preferredCharisma: "menacing",
+      preferredCharisma: "Puroresu",
       inRingBenchmark: 5,
       popularityBenchmark: 3,
       bookerOpinion: 7,
+      inRingStyle:'Strong Style',
     },
     {
       id:4,
@@ -226,6 +231,7 @@ const njpwWrestlerNames = [
       inRingBenchmark: 5,
       popularityBenchmark: 3,
       bookerOpinion: 7,
+      inRingStyle:'Hardcore',
     },
     // Add more companies here with their properties
     // ...

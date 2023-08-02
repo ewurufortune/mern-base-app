@@ -2,7 +2,7 @@ import serialize from "serialize-javascript";
 import React, { useState } from "react";
 import { Box, useMediaQuery, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity,setResponseRecieved,setActionTarget} from "state";
+import { setName, setFirstname, setSavegame, setTraits,setButton1Text, setUserResponse,setButton2Text,setButton1TextValue,setButton2TextValue,setActionDescription,setExecuteAction,setShowOptions,setShowDescription,setDecisionText1,setDecisionText2,setShowDecisionText,setSelectedDecision,setShowNextActivityButton,setShowNextWeekButton,setLastActivity,setResponseRecieved,setActionTarget,setWrestlers, setStats,setUser} from "state";
 //button2Text is represented as buttonText2 in the reducer Slice
 
 
@@ -64,8 +64,123 @@ const decisionText1 = useSelector((state) => state.decisionText1);
 const decisionText2 = useSelector((state) => state.decisionText2);
 const showDescription = useSelector((state) => state.showDescription);
 const user = useSelector((state) => state.user);
+const player = useSelector((state) => state.user);
 const actionTarget = useSelector((state) => state.actionTarget);
+const wrestlers = useSelector((state) => state.user.savegame.wrestlers);
 
+
+const makeDecision = (value) => {
+  console.log(value,actionTarget);
+
+  const playerMirror = { ...player };
+  const targetWrestler ={ ...actionTarget}
+      // Extract the data from value1
+    const { traits, stats } = value;
+
+    // Helper function to handle trait updates
+    const updateTrait = (newTrait, trait) => {
+      // Ensure that the provided traitName is a valid property of playerMirror
+      if (trait in playerMirror) {
+        playerMirror[trait] = newTrait;
+        console.log(`Player's ${trait} updated to: ${newTrait}`);
+      } else {
+        console.log(`Invalid trait: ${trait}`);
+      }
+    };
+
+    // Handle traits
+    traits.forEach((trait) => {
+      switch (trait) {
+        case "menacing":
+        case "comedic":
+          updateTrait(trait, "charisma");
+          break;
+        case "highflyer":
+        case "brawler":
+        case "technical":
+          updateTrait(trait, "style");
+          break;
+        case "face":
+        case "heel":
+          updateTrait(trait, "alignment");
+          break;
+        case "muscular":
+        case "athletic":
+        case "fat":
+        case "slim":
+          updateTrait(trait, "bodytype");
+          break;
+        default:
+          break;
+      }
+    });
+
+
+   stats.forEach((stat) => {
+      const {
+        check,
+        value,
+        increasePlayer,
+        decreasePlayer,
+        increaseTarget,
+        decreaseTarget,
+      } = stat;
+      const playerValue = playerMirror[check];
+      const targetValue = targetWrestler[check];
+
+      console.log(`Checking ${check} value...`);
+      console.log(`Player's ${check}: ${playerValue}`);
+      console.log(`Target Wrestler's ${check}: ${targetValue}`);
+
+      if (
+        (value === "isLower" && playerValue < targetValue) ||
+        (value === "isHigher" && playerValue > targetValue)
+      ) {
+        console.log(`Condition met for ${value}...`);
+        console.log("Performing actions...");
+
+        // Perform actions based on the instructions provided
+        increasePlayer.forEach(([property, amount]) => {
+          console.log(increasePlayer);
+          playerMirror[property] = (playerMirror[property] || 0) + amount;
+          console.log(
+            `Player's ${property} increased by ${amount} to: ${playerMirror[property]}`
+          );
+        });
+
+        decreasePlayer.forEach(([property, amount]) => {
+          playerMirror[property] = (playerMirror[property] || 0) - amount;
+          console.log(
+            `Player's ${property} decreased by ${amount} to: ${playerMirror[property]}`
+          );
+        });
+
+        increaseTarget.forEach(([property, amount]) => {
+          targetWrestler[property] = (targetWrestler[property] || 0) + amount;
+          console.log(
+            `Target Wrestler's ${property} increased by ${amount} to: ${targetWrestler[property]}`
+          );
+        });
+
+        decreaseTarget.forEach(([property, amount]) => {
+          targetWrestler[property] = (targetWrestler[property] || 0) - amount;
+          console.log(
+            `Target Wrestler's ${property} decreased by ${amount} to: ${targetWrestler[property]}`
+          );
+        });
+      } else {
+        console.log(
+          `Condition not met for ${value}... No actions performed.`
+        );
+      }
+    });
+
+    const updatedWrestlers = wrestlers.map((wrestler) =>
+  wrestler.id === targetWrestler.id ? targetWrestler : wrestler
+);
+  dispatch(setWrestlers(updatedWrestlers))
+ dispatch(setUser(playerMirror));    
+}
 
 
 const handleClick = async (value, decisionText) => {
@@ -73,28 +188,12 @@ const handleClick = async (value, decisionText) => {
   dispatch(setShowDescription({ showDescription: false }));
   setShowInput(true);
 
-  dispatch(setUserResponse({ userResponse: value }));
+  console.log(value);
+
+  makeDecision(value)
+  // dispatch(setUserResponse({ userResponse: value }));
   dispatch(setSelectedDecision({ selectedDecision: decisionText }));
   dispatch(setShowDecisionText({ showDecisionText: true }));
-
-  function isSerializedFunction(value) {
-    // Define a regular expression pattern for a serialized function
-    const functionPattern = /\bfunction\b/;
-
-    // Use the test method of the regular expression to check for a match
-    return functionPattern.test(value);
-  }
-
-  const isSerialized = isSerializedFunction(value);
-  if (isSerialized) {
-    const deserializedFunction = eval("(" + value + ")");
-    // Now you have the deserialized function
-    // Perform some action with the user response
-    deserializedFunction(actionTarget);
-  } else {
-    // It's a normal string, not a serialized function
-    console.log(value);
-  }
 
   dispatch(setResponseRecieved({ responseRecieved: true }));
   await replaceUser(user);

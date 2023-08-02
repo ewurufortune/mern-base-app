@@ -46,6 +46,7 @@ import {
   setCompanies,
   addFeud,
   setFeud,
+  setUser,
   setWrestlers,
   setOtherFeuds,
   setStats,
@@ -65,7 +66,7 @@ import {
   setActiveFeudLength,
   setActiveFeudMultiplier,
   setActiveTab,
-  setDecisionButtonClicked
+  setDecisionButtonClicked,
 } from "state";
 
 //button2Text is represented as buttonText2 in the reducer Slice
@@ -73,10 +74,6 @@ import {
 import UserResponseButton from "./Options";
 
 const UserActions = ({ clientId }) => {
-
-
-
-
   const userResponse = useSelector((state) => state.userResponse);
   const actionDescription = useSelector((state) => state.actionDescription);
   const button1Text = useSelector((state) => state.buttonText);
@@ -84,29 +81,35 @@ const UserActions = ({ clientId }) => {
   const showDecisionText = useSelector((state) => state.showDecisionText);
   const selectedDecision = useSelector((state) => state.selectedDecision);
   const playerWrestler = useSelector((state) => state.user);
-  const wrestlers= useSelector((state) => state.user.savegame.wrestlers);
-  const decisionButtonClicked = useSelector((state) => state.decisionButtonClicked);
-  
+  const wrestlers = useSelector((state) => state.user.savegame.wrestlers);
+  const decisionButtonClicked = useSelector(
+    (state) => state.decisionButtonClicked
+  );
 
-  
+  const [selectedCompany, setSelectedCompany] = useState(
+    playerWrestler.currentCompany.name
+  );
+  const [selectedCharisma, setSelectedCharisma] = useState("all");
+  const [selectedAlignment, setSelectedAlignment] = useState("all");
 
-  const [selectedCompany, setSelectedCompany] = useState('all');
-const [selectedCharisma, setSelectedCharisma] = useState('all');
-const [selectedAlignment, setSelectedAlignment] = useState('all');
+  const uniqueCompanies = [
+    ...new Set(wrestlers.map((wrestler) => wrestler.company)),
+  ];
+  const uniqueCharisma = [
+    ...new Set(wrestlers.map((wrestler) => wrestler.charisma)),
+  ];
+  const uniqueAlignments = [
+    ...new Set(wrestlers.map((wrestler) => wrestler.alignment)),
+  ];
 
-const uniqueCompanies = [...new Set(wrestlers.map((wrestler) => wrestler.company))];
-const uniqueCharisma = [...new Set(wrestlers.map((wrestler) => wrestler.charisma))];
-const uniqueAlignments = [...new Set(wrestlers.map((wrestler) => wrestler.alignment))];
+  const [optionsPresent, setOptionsPresent] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-const [optionsPresent, setOptionsPresent] = useState(false);
-const [snackbarOpen, setSnackbarOpen] = useState(false);
-const [successMessage, setSuccessMessage] = useState("");
-const [errorMessage, setErrorMessage] = useState("");
-
-const handleSnackbarClose = () => {
-  setSnackbarOpen(false);
-};
-
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleSendButton = (option, selectedWrestler) => {
     if (responseRecieved === true) {
@@ -122,28 +125,31 @@ const handleSnackbarClose = () => {
         value1,
         value2,
       } = option;
-       dispatch(setActionTarget(selectedWrestler));
+      dispatch(setActionTarget(selectedWrestler));
       const isOptions = options ? true : false;
-    
+
       dispatch(setShowOptions({ showOptions: isOptions }));
       dispatch(setShowDescription({ showDescription: true }));
       dispatch(setShowDecisionText({ showDecisionText: false }));
       // Send the option string to UserResponseButton
       dispatch(setActionDescription({ actionDescription: description }));
-      dispatch(setButton1Text({ buttonText: text1 }));
-      dispatch(setButton1TextValue({ buttonTextValue: value1 }));
-      dispatch(setButton2Text({ button2Text: text2 }));
-      dispatch(setButton2TextValue({ button2TextValue: value2 }));
+      if (isOptions===true){
+        dispatch(setButton2TextValue({ button2TextValue: value2 }));
+        dispatch(setButton1TextValue({ buttonTextValue: value1 }));
+        dispatch(setButton1Text({ buttonText: text1 }));
+        dispatch(setButton2Text({ button2Text: text2 }));
+      }
+   
       dispatch(setDecisionText1({ decisionText1: decisionText1 }));
       dispatch(setDecisionText2({ decisionText2: decisionText2 }));
-      if(options=== false){
-        console.log('options are absent');
-        setOptionsPresent(false)
+      if (options === false) {
+        console.log("options are absent");
+        setOptionsPresent(false);
         dispatch(setResponseRecieved({ responseRecieved: true }));
         console.log(responseRecieved);
-      }else{
-        console.log('options are present');
-        setOptionsPresent(true)
+      } else {
+        console.log("options are present");
+        setOptionsPresent(true);
       }
     } else {
       console.log("ERROR");
@@ -161,17 +167,18 @@ const handleSnackbarClose = () => {
   const popularity = useSelector((state) => state.user.popularity);
   const alignment = useSelector((state) => state.user.alignment);
   const savegame = useSelector((state) => state.user.savegame);
-  const player = useSelector((state) => state.user)
+  const player = useSelector((state) => state.user);
   const activeTab = useSelector((state) => state.activeTab);
-  
 
   const [matchLog, setMatchLog] = useState([]);
   const [matchLogWWE, setMatchLogWWE] = useState([]);
   const [matchLogAEW, setMatchLogAEW] = useState([]);
-const   activeFeud=useSelector((state) => state.user.activeFeud);
-const allWrestlers= useSelector((state) => state.user.savegame.wrestlers);
+  const activeFeud = useSelector((state) => state.user.activeFeud);
+  const allWrestlers = useSelector((state) => state.user.savegame.wrestlers);
 
-const playerCompanyName = useSelector((state) => state.user.currentCompany.name);
+  const playerCompanyName = useSelector(
+    (state) => state.user.currentCompany.name
+  );
   const showNextActivityButton = useSelector(
     (state) => state.showNextActivityButton
   );
@@ -194,29 +201,135 @@ const playerCompanyName = useSelector((state) => state.user.currentCompany.name)
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [activities, setActivities] = useState([]);
 
-
-
   const createFeud = (opponent) => {
-    const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-console.log(opponent);
+    const getRandomNumber = (min, max) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+    console.log(opponent);
     // const sameCompanyOpponents = wrestlers.filter((wrestler) => !wrestler.isFeuding && wrestler.company === player.company);
     // const opponent = sameCompanyOpponents[Math.floor(Math.random() * sameCompanyOpponents.length)];
-  
+
     if (!opponent) {
-      console.log('No available opponents for feud');
-      return ; 
+      console.log("No available opponents for feud");
+      return;
     }
-  const format=['Dominant', 'Underdog',][getRandomNumber(0, 1)]
-  const aim=['Get Over', 'Put Over',][getRandomNumber(0, 1)]
-  const storyline=[
-    {title:'Trial of Redemption',description:'A wrestler must choose between loyalty to their friends or their career.',role:['Bad Ass','Mysterious','Egomaniac','Business Minded','Political Schemer','Inspiring','Lone Wolf','Protege','Prodigy','Authority','Lover Boy','Veteran','Heroic','Unstable'][getRandomNumber(0, 13)]},
-    {title:'Social and Cultural Commentary',description:' Use wrestling to address real-world issues and societal themes.',role:['Egomaniac','Business Minded','Political Schemer','Inspiring','Authority','Veteran','Heroic','Unstable'][getRandomNumber(0, 7)]},
-    {title:'Sacrifice for a Cause',description:'Follow a wrestler\'s selfless journey, sacrificing personal gain for a greater cause..',role:['Political Schemer','Inspiring','Lone Wolf','Protege','Prodigy','Authority','Heroic','Unstable'][getRandomNumber(0, 7)]},
-    {title:'Feud over Leadership',description:'Power struggles to determine the leader.',role:['Bad Ass','Mysterious','Egomaniac','Business Minded','Political Schemer','Inspiring','Authority','Lover Boy','Veteran','Heroic','Unstable'][getRandomNumber(0, 10)]},
-{title:'Feud Over Authority',description:'Centered on wrestlers challenging the authority figures in the promotion.',role:['Bad Ass','Mysterious','Business Minded','Political Schemer','Inspiring','Lone Wolf','Prodigy','Authority','Heroic'][getRandomNumber(0, 8)]},
-{title:'Conquering a Personal Demon',description:' a wrestler\'s struggle to overcome inner demons or fears..',role:['Inspiring','Lone Wolf','Protege','Prodigy','Heroic','Unstable'][getRandomNumber(0, 14)]},
-{title:'Mystery Whodunit',description:'A storyline with a mystery component, where the audience must guess the culprit.',role:['Bad Ass','Mysterious','Egomaniac','Business Minded','Political Schemer','Lone Wolf','Protege','Prodigy','Authority','Lover Boy',][getRandomNumber(0, 14)]},
-][getRandomNumber(0, 6)];
+    const format = ["Dominant", "Underdog"][getRandomNumber(0, 1)];
+    const aim = ["Get Over", "Put Over"][getRandomNumber(0, 1)];
+    const storyline = [
+      {
+        title: "Trial of Redemption",
+        description:
+          "A wrestler must choose between loyalty to their friends or their career.",
+        role: [
+          "Bad Ass",
+          "Mysterious",
+          "Egomaniac",
+          "Business Minded",
+          "Political Schemer",
+          "Inspiring",
+          "Lone Wolf",
+          "Protege",
+          "Prodigy",
+          "Authority",
+          "Lover Boy",
+          "Veteran",
+          "Heroic",
+          "Unstable",
+        ][getRandomNumber(0, 13)],
+      },
+      {
+        title: "Social and Cultural Commentary",
+        description:
+          " Use wrestling to address real-world issues and societal themes.",
+        role: [
+          "Egomaniac",
+          "Business Minded",
+          "Political Schemer",
+          "Inspiring",
+          "Authority",
+          "Veteran",
+          "Heroic",
+          "Unstable",
+        ][getRandomNumber(0, 7)],
+      },
+      {
+        title: "Sacrifice for a Cause",
+        description:
+          "Follow a wrestler's selfless journey, sacrificing personal gain for a greater cause..",
+        role: [
+          "Political Schemer",
+          "Inspiring",
+          "Lone Wolf",
+          "Protege",
+          "Prodigy",
+          "Authority",
+          "Heroic",
+          "Unstable",
+        ][getRandomNumber(0, 7)],
+      },
+      {
+        title: "Feud over Leadership",
+        description: "Power struggles to determine the leader.",
+        role: [
+          "Bad Ass",
+          "Mysterious",
+          "Egomaniac",
+          "Business Minded",
+          "Political Schemer",
+          "Inspiring",
+          "Authority",
+          "Lover Boy",
+          "Veteran",
+          "Heroic",
+          "Unstable",
+        ][getRandomNumber(0, 10)],
+      },
+      {
+        title: "Feud Over Authority",
+        description:
+          "Centered on wrestlers challenging the authority figures in the promotion.",
+        role: [
+          "Bad Ass",
+          "Mysterious",
+          "Business Minded",
+          "Political Schemer",
+          "Inspiring",
+          "Lone Wolf",
+          "Prodigy",
+          "Authority",
+          "Heroic",
+        ][getRandomNumber(0, 8)],
+      },
+      {
+        title: "Conquering a Personal Demon",
+        description:
+          " a wrestler's struggle to overcome inner demons or fears..",
+        role: [
+          "Inspiring",
+          "Lone Wolf",
+          "Protege",
+          "Prodigy",
+          "Heroic",
+          "Unstable",
+        ][getRandomNumber(0, 14)],
+      },
+      {
+        title: "Mystery Whodunit",
+        description:
+          "A storyline with a mystery component, where the audience must guess the culprit.",
+        role: [
+          "Bad Ass",
+          "Mysterious",
+          "Egomaniac",
+          "Business Minded",
+          "Political Schemer",
+          "Lone Wolf",
+          "Protege",
+          "Prodigy",
+          "Authority",
+          "Lover Boy",
+        ][getRandomNumber(0, 14)],
+      },
+    ][getRandomNumber(0, 6)];
     const length = 2; // Default length of the feud
     const opponentPopularity = opponent.popularity;
     const playerPopularity = player.popularity;
@@ -224,22 +337,22 @@ console.log(opponent);
     const multiplier = defaultMultiplier; // Default multiplier based on average popularity
     const intensity =
       multiplier < 20
-        ? 'stale'
+        ? "stale"
         : multiplier < 40
-        ? 'cold'
+        ? "cold"
         : multiplier < 50
-        ? 'tepid'
+        ? "tepid"
         : multiplier < 60
-        ? 'warm'
+        ? "warm"
         : multiplier < 70
-        ? 'hot'
+        ? "hot"
         : multiplier < 80
-        ? 'boiling'
+        ? "boiling"
         : multiplier < 90
-        ? 'mainstream'
-        : 'volcanic';
-  
-  const title=storyline.title
+        ? "mainstream"
+        : "volcanic";
+
+    const title = storyline.title;
     // Generate random values for the requirements
     const requirements = {
       alignment: opponent.alignment,
@@ -248,24 +361,39 @@ console.log(opponent);
       inTeam: false,
       inFaction: false,
       championshipFeud: opponent.isChampion || Math.random() < 0.2, // 20% chance if opponent is not champion
-      championshipName: opponent.isChampion ? opponent.championshipHeld : '',
-      role: 'wrestler',
-      gimmick: ['supernatural', 'monster', 'anti-establishment', 'superhero', 'showman'][getRandomNumber(0, 4)],
+      championshipName: opponent.isChampion ? opponent.championshipHeld : "",
+      role: "wrestler",
+      gimmick: [
+        "supernatural",
+        "monster",
+        "anti-establishment",
+        "superhero",
+        "showman",
+      ][getRandomNumber(0, 4)],
       gender: opponent.gender,
-      bodytype: ['muscular', 'athletic', 'fat', 'slim'][getRandomNumber(0, 3)],
-      inRingSkill: aim === 'Get Over' ? opponent.inRingSkill - getRandomNumber(5, 15) : opponent.inRingSkill + getRandomNumber(5, 15),
+      bodytype: ["muscular", "athletic", "fat", "slim"][getRandomNumber(0, 3)],
+      inRingSkill:
+        aim === "Get Over"
+          ? opponent.inRingSkill - getRandomNumber(5, 15)
+          : opponent.inRingSkill + getRandomNumber(5, 15),
       ringPsycholgy: opponent.ringPsycholgy,
-      popularity: aim === 'Put Over' ? opponent.popularity - getRandomNumber(5, 15) : opponent.popularity + getRandomNumber(5, 15),
-      age: aim === 'Get Over' ? opponent.age - getRandomNumber(5, 15) : opponent.age + getRandomNumber(5, 15),
+      popularity:
+        aim === "Put Over"
+          ? opponent.popularity - getRandomNumber(5, 15)
+          : opponent.popularity + getRandomNumber(5, 15),
+      age:
+        aim === "Get Over"
+          ? opponent.age - getRandomNumber(5, 15)
+          : opponent.age + getRandomNumber(5, 15),
     };
-  
+
     // Use opponent's company and contract
     const company = opponent.company;
     const contract = opponent.contract;
-  
+
     // Create the feud object
     const feudObject = {
-      id: feuds.length + 1, 
+      id: feuds.length + 1,
       name: `Feud with ${opponent.name}`,
       title,
       opponent: [opponent],
@@ -279,10 +407,10 @@ console.log(opponent);
       storyline,
       contract,
       isCurrentFeud: false,
-    tags: [],
-    ally:[], 
+      tags: [],
+      ally: [],
     };
-  
+
     // Mark the opponent as feuding
     // Create a copy of the opponent object and mark them as feuding
     const mirrorOpponent = { ...opponent, isFeuding: true };
@@ -291,16 +419,15 @@ console.log(opponent);
     const updatedWrestlers = wrestlers.map((wrestler) =>
       wrestler.id === opponent.id ? mirrorOpponent : wrestler
     );
-  console.log(opponent);
+    console.log(opponent);
     // Call setWrestlers with the updated array
-   
-   dispatch(setWrestlers(updatedWrestlers));
-   dispatch(addFeud(feudObject));
+
+    dispatch(setWrestlers(updatedWrestlers));
+    dispatch(addFeud(feudObject));
     return feudObject;
   };
-  
+
   // Add the new feud to the feuds array
- 
 
   // return newFeud;
   const updateCompanyBenchmarks = () => {
@@ -339,9 +466,9 @@ console.log(opponent);
     const updatedFeuds = feuds.map((feud) => {
       const { requirements, opponent, ally } = feud;
       console.log(opponent);
-     
+
       let multiplier = 1;
-console.log(feud);
+      console.log(feud);
       // Compare the player's stats with the feud's requirements and update the multiplier accordingly
       if (playerWrestler.alignment === requirements.alignment) {
         multiplier += 0.5;
@@ -391,17 +518,19 @@ console.log(feud);
     // Filter feuds to exclude feuds with no opponent or where the opponent's length is zero
     const filteredFeuds = feuds.filter((feud) => feud.opponent.length > 0);
 
-  // Choose a random feud from the filtered list
-  const randomFeudIndex = Math.floor(Math.random() * filteredFeuds.length);
-  const randomFeud = filteredFeuds[randomFeudIndex];
+    // Choose a random feud from the filtered list
+    const randomFeudIndex = Math.floor(Math.random() * filteredFeuds.length);
+    const randomFeud = filteredFeuds[randomFeudIndex];
 
-  const updatedFeuds = filteredFeuds.filter((feud, index) => index !== randomFeudIndex);
+    const updatedFeuds = filteredFeuds.filter(
+      (feud, index) => index !== randomFeudIndex
+    );
 
-  // Update the feuds array with the filtered array
-  dispatch(setFeud(updatedFeuds));
+    // Update the feuds array with the filtered array
+    dispatch(setFeud(updatedFeuds));
     // Check the alignment of the selected feud's opponent
     const { alignment } = randomFeud.opponent[0];
-const{ company}=randomFeud
+    const { company } = randomFeud;
 
     // Filter wrestlers array to get a random wrestler with the opposite alignment and not currently feuding
     const opposingAlignment = alignment === "face" ? "heel" : "face";
@@ -487,23 +616,26 @@ const{ company}=randomFeud
       heel: alignment === "heel" ? randomFeud.opponent : [randomWrestler],
       championshipFeud: randomFeud.championshipFeud,
       championship: randomFeud.championship || {},
-      company:company,
+      company: company,
       multiplier,
       intensity,
       length,
     };
 
-      // Update the isFeuding property for the wrestlers involved in the feud
-  const updatedWrestlers = user.savegame.wrestlers.map((wrestler) => {
-    if (newOtherFeud.face.some((w) => w.id === wrestler.id) || newOtherFeud.heel.some((w) => w.id === wrestler.id)) {
-      return {
-        ...wrestler,
-        isFeuding: true,
-      };
-    } else {
-      return wrestler;
-    }
-  });
+    // Update the isFeuding property for the wrestlers involved in the feud
+    const updatedWrestlers = user.savegame.wrestlers.map((wrestler) => {
+      if (
+        newOtherFeud.face.some((w) => w.id === wrestler.id) ||
+        newOtherFeud.heel.some((w) => w.id === wrestler.id)
+      ) {
+        return {
+          ...wrestler,
+          isFeuding: true,
+        };
+      } else {
+        return wrestler;
+      }
+    });
 
     dispatch(setWrestlers(updatedWrestlers));
 
@@ -513,50 +645,53 @@ const{ company}=randomFeud
   };
 
   const updateAndEliminateOtherFeuds = () => {
-    if (otherFeuds.length === 0 || (otherFeuds.length === 1 && otherFeuds[0].name === "")) {
+    if (
+      otherFeuds.length === 0 ||
+      (otherFeuds.length === 1 && otherFeuds[0].name === "")
+    ) {
       console.log(user.savegame.wrestlers);
       console.log("No otherFeuds yet");
       return;
     }
-  
+
     // Calculate the average popularity of the wrestlerObjects in the face and heel arrays
-  const calculateAveragePopularity = (feud) => {
-    let totalPopularity = 0;
-    let totalWrestlers = 0;
-  
-    if (feud.face && feud.face.length > 0) {
-      feud.face.forEach((wrestlerObject) => {
-        if (wrestlerObject.popularity) {
-          totalPopularity += wrestlerObject.popularity;
-          totalWrestlers++;
-        }
-      });
-    }
-  
-    if (feud.heel && feud.heel.length > 0) {
-      feud.heel.forEach((wrestlerObject) => {
-        if (wrestlerObject.popularity) {
-          totalPopularity += wrestlerObject.popularity;
-          totalWrestlers++;
-        }
-      });
-    }
-  
-    // Calculate the average popularity (ranging from 0 to 10)
-    return totalWrestlers > 0
-      ? Math.min(10, Math.ceil(totalPopularity / totalWrestlers))
-      : 0;
-  };
-  
+    const calculateAveragePopularity = (feud) => {
+      let totalPopularity = 0;
+      let totalWrestlers = 0;
+
+      if (feud.face && feud.face.length > 0) {
+        feud.face.forEach((wrestlerObject) => {
+          if (wrestlerObject.popularity) {
+            totalPopularity += wrestlerObject.popularity;
+            totalWrestlers++;
+          }
+        });
+      }
+
+      if (feud.heel && feud.heel.length > 0) {
+        feud.heel.forEach((wrestlerObject) => {
+          if (wrestlerObject.popularity) {
+            totalPopularity += wrestlerObject.popularity;
+            totalWrestlers++;
+          }
+        });
+      }
+
+      // Calculate the average popularity (ranging from 0 to 10)
+      return totalWrestlers > 0
+        ? Math.min(10, Math.ceil(totalPopularity / totalWrestlers))
+        : 0;
+    };
+
     console.log(otherFeuds);
     const updatedOtherFeuds = otherFeuds.map((feud) => {
       const updatedFeud = { ...feud };
       updatedFeud.length--;
-  
+
       // Calculate the average popularity for the updated feud
       const averagePopularity = calculateAveragePopularity(feud);
       updatedFeud.multiplier = 0.1 * averagePopularity;
-  
+
       // Update the intensity based on the average popularity
       if (averagePopularity > 9) {
         updatedFeud.intensity = "volcanic";
@@ -571,59 +706,68 @@ const{ company}=randomFeud
       } else {
         updatedFeud.intensity = "stale";
       }
-  
-    // Check if the length is greater than 0, if so, add the feud to the updatedOtherFeuds array
-  if (updatedFeud.length > 0) {
-    return updatedFeud;
-  } else {
-    // The feud's length has become zero or less, so it will be eliminated.
-    // Before eliminating, push the feud into the pastFeuds of the corresponding wrestlerObjects
-  
-    const updatedWrestlers = user.savegame.wrestlers.map((wrestler) => {
-      if (updatedFeud.face && updatedFeud.face.length > 0) {
-        if (updatedFeud.face.some((wrestlerObject) => wrestler.id === wrestlerObject.id)) {
-          // This wrestler is involved in the eliminated feud
-          // Update the wrestler's past feuds
-          return {
-            ...wrestler,
-            isFeuding: false,
-            pastFeuds: [...(wrestler.pastFeuds || []), { ...updatedFeud }],
-          };
-        }
+
+      // Check if the length is greater than 0, if so, add the feud to the updatedOtherFeuds array
+      if (updatedFeud.length > 0) {
+        return updatedFeud;
+      } else {
+        // The feud's length has become zero or less, so it will be eliminated.
+        // Before eliminating, push the feud into the pastFeuds of the corresponding wrestlerObjects
+
+        const updatedWrestlers = user.savegame.wrestlers.map((wrestler) => {
+          if (updatedFeud.face && updatedFeud.face.length > 0) {
+            if (
+              updatedFeud.face.some(
+                (wrestlerObject) => wrestler.id === wrestlerObject.id
+              )
+            ) {
+              // This wrestler is involved in the eliminated feud
+              // Update the wrestler's past feuds
+              return {
+                ...wrestler,
+                isFeuding: false,
+                pastFeuds: [...(wrestler.pastFeuds || []), { ...updatedFeud }],
+              };
+            }
+          }
+
+          if (updatedFeud.heel && updatedFeud.heel.length > 0) {
+            if (
+              updatedFeud.heel.some(
+                (wrestlerObject) => wrestler.id === wrestlerObject.id
+              )
+            ) {
+              // This wrestler is involved in the eliminated feud
+              // Update the wrestler's past feuds
+              return {
+                ...wrestler,
+                isFeuding: false,
+                pastFeuds: [...(wrestler.pastFeuds || []), { ...updatedFeud }],
+              };
+            }
+          }
+
+          return wrestler;
+        });
+
+        dispatch(setWrestlers(updatedWrestlers));
+
+        // The feud's length is now 0, so we don't need to include it in the updatedOtherFeuds array
+        return updatedFeud;
       }
-  
-      if (updatedFeud.heel && updatedFeud.heel.length > 0) {
-        if (updatedFeud.heel.some((wrestlerObject) => wrestler.id === wrestlerObject.id)) {
-          // This wrestler is involved in the eliminated feud
-          // Update the wrestler's past feuds
-          return {
-            ...wrestler,
-            isFeuding: false,
-            pastFeuds: [...(wrestler.pastFeuds || []), { ...updatedFeud }],
-          };
-        }
-      }
-  
-      return wrestler;
     });
-  
-    dispatch(setWrestlers(updatedWrestlers));
-  
-    // The feud's length is now 0, so we don't need to include it in the updatedOtherFeuds array
-    return updatedFeud;
-  }
-  
-  });
-  
-  // Remove feuds with length less than or equal to 0 from the updatedOtherFeuds array
-    const filteredOtherFeuds = updatedOtherFeuds.filter((feud) => feud.length > 0);
-  
+
+    // Remove feuds with length less than or equal to 0 from the updatedOtherFeuds array
+    const filteredOtherFeuds = updatedOtherFeuds.filter(
+      (feud) => feud.length > 0
+    );
+
     dispatch(setOtherFeuds(filteredOtherFeuds));
     console.log(updatedOtherFeuds);
     const updateWrestlersFeudingStatus = () => {
       // Create an array to store the IDs of wrestlers involved in any feud
       const feudingWrestlerIds = [];
-    
+
       // Add wrestlers from otherFeuds to the feudingWrestlerIds array
       otherFeuds.forEach((feud) => {
         if (feud.face && feud.face.length > 0) {
@@ -631,21 +775,21 @@ const{ company}=randomFeud
             feudingWrestlerIds.push(wrestler.id);
           });
         }
-    
+
         if (feud.heel && feud.heel.length > 0) {
           feud.heel.forEach((wrestler) => {
             feudingWrestlerIds.push(wrestler.id);
           });
         }
       });
-    
+
       // Add wrestlers from activeFeud to the feudingWrestlerIds array
       if (activeFeud.opponent && activeFeud.opponent.length > 0) {
         activeFeud.opponent.forEach((wrestler) => {
           feudingWrestlerIds.push(wrestler.id);
         });
       }
-    
+
       // Update the wrestlers array with the isFeuding property
       const updatedWrestlers = allWrestlers.map((wrestler) => {
         return {
@@ -653,10 +797,10 @@ const{ company}=randomFeud
           isFeuding: feudingWrestlerIds.includes(wrestler.id),
         };
       });
-    
-    console.log( updatedWrestlers)
+
+      console.log(updatedWrestlers);
     };
-    
+
     return updatedOtherFeuds;
   };
   const updateActiveFeudMultiplier = () => {
@@ -742,49 +886,38 @@ const{ company}=randomFeud
       decisionText2: "you followed an unauthodox path",
       text1: "help her",
       text2: "hinder them",
-      value1: serialize(function sayHello(actionTarget) {
-        console.log(actionTarget);
-        console.log("hello");
-      }),
-      value2: "bad 1",
-      label: "Help Wrestler",
-      value: {
-        actionText: "Gave target some tips for improvement",
-        actionFunction: (wrestlerId) => {
-          const selectedWrestler = wrestlers.find(
-            (wrestler) => wrestler.id === wrestlerId
-          );
-          if (selectedWrestler) {
-            const updatedName = `${selectedWrestler.name} Champion`;
-            const updatedRelationship = selectedWrestler.relationship + 13;
-
-            // Update the name and relationship in the selectedWrestler object
-            const updatedWrestlers = wrestlers.map((wrestler) => {
-              if (wrestler.id === wrestlerId) {
-                return {
-                  ...wrestler,
-                  name: updatedName,
-                  relationship: updatedRelationship,
-                };
-              }
-              return wrestler;
-            });
-
-            // Update the savegame with the modified wrestlers array
-            const updatedSavegame = {
-              ...savegame,
-              wrestlers: updatedWrestlers,
-            };
-
-            // Dispatch an action to update the state with the updated savegame
-            dispatch(setSavegame(updatedSavegame));
-
-            // Perform some action here using the updatedName
-            console.log(`Helping wrestler ${updatedName}...`);
-          }
-        },
+      value1: {
+        traits: ["menacing", "technical", "face", "athletic"],
+        stats: [
+          {
+            check: "experience",
+            value: "isLower",
+            increasePlayer: [["popularity",5], ["inRingSkill",1]],
+            decreasePlayer: [["ringPyschology",1], ["popularity",1]],
+            increaseTarget: [ ["relationship",1]],
+            decreaseTarget: [["popularity",1], ["inRingSkill",1]],
+          },
+        ],
       },
+
+      value2: {
+        traits: ["menacing", "technical", "face", "athletic"],
+        stats: [
+          {
+            check: "experience",
+            value: "isLower",
+            increasePlayer: [["popularity",5], ["inRingSkill",1]],
+            decreasePlayer: [["ringPyschology",1], ["popularity",1]],
+            increaseTarget: [ ["relationship",1]],
+            decreaseTarget: [["popularity",1], ["inRingSkill",1]],
+          },
+        ],
+      },
+      label: "Help Wrestler",
+      show: true,
+      actionText: "Gave target some tips for improvement",
     },
+
     {
       options: false,
       description: "you have a chance to do something",
@@ -792,83 +925,197 @@ const{ company}=randomFeud
       decisionText2: "you followed an alternate route",
       text1: "Scold",
       text2: "Motivate",
-      value1: serialize(function sayHello() {
-        console.log("hello");
-      }),
-      value2: "bad 1",
-      label: "Meet Wrestler",
-      value: {
-        actionText: "A serious meeting with target",
-        actionFunction: (wrestlerId) => {
-          const selectedWrestler = wrestlers.find(
-            (wrestler) => wrestler.id === wrestlerId
-          );
-          if (selectedWrestler) {
-            const updatedName = `${selectedWrestler.name} Champion`;
-            const updatedRelationship = selectedWrestler.relationship + 13;
-
-            // Update the name and relationship in the selectedWrestler object
-            const updatedWrestlers = wrestlers.map((wrestler) => {
-              if (wrestler.id === wrestlerId) {
-                return {
-                  ...wrestler,
-                  name: updatedName,
-                  relationship: updatedRelationship,
-                };
-              }
-              return wrestler;
-            });
-
-            // Update the savegame with the modified wrestlers array
-            const updatedSavegame = {
-              ...savegame,
-              wrestlers: updatedWrestlers,
-            };
-
-            // Dispatch an action to update the state with the updated savegame
-            dispatch(setSavegame(updatedSavegame));
-
-            // Perform some action here using the updatedName
-            console.log(`Helping wrestler ${updatedName}...`);
-          }
-        },
+      value1: {
+        traits: [
+          "menacing",
+          "comedic",
+          "highflyer",
+          "brawler",
+          "technical",
+          "face",
+          "heel",
+          "muscular",
+          "athletic",
+          "fat",
+          "slim",
+        ],
+        stats: [
+          {
+            check: "experience",
+            value: "isHigher",
+            increasePlayer: [["popularity",1], ["inRingSkill",1]],
+            decreasePlayer: [["ringPyschology",1], ["popularity",1]],
+            increaseTarget: [ ["relationship",1]],
+            decreaseTarget: [["popularity",1], ["inRingSkill",1]],
+          },
+        ],
       },
+      value2: {
+        check: [],
+        traits: [],
+        stats: [],
+      },
+      label: "Meet Wrestler",
+      show: true,
+      actionText: "Gave target some tips for improvement",
     },
-    // Add more actions based on your requirements
   ];
 
- const wrestlerButtons = wrestlers
-  .filter((wrestler) => {
-    // Filter by selected company
-    if (selectedCompany !== 'all') {
-      return wrestler.company === selectedCompany;
-    }
-    return true;
-  })
-  .filter((wrestler) => {
-    // Filter by selected charisma
-    if (selectedCharisma !== 'all') {
-      return wrestler.charisma === selectedCharisma;
-    }
-    return true;
-  })
-  .filter((wrestler) => {
-    // Filter by selected alignment
-    if (selectedAlignment !== 'all') {
-      return wrestler.alignment === selectedAlignment;
-    }
-    return true;
-  })
-  .map((wrestler) => (
-    <button
-      key={wrestler.id}
-      onClick={() => setSelectedWrestler(wrestler)}
-      disabled={selectedWrestler && selectedWrestler.id === wrestler.id}
-    >
-      {wrestler.name}
-    </button>
-  ));
+  const makeDecision = (action, targetWrestlersArray) => {
+    const playerMirror = { ...player };
+    console.log(targetWrestlersArray[0][0]);
+    const targetWrestler ={ ...targetWrestlersArray[0][0]}
+    
+    const { value1 } = action;
+    if (action.options === false) {
+      // Extract the data from value1
+      const { traits, stats } = value1;
 
+      // Helper function to handle trait updates
+      const updateTrait = (newTrait, trait) => {
+        // Ensure that the provided traitName is a valid property of playerMirror
+        if (trait in playerMirror) {
+          playerMirror[trait] = newTrait;
+          console.log(`Player's ${trait} updated to: ${newTrait}`);
+        } else {
+          console.log(`Invalid trait: ${trait}`);
+        }
+      };
+
+      console.log(value1);
+
+      // Handle traits
+      traits.forEach((trait) => {
+        switch (trait) {
+          case "menacing":
+          case "comedic":
+            updateTrait(trait, "charisma");
+            break;
+          case "highflyer":
+          case "brawler":
+          case "technical":
+            updateTrait(trait, "style");
+            break;
+          case "face":
+          case "heel":
+            updateTrait(trait, "alignment");
+            break;
+          case "muscular":
+          case "athletic":
+          case "fat":
+          case "slim":
+            updateTrait(trait, "bodytype");
+            break;
+          default:
+            break;
+        }
+      });
+
+
+     stats.forEach((stat) => {
+        const {
+          check,
+          value,
+          increasePlayer,
+          decreasePlayer,
+          increaseTarget,
+          decreaseTarget,
+        } = stat;
+        const playerValue = playerMirror[check];
+        const targetValue = targetWrestler[check];
+
+        console.log(`Checking ${check} value...`);
+        console.log(`Player's ${check}: ${playerValue}`);
+        console.log(`Target Wrestler's ${check}: ${targetValue}`);
+
+        if (
+          (value === "isLower" && playerValue < targetValue) ||
+          (value === "isHigher" && playerValue > targetValue)
+        ) {
+          console.log(`Condition met for ${value}...`);
+          console.log("Performing actions...");
+
+          // Perform actions based on the instructions provided
+          increasePlayer.forEach(([property, amount]) => {
+            console.log(increasePlayer);
+            playerMirror[property] = (playerMirror[property] || 0) + amount;
+            console.log(
+              `Player's ${property} increased by ${amount} to: ${playerMirror[property]}`
+            );
+          });
+  
+          decreasePlayer.forEach(([property, amount]) => {
+            playerMirror[property] = (playerMirror[property] || 0) - amount;
+            console.log(
+              `Player's ${property} decreased by ${amount} to: ${playerMirror[property]}`
+            );
+          });
+  
+          increaseTarget.forEach(([property, amount]) => {
+            targetWrestler[property] = (targetWrestler[property] || 0) + amount;
+            console.log(
+              `Target Wrestler's ${property} increased by ${amount} to: ${targetWrestler[property]}`
+            );
+          });
+  
+          decreaseTarget.forEach(([property, amount]) => {
+            targetWrestler[property] = (targetWrestler[property] || 0) - amount;
+            console.log(
+              `Target Wrestler's ${property} decreased by ${amount} to: ${targetWrestler[property]}`
+            );
+          });
+        } else {
+          console.log(
+            `Condition not met for ${value}... No actions performed.`
+          );
+        }
+      });
+
+
+      const updatedWrestlers = wrestlers.map((wrestler) =>
+      wrestler.id === targetWrestler.id ? targetWrestler : wrestler
+    );
+      dispatch(setWrestlers(updatedWrestlers))
+     dispatch(setUser(playerMirror)); 
+    }
+  };
+
+
+
+
+  
+
+  const wrestlerButtons = wrestlers
+    .filter((wrestler) => {
+      // Filter by selected company
+      if (selectedCompany !== "all") {
+        return wrestler.company === selectedCompany;
+      }
+      return true;
+    })
+    .filter((wrestler) => {
+      // Filter by selected charisma
+      if (selectedCharisma !== "all") {
+        return wrestler.charisma === selectedCharisma;
+      }
+      return true;
+    })
+    .filter((wrestler) => {
+      // Filter by selected alignment
+      if (selectedAlignment !== "all") {
+        return wrestler.alignment === selectedAlignment;
+      }
+      return true;
+    })
+    .map((wrestler) => (
+      <button
+        key={wrestler.id}
+        onClick={() => setSelectedWrestler(wrestler)}
+        disabled={selectedWrestler && selectedWrestler.id === wrestler.id}
+      >
+        {wrestler.name}
+      </button>
+    ));
 
   const handleActionSelection = (action) => {
     setSelectedAction(action);
@@ -882,36 +1129,16 @@ const{ company}=randomFeud
   const renderActionButtons = () => {
     if (!selectedWrestler) return null;
 
-    const wrestlerPopularity = selectedWrestler.popularity;
-    const wrestlerCharisma = selectedWrestler.charisma;
-    const playerPopularity = playerWrestler.popularity;
-    const playerCharisma = playerWrestler.charisma;
-
-    const actionButtons = [];
-
-    if (wrestlerPopularity < 5) {
-      actionButtons.push(
+    const actionButtons = actions
+      .filter((action) => action.show) // Filter actions based on the 'show' property
+      .map((action) => (
         <button
-          key={actions[0].label}
-          onClick={() => handleActionSelection(actions[0])}
+          key={action.label}
+          onClick={() => handleActionSelection(action, [selectedWrestler])}
         >
-          {actions[0].label}
+          {action.label}
         </button>
-      );
-    }
-
-    if (wrestlerPopularity >= 5) {
-      actionButtons.push(
-        <button
-          key={actions[1].label}
-          onClick={() => handleActionSelection(actions[1])}
-        >
-          {actions[1].label}
-        </button>
-      );
-    }
-
-    // Add more conditions and buttons as needed
+      ));
 
     return (
       <div>
@@ -975,24 +1202,22 @@ const{ company}=randomFeud
       const data = await response.json();
       // Show the Snackbar when the API call succeeds
       setErrorMessage("");
-    setSuccessMessage("Data replaced successfully!");
-    setSnackbarOpen(true);
+      setSuccessMessage("Data replaced successfully!");
+      setSnackbarOpen(true);
       console.log(data);
     } catch (error) {
       setSuccessMessage("");
       setErrorMessage("Failed to replace data!");
       setSnackbarOpen(true);
       console.error("Error replacing user:", error);
-       // Show the Snackbar when the API call fails
-    
+      // Show the Snackbar when the API call fails
     }
   };
 
   const triggerActionFunctions = async () => {
     const handleNextWeek = () => {
-
       function increaseBookerOpinion() {
-       console.log(companies);
+        console.log(companies);
         const companyIndex = companies.findIndex(
           (company) => company.id === playerWrestler.currentCompany.id
         );
@@ -1000,30 +1225,28 @@ const{ company}=randomFeud
         if (companyIndex !== -1) {
           // Create a copy of playerWrestler.currentCompany to avoid modifying the original object directly
           const updatedCurrentCompany = { ...playerWrestler.currentCompany };
-      
+
           // Increase the bookerOpinion by 0.1
           updatedCurrentCompany.bookerOpinion += 0.1;
-      
+
           // Update the companies array with the updatedCurrentCompany
           const updatedCompanies = [...companies];
           updatedCompanies[companyIndex] = updatedCurrentCompany;
-      
+
           // Now you can dispatch the updatedCompanies or update the state with it
           dispatch(setCompanies(updatedCompanies));
-           dispatch(setCurrentCompany(updatedCurrentCompany)); // If using Redux
+          dispatch(setCurrentCompany(updatedCurrentCompany)); // If using Redux
           // setCompanies(updatedCompanies); // If using React state
         }
       }
-      increaseBookerOpinion()
-      const playerCompanyFeuds = otherFeuds.filter((feud) => 
-      feud.company === playerCompany.name);
+      increaseBookerOpinion();
+      const playerCompanyFeuds = otherFeuds.filter(
+        (feud) => feud.company === playerCompany.name
+      );
       const numberOfCompanyFeuds = playerCompanyFeuds.length;
 
-      updateAndEliminateOtherFeuds()
-   
-    
+      updateAndEliminateOtherFeuds();
 
-  
       updateMultipliers();
       // Check if the feuds array has less than 3 feuds and create a new feud
 
@@ -1042,7 +1265,7 @@ const{ company}=randomFeud
       updateActiveFeudMultiplier();
       updateCompanyBenchmarks();
 
-      dispatch(setTimeToOpenSpot({ timeToOpenSpot:numberOfCompanyFeuds}));
+      dispatch(setTimeToOpenSpot({ timeToOpenSpot: numberOfCompanyFeuds }));
 
       // Check if there is a current potential feud
       if (playerWrestler.currentPotentialFeud.name) {
@@ -1098,51 +1321,53 @@ const{ company}=randomFeud
               } = playerCompany;
 
               const minimumPopularity = popularityBenchmark + 1;
-            const minimumInRingSkill = inRingBenchmark + 1;
-          const requiredCharisma = preferredCharisma;
-          
-          const requiredTrust=5;
+              const minimumInRingSkill = inRingBenchmark + 1;
+              const requiredCharisma = preferredCharisma;
 
+              const requiredTrust = 5;
 
-          // Calculate the playerWrestler's score based on how well they meet the criteria
-const playerPopularity = playerWrestler.popularity;
-const playerInRingSkill = playerWrestler.inRingSkill;
-const playerCharisma = playerWrestler.charisma;
-const playerTrust = playerWrestler.currentCompany.bookerOpinion;
+              // Calculate the playerWrestler's score based on how well they meet the criteria
+              const playerPopularity = playerWrestler.popularity;
+              const playerInRingSkill = playerWrestler.inRingSkill;
+              const playerCharisma = playerWrestler.charisma;
+              const playerTrust = playerWrestler.currentCompany.bookerOpinion;
 
-          let playerScore = 0;
+              let playerScore = 0;
 
-if (playerPopularity >= minimumPopularity) {
-  playerScore += 1;
-}
+              if (playerPopularity >= minimumPopularity) {
+                playerScore += 1;
+              }
 
-if (playerInRingSkill >= minimumInRingSkill) {
-  playerScore += 1;
-}
+              if (playerInRingSkill >= minimumInRingSkill) {
+                playerScore += 1;
+              }
 
-if (playerCharisma === requiredCharisma) {
-  playerScore += 1;
-}
+              if (playerCharisma === requiredCharisma) {
+                playerScore += 1;
+              }
 
-if (playerTrust >= requiredTrust) {
-  playerScore += 1;
-}
+              if (playerTrust >= requiredTrust) {
+                playerScore += 1;
+              }
 
-// Determine the currentFeud.length based on the player's score
-let currentFeudLength;
+              // Determine the currentFeud.length based on the player's score
+              let currentFeudLength;
 
-// Define a scale for feud length based on the player's score
-const scoreToFeudLength = {
-  0: 2, // If the player meets none of the criteria, the feud length is 0
-  1: 4, // If the player meets one criterion, the feud length is 1 (you can adjust these values based on your desired scale)
-  2: 6,
-  3: 8,
-  4: 10, // If the player meets all criteria, the feud length is 4 (maximum in this example)
-};
+              // Define a scale for feud length based on the player's score
+              const scoreToFeudLength = {
+                0: 2, // If the player meets none of the criteria, the feud length is 0
+                1: 4, // If the player meets one criterion, the feud length is 1 (you can adjust these values based on your desired scale)
+                2: 6,
+                3: 8,
+                4: 10, // If the player meets all criteria, the feud length is 4 (maximum in this example)
+              };
 
-currentFeudLength = scoreToFeudLength[playerScore];
-const playerCurrentPotentialFeud = { ...playerWrestler.currentPotentialFeud };
-playerCurrentPotentialFeud.length = playerCurrentPotentialFeud.length + currentFeudLength;
+              currentFeudLength = scoreToFeudLength[playerScore];
+              const playerCurrentPotentialFeud = {
+                ...playerWrestler.currentPotentialFeud,
+              };
+              playerCurrentPotentialFeud.length =
+                playerCurrentPotentialFeud.length + currentFeudLength;
 
               dispatch(setActiveFeud(playerCurrentPotentialFeud));
               dispatch(setCurrentPotentialFeud({}));
@@ -1171,7 +1396,7 @@ playerCurrentPotentialFeud.length = playerCurrentPotentialFeud.length + currentF
 
             setIsFeudActive(false);
           }
-          dispatch(setTimeToOpenSpot({ timeToOpenSpot:numberOfCompanyFeuds }));
+          dispatch(setTimeToOpenSpot({ timeToOpenSpot: numberOfCompanyFeuds }));
         }
       } else {
       }
@@ -1271,14 +1496,11 @@ playerCurrentPotentialFeud.length = playerCurrentPotentialFeud.length + currentF
 
         dispatch(setFeud(updatedFeuds));
         createFeud(randomWrestler);
-      
       }
 
-  
-
-if (timeToOpenSpot <= 0) {
-  dispatch(setTimeToOpenSpot({ timeToOpenSpot: numberOfCompanyFeuds }));
-}
+      if (timeToOpenSpot <= 0) {
+        dispatch(setTimeToOpenSpot({ timeToOpenSpot: numberOfCompanyFeuds }));
+      }
 
       const checkAndAddFeudsForCompany = (company, maxFeuds) => {
         const feudsForCompany = feuds.filter(
@@ -1328,8 +1550,6 @@ if (timeToOpenSpot <= 0) {
         // Check and add feuds for each company to have exactly 4 feuds
         checkAndAddFeudsForCompany("AEW", 4);
         checkAndAddFeudsForCompany("WWE", 4);
-
-      
       };
 
       const shuffleArray = (array) => {
@@ -1339,17 +1559,14 @@ if (timeToOpenSpot <= 0) {
         }
       };
       selectRandomWrestlers();
-    
-     
+
       const maxOtherFeud = 10 - otherFeuds.length;
 
       // Check if the feuds array has less than 3 feuds and create a new feud
       for (let i = 0; i < maxOtherFeud; i++) {
-        createOtherFeuds()
+        createOtherFeuds();
       }
-     };
-
-
+    };
 
     if (responseRecieved === true) {
       handleNextWeek();
@@ -1360,15 +1577,17 @@ if (timeToOpenSpot <= 0) {
         // Execute the action function for the first activity only if it is the first time the "Next Week" button is pressed
         if (remainingActivities.length === activities.length - 1) {
           const { action, selectedWrestler } = firstActivity;
-          if (action.value && action.value.actionFunction) {
-            action.value.actionFunction(selectedWrestler.id);
+          if ( action.options===false) {
+            console.log('HERE')
+            makeDecision(action,[[selectedWrestler]]);
           }
-    
+
           handleSendButton(action, selectedWrestler);
         } else {
           const { action, selectedWrestler } = firstActivity;
-          if (action.value && action.value.actionFunction) {
-            action.value.actionFunction(selectedWrestler.id);
+          console.log('HERE TWO')
+          if (action.options===false) {
+            makeDecision(action,[selectedWrestler]);
           }
 
           handleSendButton(action, selectedWrestler);
@@ -1400,21 +1619,18 @@ if (timeToOpenSpot <= 0) {
       }
       if (activities.length === 0) {
         dispatch(setResponseRecieved({ responseRecieved: true }));
-        if (activeFeud.hasOwnProperty('length')){
-           dispatch(setDecisionButtonClicked(false));
-          dispatch(setActiveTab('1'))
-          
+        if (activeFeud.hasOwnProperty("length")) {
+          dispatch(setDecisionButtonClicked(false));
+          dispatch(setActiveTab("1"));
         }
-        
+
         await replaceUser(user);
       } else {
-     
-        if(optionsPresent=== false){
-          console.log('its false');
+        if (optionsPresent === false) {
+          console.log("its false");
           dispatch(setResponseRecieved({ responseRecieved: true }));
-          
-           console.log(activeTab);
-        }else{
+
+        } else {
           dispatch(setResponseRecieved({ responseRecieved: false }));
         }
       }
@@ -1432,18 +1648,21 @@ if (timeToOpenSpot <= 0) {
         // Execute the action function for the first activity only if it is the first time the "Next Week" button is pressed
         if (remainingActivities.length === activities.length - 1) {
           const { action, selectedWrestler } = firstActivity;
-          if (action.value && action.value.actionFunction) {
-            action.value.actionFunction(selectedWrestler.id);
+          if ( action.options===false) {
+            console.log('HERE 3');
+            makeDecision(action,[[selectedWrestler]]);
           }
-              dispatch(setResponseRecieved({ responseRecieved: false }));
+          dispatch(setResponseRecieved({ responseRecieved: false }));
 
           handleSendButton(action, selectedWrestler);
         } else {
           const { action, selectedWrestler } = firstActivity;
-          if (action.value && action.value.actionFunction) {
-            action.value.actionFunction(selectedWrestler.id);
+          console.log('HERE 4');
+
+          if ( action.options===false) {
+            makeDecision(action,[selectedWrestler]);
           }
-      dispatch(setResponseRecieved({ responseRecieved: false }));
+          dispatch(setResponseRecieved({ responseRecieved: false }));
 
           handleSendButton(action, selectedWrestler);
         }
@@ -1457,9 +1676,9 @@ if (timeToOpenSpot <= 0) {
           // There are remaining activities
           dispatch(setShowNextActivityButton({ showNextActivityButton: true }));
         } else {
-          dispatch(setShowNextActivityButton({ showNextActivityButton: false }) );
-  
-          
+          dispatch(
+            setShowNextActivityButton({ showNextActivityButton: false })
+          );
         }
 
         // Hide the "Next Week" button if there are remaining activities
@@ -1470,14 +1689,13 @@ if (timeToOpenSpot <= 0) {
       } else {
         // No more activities, hide the "Next Activity" button and show the "Next Week" button
         dispatch(setShowNextActivityButton({ showNextActivityButton: false }));
-        if (activeFeud.hasOwnProperty('length')){
+        if (activeFeud.hasOwnProperty("length")) {
           dispatch(setDecisionButtonClicked(false));
-          dispatch(setActiveTab('1'))
+          dispatch(setActiveTab("1"));
         }
-        
+
         dispatch(setShowNextWeekButton({ showNextWeekButton: true }));
       }
-
     } else {
       console.log("COMPLETE ACTION FIRST");
     }
@@ -1495,78 +1713,77 @@ if (timeToOpenSpot <= 0) {
       <GameLogic />
       <Testing />
       <div>
-      <h1>ComponentA</h1>
-      <UserResponseButton initialButtonText="Click Me" onResponse={'handleSendText'} />
-    {showDescription && (
-            <>
-              <p>Result Text: {actionDescription}</p>
-              <p>Result value: {userResponse}</p>
-             
-            </>
-            
-          )}
-          {showDecisionText && (
-            <>
-             <p>Decision: {selectedDecision}</p>
-        
-            </>
-          )}
-       
-    </div>
+        <h1>ComponentA</h1>
+        <UserResponseButton
+          initialButtonText="Click Me"
+          onResponse={"handleSendText"}
+        />
+        {showDescription && (
+          <>
+            <p>Result Text: {actionDescription}</p>
+            <p>Result value: {userResponse}</p>
+          </>
+        )}
+        {showDecisionText && (
+          <>
+            <p>Decision: {selectedDecision}</p>
+          </>
+        )}
+      </div>
 
-  
-    
       <div>
-  <h2>Wrestler Selection:</h2>
-  {/* Filter buttons for Company */}
-  <label>Filter by Company:</label>
-  <select
-    value={selectedCompany}
-    onChange={(e) => setSelectedCompany(e.target.value)}
-  >
-    <option value="all">All Companies</option>
-    {uniqueCompanies.map((company) => (
-      <option key={company} value={company}>
-        {company}
-      </option>
-    ))}
-  </select>
+        <h2>Wrestler Selection:</h2>
+        {/* Filter buttons for Company */}
+        <label>Filter by Company:</label>
+        <select
+          value={selectedCompany}
+          onChange={(e) => setSelectedCompany(e.target.value)}
+        >
+          <option value={"all"}>All Companies</option>
+          {uniqueCompanies.map((company) => (
+            <option key={company} value={company}>
+              {company}
+            </option>
+          ))}
+        </select>
 
-  {/* Filter buttons for Charisma */}
-  <label>Filter by Charisma:</label>
-  <select
-    value={selectedCharisma}
-    onChange={(e) => setSelectedCharisma(e.target.value)}
-  >
-    <option value="all">All Charisma</option>
-    {uniqueCharisma.map((charisma) => (
-      <option key={charisma} value={charisma}>
-        {charisma}
-      </option>
-    ))}
-  </select>
+        {/* Filter buttons for Charisma */}
+        <label>Filter by Charisma:</label>
+        <select
+          value={selectedCharisma}
+          onChange={(e) => setSelectedCharisma(e.target.value)}
+        >
+          <option value="all">All Charisma</option>
+          {uniqueCharisma.map((charisma) => (
+            <option key={charisma} value={charisma}>
+              {charisma}
+            </option>
+          ))}
+        </select>
 
-  {/* Filter buttons for Alignment */}
-  <label>Filter by Alignment:</label>
-  <select
-    value={selectedAlignment}
-    onChange={(e) => setSelectedAlignment(e.target.value)}
-  >
-    <option value="all">All Alignments</option>
-    {uniqueAlignments.map((alignment) => (
-      <option key={alignment} value={alignment}>
-        {alignment}
-      </option>
-    ))}
-  </select>
+        {/* Filter buttons for Alignment */}
+        <label>Filter by Alignment:</label>
+        <select
+          value={selectedAlignment}
+          onChange={(e) => setSelectedAlignment(e.target.value)}
+        >
+          <option value="all">All Alignments</option>
+          {uniqueAlignments.map((alignment) => (
+            <option key={alignment} value={alignment}>
+              {alignment}
+            </option>
+          ))}
+        </select>
 
-  {wrestlerButtons}
-</div>
+        {wrestlerButtons}
+      </div>
 
       <br />
       {renderActionButtons()}
       {selectedWrestler && selectedAction && !isConfirmed && (
-        <button onClick={() => addToActivities(selectedAction, selectedWrestler)}>
+        <button
+          onClick={() => addToActivities(selectedAction, selectedWrestler)}
+        >
           Confirm
         </button>
       )}
@@ -1574,7 +1791,7 @@ if (timeToOpenSpot <= 0) {
       <ul>
         {activities.map((activity, index) => (
           <li key={index}>
-            {activity.action.value.actionText.replace(
+            {activity.action.actionText.replace(
               /target/gi,
               activity.selectedWrestler.name
             )}
@@ -1584,30 +1801,30 @@ if (timeToOpenSpot <= 0) {
       </ul>
 
       <div>
-      <Snackbar
-       anchorOrigin={ {vertical:'top',horizontal: 'center'} }
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={snackbarOpen}
+          autoHideDuration={4000}
           onClose={handleSnackbarClose}
-          severity={errorMessage ? "error" : "success"}
         >
-          {errorMessage || successMessage}
-        </MuiAlert>
-      </Snackbar>
-      {/* Your content here */}
-    </div>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleSnackbarClose}
+            severity={errorMessage ? "error" : "success"}
+          >
+            {errorMessage || successMessage}
+          </MuiAlert>
+        </Snackbar>
+        {/* Your content here */}
+      </div>
 
       {renderNextButton()}
       {showNextWeekButton && (
         <button onClick={triggerActionFunctions}>Next Week</button>
       )}
 
-     <OverallTab />
+      <OverallTab />
       {isNonMobileScreens && (
         <Box flexBasis="26%">
           <Box m="2rem 0" />

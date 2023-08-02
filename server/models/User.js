@@ -251,6 +251,23 @@ const UserSchema = new mongoose.Schema(
     type:String,
     default:'he'
    },
+   experience:{
+    type:Number,
+    default:1
+   },
+   bodytype:{
+    type:String,
+    default:'fat'
+   },
+   style:{
+    type:String,
+    default:'technical'
+   },
+   ringPsychology:{
+    type:Number,
+    default:25
+   },
+   
 
     location: String,
 
