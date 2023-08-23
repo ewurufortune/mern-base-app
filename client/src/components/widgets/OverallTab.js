@@ -1,10 +1,13 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import { PlayerStats } from "components/playerStats/PlayerStats";
 import TabComponent from './tabsComponent/TabsComponent';
-import Game from './NewApproach';
-import { setActiveTab } from 'state';
+import { setStats } from 'state';
 import { useSelector, useDispatch } from "react-redux";
+import UserActions from './UserActions';
+import Editor from './Editor/Editor';
+import MainLogs from './mainLogs/MainLogs';
+import RandomEvents from './randomEvents/RandomEvents';
+import EventGenerator from './randomEvents/EventGenerator';
 
 const onChange = (key) => {
 };
@@ -14,22 +17,25 @@ const playerInformation = [
   {
     key: '1',
     label: `Tab 1`,
-    children: <Game />,
+    children: <UserActions />,
   },
   {
     key: '2',
     label: `Player`,
-    children: <TabComponent />,
+    children: <MainLogs />,
   },
   {
     key: '3',
-    label: `Schedule Activities`,
-    children: `schedule activities with available wrestler`,
+    label: `Editor`,
+    children: <Editor />,
   },
   {
     key: '4',
-    label: `Other Companies`,
-    children: `collapse of current wrestler table & popularity, along with their active feuds & champions, also add a joinCompany offer`,
+    label: `Random Events`,
+    children: <>
+<RandomEvents />
+<EventGenerator />
+    </>,
   },
   {
     key: '5',
@@ -43,7 +49,8 @@ export default function OverallTab() {
   const activeTab = useSelector((state) => state.activeTab);
   
   return (
-    <Tabs defaultActiveKey="1" items={playerInformation} onChange={onChange} activeKey={activeTab} /> )
+    <Tabs defaultActiveKey="1" items={playerInformation} onChange={onChange} activeKey={activeTab} />
+     )
 }
 
 

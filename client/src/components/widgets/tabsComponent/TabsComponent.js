@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import { PlayerStats } from "components/playerStats/PlayerStats";
 
 
 const onChange = (key) => {
@@ -10,7 +9,7 @@ const playerInformation = [
   {
     key: '1',
     label: `Player Stats (include friends&enemies)`,
-    children: <PlayerStats />,
+    children: 'Nothing some',
   },
   {
     key: '2',

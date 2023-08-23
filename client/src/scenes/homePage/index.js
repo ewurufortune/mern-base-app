@@ -1,10 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-
-
-import UserActions from "components/widgets/UserActions";
-
+import OverallTab from "components/widgets/OverallTab";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -19,8 +16,7 @@ const clientId=user._id
 
   return (
     <Box>
-      <UserActions clientId={clientId} />
-
+<OverallTab />
       {isNonMobileScreens && (
         <Box flexBasis="26%">
           <Box m="2rem 0" />

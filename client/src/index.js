@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import GameLogic from "components/widgets/GameLogic";
 import App from "./App";
 import authReducer from "./state";
 import { configureStore } from "@reduxjs/toolkit";
@@ -33,9 +32,9 @@ const store = configureStore({
     }),
 });
 const persistor = persistStore(store);
-// persistor.purge().then(() => {
-//   console.log('Persisted state has been cleared.');
-// });
+persistor.purge().then(() => {
+  console.log('Persisted state has been cleared.');
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   
