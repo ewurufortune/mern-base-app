@@ -8,6 +8,8 @@ import Editor from './Editor/Editor';
 import MainLogs from './mainLogs/MainLogs';
 import RandomEvents from './randomEvents/RandomEvents';
 import EventGenerator from './randomEvents/EventGenerator';
+import TriggerRandomEvent from './randomEvents/TriggerRandomEvent';
+import EventNotifications from './randomEvents/EventNotification';
 
 const onChange = (key) => {
 };
@@ -17,7 +19,11 @@ const playerInformation = [
   {
     key: '1',
     label: `Tab 1`,
-    children: <UserActions />,
+    children: <>
+          <TriggerRandomEvent />
+
+    <UserActions />
+    </>,
   },
   {
     key: '2',
@@ -39,8 +45,8 @@ const playerInformation = [
   },
   {
     key: '5',
-    label: `Awards & Rankings`,
-    children: `selectable list of award winners by year, `,
+    label: `Events`,
+    children: <EventNotifications />,
   },
 ];
 

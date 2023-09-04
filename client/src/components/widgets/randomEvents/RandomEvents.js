@@ -112,4 +112,3 @@ export default function RandomEvents() {
 }
 
 
-// Check:stat range, date,inactivity, item posesion ,category.  consequences: increase/decrease Stat, active/inactive, item Change,category change

@@ -8,9 +8,11 @@ import {
   categories,
   items,
   stats,
+  randomEvents,
   relationships,
   date,
   arcs,
+  statPerception,
 }  from "../data/arrays.js";
 const { Schema } = mongoose;
 const UserSchema = new mongoose.Schema(
@@ -71,6 +73,10 @@ const UserSchema = new mongoose.Schema(
       type: Array,
       default:relationships,
     },
+    statPerception: {
+      type: Array,
+      default:statPerception,
+    },
     arcs: {
       type: Array,
       default:arcs,
@@ -78,6 +84,10 @@ const UserSchema = new mongoose.Schema(
     date: {
       type: Date,
       default:date,
+    },
+    randomEvents: {
+      type: Array,
+      default:randomEvents,
     },
     location: String,
 

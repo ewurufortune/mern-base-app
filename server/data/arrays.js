@@ -104,12 +104,7 @@ const mainLogs = [];
   ];
 
   const randomEvents=[
-    {
-      id:1,
-      name:'Got over with the fans',
-      affectedStat:[1,2],
-      basedOnStat:[1,2],
-    }
+ 
   ]
 
   const relationships = [
@@ -159,7 +154,7 @@ const mainLogs = [];
       numberOfParticipants: 2,
     },
   ];
-
+const statPerception=[]
   const date = new Date(2023, 6, 10, 15, 30);
 
   export {
@@ -173,6 +168,7 @@ const mainLogs = [];
     randomEvents,
     relationships,
     arcs,
+    statPerception
   };
 
   

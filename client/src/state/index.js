@@ -61,8 +61,9 @@ export const authSlice = createSlice({
           ...(action.payload.stats && { stats: action.payload.stats }),
           ...(action.payload.date && { date: action.payload.date }),
           ...(action.payload.relationships && { relationships: action.payload.relationships }),
-          ...(action.payload.randomEvents && { relationships: action.payload.randomEvents }),
+          ...(action.payload.randomEvents && { randomEvents: action.payload.randomEvents }),
           ...(action.payload.arcs && { arcs: action.payload.arcs }),
+          ...(action.payload.statPerception && { statPerception: action.payload.statPerception }),
           // ...(action.payload.wrestlers && { savegame: { ...state.user.savegame, wrestlers: action.payload.wrestlers } })
         };
       } else {
