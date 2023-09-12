@@ -7,6 +7,7 @@ import { Collapse } from 'antd';
 import Arcs from './Arcs'
 import ItemsEditor from './Items';
 import CategoriesEditor from './CategoriesEditor';
+import StatsPerceptionEditor from './StatPerceptionEditor';
 const items=[
     {
         key:1,
@@ -19,6 +20,12 @@ const items=[
         children:      <StatsEditor />
 
     },
+    {
+      key:6,
+      label:'Stats Perception',
+      children:      <StatsPerceptionEditor />
+  
+  },
     {
         key:3,
         label:'Arcs Edit',
@@ -37,6 +44,7 @@ const items=[
     children:      <CategoriesEditor />
 
 },
+
 ]
 export default function Editor() {
   return (

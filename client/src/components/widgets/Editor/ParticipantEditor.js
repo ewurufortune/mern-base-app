@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Form, Input, Popconfirm, Table, Switch } from 'antd';
-import { setStats } from 'state';
+import { Button, Form, Input, Popconfirm, Table, Switch } from "antd";
+import { setStats } from "state";
+import { v4 as uuidv4 } from "uuid";
 
 const EditableContext = React.createContext(null);
 
@@ -47,7 +48,7 @@ const EditableCell = ({
         ...values,
       });
     } catch (errInfo) {
-      console.log('Save failed:', errInfo);
+      console.log("Save failed:", errInfo);
     }
   };
   let childNode = children;
@@ -79,26 +80,27 @@ const EditableCell = ({
       </div>
     );
   }
-  
+
   return <td {...restProps}>{childNode}</td>;
 };
 
-
 const ParticipantEditor = () => {
-    const user = useSelector((state) => state.user);
-    const stats = useSelector((state) => state.user.stats);
-    const participants = useSelector((state) => state.user.participants);
-    const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const stats = useSelector((state) => state.user.stats);
+  const participants = useSelector((state) => state.user.participants);
+  const dispatch = useDispatch();
 
-    const [dataSource, setDataSource] = useState(participants);
+  const [dataSource, setDataSource] = useState(participants);
   const [count, setCount] = useState(participants.length);
 
-  const uniqueStatNamesFromStats = Array.from(new Set(stats.map((stat) => stat.statName)));
-const uniqueStatNames=[...uniqueStatNamesFromStats,'relevance']
+  const uniqueStatNamesFromStats = Array.from(
+    new Set(stats.map((stat) => stat.statName))
+  );
+  const uniqueStatNames = [...uniqueStatNamesFromStats, "relevance"];
 
   const handleDelete = (id) => {
-    const newData = dataSource.filter(item => item.id !== id);
-     dispatch(setStats({ participants: newData }));
+    const newData = dataSource.filter((item) => item.id !== id);
+    dispatch(setStats({ participants: newData }));
     setDataSource(newData);
   };
 
@@ -112,82 +114,85 @@ const uniqueStatNames=[...uniqueStatNamesFromStats,'relevance']
       }
       return item;
     });
-  
+
     setDataSource(updatedData);
   };
 
   const defaultColumns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      width: '30%',
+      title: "Name",
+      dataIndex: "name",
+      width: "30%",
       editable: true,
     },
     {
-        title: 'IsActive',
-        dataIndex: 'isActive',
-        render: (_, record) => (
-          <Switch
-            checked={record.isActive}
-            onChange={(checked) => handleToggle(record.id, checked)}
-          />
-        ),
+      title: "IsActive",
+      dataIndex: "isActive",
+      render: (_, record) => (
+        <Switch
+          checked={record.isActive}
+          onChange={(checked) => handleToggle(record.id, checked)}
+        />
+      ),
+    },
+    ...uniqueStatNames.map((statName) => ({
+      title: statName.charAt(0).toUpperCase() + statName.slice(1),
+      dataIndex: statName,
+      sorter: (a, b) => {
+        const statA = a.stats.find((s) => s.hasOwnProperty(statName));
+        const statB = b.stats.find((s) => s.hasOwnProperty(statName));
+
+        if (statA && statB) {
+          return statA[statName] - statB[statName]; // You can customize the sorting logic here
+        } else if (statA) {
+          return -1; // Put rows with statA first
+        } else if (statB) {
+          return 1; // Put rows with statB first
+        }
+
+        return 0; // No stat found in both rows
       },
-      ...uniqueStatNames.map((statName) => ({
-        title: statName.charAt(0).toUpperCase() + statName.slice(1),
-        dataIndex: statName,
-        sorter: (a, b) => {
-          const statA = a.stats.find((s) => s.hasOwnProperty(statName));
-          const statB = b.stats.find((s) => s.hasOwnProperty(statName));
-          
-          if (statA && statB) {
-            return statA[statName] - statB[statName]; // You can customize the sorting logic here
-          } else if (statA) {
-            return -1; // Put rows with statA first
-          } else if (statB) {
-            return 1; // Put rows with statB first
-          }
-          
-          return 0; // No stat found in both rows
-        },
-        filters: [
-          { text: "0", value: 0 },
-          // Add more filter options if needed
-        ],
-        onFilter: (value, record) =>
-          record.stats.some((stat) => stat[statName] === parseInt(value)),
-        render: (_, record) => {
-          const stat = record.stats.find((s) => s.hasOwnProperty(statName));
-          return stat ? stat[statName] : ""; // Display the stat value
-        },
-      })),
+      filters: [
+        { text: "0", value: 0 },
+        // Add more filter options if needed
+      ],
+      onFilter: (value, record) =>
+        record.stats.some((stat) => stat[statName] === parseInt(value)),
+      render: (_, record) => {
+        const stat = record.stats.find((s) => s.hasOwnProperty(statName));
+        return stat ? stat[statName] : ""; // Display the stat value
+      },
+    })),
 
     {
-      title: 'Operation',
-      dataIndex: 'operation',
+      title: "Operation",
+      dataIndex: "operation",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => handleDelete(record.id)}
+          >
             <a>Delete</a>
           </Popconfirm>
         ) : null,
     },
   ];
 
- const handleAdd = () => {
-  const newData = {
-    id: count + 1,
-    name: `Agent ${count + 1}`,
-    isActive: true, // Set the initial value to true
-    bio: '',
-    stats: [{ relevance: 0 }],
+  const handleAdd = () => {
+    const newData = {
+      id: uuidv4(),
+      name: `Agent ${count + 1}`,
+      isActive: true, // Set the initial value to true
+      bio: "",
+      stats: [{ relevance: 0 }],
+    };
+    setDataSource([...dataSource, newData]);
+    setCount(count + 1);
   };
-  setDataSource([...dataSource, newData]);
-  setCount(count + 1);
-};
 
-const handleSave = (row) => {
-    const newData = dataSource.map(item => {
+  const handleSave = (row) => {
+    const newData = dataSource.map((item) => {
       if (item.id === row.id) {
         return {
           ...item,
@@ -197,10 +202,10 @@ const handleSave = (row) => {
       return item;
     });
     setDataSource(newData);
-     dispatch(setStats({ participants: newData }));
+    dispatch(setStats({ participants: newData }));
     console.log(newData);
   };
-  
+
   const components = {
     body: {
       row: EditableRow,
@@ -231,66 +236,62 @@ const handleSave = (row) => {
           marginBottom: 16,
         }}
       >
-       Add A Character
+        Add A Character
       </Button>
       <Table
         components={components}
-        rowClassName={() => 'editable-row'}
+        rowClassName={() => "editable-row"}
         bordered
         dataSource={dataSource}
         columns={columns}
-        rowKey="id" 
+        rowKey="id"
         expandable={{
-    expandedRowRender: (record) => (
-      <EditableBio
-        initialBio={record.bio}
-        onSave={(editedBio) => handleSave({ ...record, bio: editedBio })}
+          expandedRowRender: (record) => (
+            <EditableBio
+              initialBio={record.bio}
+              onSave={(editedBio) => handleSave({ ...record, bio: editedBio })}
+            />
+          ),
+          rowExpandable: (record) => record.name !== "Not Expandable",
+        }}
       />
-    ),
-    rowExpandable: (record) => record.name !== 'Not Expandable',
-  }}
-      />
-    
     </div>
   );
 };
 
-
 const EditableBio = ({ initialBio, onSave }) => {
-    const [editing, setEditing] = useState(false);
-    const [editedBio, setEditedBio] = useState(initialBio);
-  
-    const toggleEdit = () => {
-      setEditing(!editing);
-    };
-  
-    const handleBioChange = (e) => {
-      setEditedBio(e.target.value);
-    };
-  
-    const handleSaveBio = () => {
-      onSave(editedBio);
-      toggleEdit();
-    };
-  
-    return (
-      <div>
-        <p>
-          {editing ? (
-            <Input
-              value={editedBio}
-              onChange={handleBioChange}
-              onPressEnter={handleSaveBio}
-              onBlur={handleSaveBio}
-            />
-          ) : (
-            initialBio
-          )}
-        </p>
-        <Button onClick={toggleEdit}>
-          {editing ? 'Save' : 'Edit'}
-        </Button>
-      </div>
-    );
+  const [editing, setEditing] = useState(false);
+  const [editedBio, setEditedBio] = useState(initialBio);
+
+  const toggleEdit = () => {
+    setEditing(!editing);
   };
+
+  const handleBioChange = (e) => {
+    setEditedBio(e.target.value);
+  };
+
+  const handleSaveBio = () => {
+    onSave(editedBio);
+    toggleEdit();
+  };
+
+  return (
+    <div>
+      <p>
+        {editing ? (
+          <Input
+            value={editedBio}
+            onChange={handleBioChange}
+            onPressEnter={handleSaveBio}
+            onBlur={handleSaveBio}
+          />
+        ) : (
+          initialBio
+        )}
+      </p>
+      <Button onClick={toggleEdit}>{editing ? "Save" : "Edit"}</Button>
+    </div>
+  );
+};
 export default ParticipantEditor;

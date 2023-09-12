@@ -1,0 +1,10 @@
+/* Adjust the padding to make the expand button row smaller */
+.ant-table-expanded-row > td {
+    padding: 5px;
+  }
+  
+  /* Reduce the size of the expand icon */
+  .ant-table-row-expand-icon-cell {
+    width: 30px; /* Adjust the width to your desired size */
+  }
+  

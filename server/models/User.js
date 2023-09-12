@@ -10,6 +10,7 @@ import {
   stats,
   randomEvents,
   relationships,
+  recentEvents,
   date,
   arcs,
   statPerception,
@@ -72,6 +73,10 @@ const UserSchema = new mongoose.Schema(
     relationships: {
       type: Array,
       default:relationships,
+    },
+    recentEvents: {
+      type: Array,
+      default:recentEvents,
     },
     statPerception: {
       type: Array,

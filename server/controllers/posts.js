@@ -3,49 +3,57 @@ import User from "../models/User.js";
 
 /* CREATE */
 export const createPost = async (req, res) => {
+  console.log(req.body);
+
   try {
     const { userId, description, picturePath } = req.body;
-    const user = await User.findById(userId);
+console.log(req.body);
+    // Create a new post object
     const newPost = new Post({
       userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      location: user.location,
+      firstName: req.user.firstName, // Assuming you have user data stored in req.user
+      lastName: req.user.lastName,   // Adjust this according to your authentication setup
       description,
-      userPicturePath: user.picturePath,
       picturePath,
-      likes: {},
-      comments: [],
+      likes: new Map(),             // Initialize likes as an empty Map
+      comments: [],                 // Initialize comments as an empty array
     });
+
+    // Save the new post to the database
     await newPost.save();
 
-    const post = await Post.find();
-    res.status(201).json(post);
+    res.status(201).json(newPost);
   } catch (err) {
-    res.status(409).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
+
 
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find();
-    res.status(200).json(post);
+    const posts = await Post.find();
+    res.status(200).json(posts);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Error retrieving feed posts', error: err.message });
   }
 };
 
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const post = await Post.find({ userId });
-    res.status(200).json(post);
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const posts = await Post.find({ userId });
+    res.status(200).json(posts);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Error retrieving user posts', error: err.message });
   }
 };
-
 
 
 
@@ -58,6 +66,11 @@ export const likePost = async (req, res) => {
     const { id } = req.params;
     const { userId } = req.body;
     const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
     const isLiked = post.likes.get(userId);
 
     if (isLiked) {
@@ -74,6 +87,6 @@ export const likePost = async (req, res) => {
 
     res.status(200).json(updatedPost);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Error updating post like', error: err.message });
   }
 };

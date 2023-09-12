@@ -1,0 +1,57 @@
+.event-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 20px; /* Gap between columns */
+  }
+  
+  .event-list ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .event-list li {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+  
+  .event-description {
+    border: 1px solid #ccc;
+    padding: 20px;
+  }
+  
+  .event-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .event-list li {
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    position: relative; /* Add this for positioning the dot */
+  }
+  
+  .event-list li.unread::before {
+    content: "•"; /* Unicode bullet point */
+    color: red;
+    font-size: 36px; /* Adjust the font size to make the dot larger */
+    position: absolute;
+    left: 0;
+    top: 40%;
+    transform: translateY(-50%);
+    margin-right: 32px;
+  }
+  
+    /* Add this to your EventNotification.css or a separate CSS file */
+.scrollable-title-box {
+    max-height: 200px; /* Adjust the max height as needed */
+    overflow-y: hidden;
+    border-color: 'red';
+    border: 20px;
+  }
+  
+  .scrollable-title {
+    white-space: nowrap;
+  }
+  

@@ -183,7 +183,7 @@ function Segment({ removeSegment }) {
 
   const dispatch = useDispatch();
 
-  const { participants, categories, factions, stats, items, date, arcs } = user;
+  const { participants, categories, factions, stats, items, date, arcs , statPerception} = user;
 
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [observers, setObservers] = useState([]);
@@ -282,6 +282,46 @@ function Segment({ removeSegment }) {
     handleShowSegmentRating();
     removeSegment();
   };
+  const handleDeselectAll = () => {
+    setSelectedParticipants([]);
+  };
+  
+
+  const calculatePercentileCategory = (participant, participants, statName, statPerception) => {
+    const statValue = participant.stats.find((stat) => Object.keys(stat)[0] === statName);
+  
+    if (!statValue) {
+      return "Unclear";
+    }
+  
+    const sortedStats = participants
+      .map((p) => {
+        const pStat = p.stats.find((s) => Object.keys(s)[0] === statName);
+        return pStat ? Object.values(pStat)[0] : null;
+      })
+      .filter((value) => value !== null)
+      .sort((a, b) => b - a);
+  
+    const participantValue = Object.values(statValue)[0];
+    const percentile = sortedStats.indexOf(participantValue) / (sortedStats.length - 1) * 100;
+  
+    if (percentile <= 1) {
+      return statPerception.find((s) => s.statName === statName)?.top1 || "Unclear";
+    } else if (percentile <= 5) {
+      return statPerception.find((s) => s.statName === statName)?.top5Percentile || "Unclear";
+    } else if (percentile <= 10) {
+      return statPerception.find((s) => s.statName === statName)?.top10Percentile || "Unclear";
+    } else if (percentile <= 20) {
+      return statPerception.find((s) => s.statName === statName)?.top20Percentile || "Unclear";
+    } else if (percentile <= 40) {
+      return statPerception.find((s) => s.statName === statName)?.top40Percentile || "Unclear";
+    } else {
+      return statPerception.find((s) => s.statName === statName)?.top80Percentile || "Unclear";
+    }
+  };
+  
+  
+
 
   const applySelectedStats = () => {
     transferItem();
@@ -386,7 +426,7 @@ function Segment({ removeSegment }) {
       return updatedParticipantsArray;
     });
   };
-
+console.log(selectedParticipants);
   function updateDate(currentDate, changeValue, changeUnit) {
     const newDate = new Date(currentDate);
     switch (changeUnit) {
@@ -690,6 +730,7 @@ function Segment({ removeSegment }) {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+        <Button onClick={handleDeselectAll}>Deselect All</Button>
         <Checkbox
           checked={isObserver}
           onChange={(e) => setIsObserver(e.target.checked)}
@@ -717,38 +758,39 @@ function Segment({ removeSegment }) {
         </div>
 
         {hoveredParticipant && (
-          <div
-            className="participant-tooltip"
-            style={{ maxHeight: "150px", overflow: "auto" }}
-          >
-            <p>{`Participant: ${hoveredParticipant.name}`}</p>
-            {categoryTypes.map((type) => (
-              <p key={type}>{`${type}s: ${categories
-                .filter(
-                  (cat) =>
-                    cat.type === type &&
-                    cat.participants.includes(hoveredParticipant.id)
-                )
-                .map((cat) => cat.name)
-                .join(", ")}`}</p>
-            ))}
-            <p>{`Items: ${items
-              .filter((item) => item.holderId.includes(hoveredParticipant.id))
-              .map((item) => item.name)
-              .join(", ")}`}</p>
-            <p>{`Factions: ${factions
-              .filter((faction) =>
-                faction.participants.includes(hoveredParticipant.id)
-              )
-              .map((faction) => faction.name)
-              .join(", ")}`}</p>
-            {hoveredParticipant.stats.map((stat, index) => (
-              <p key={index}>{`${Object.keys(stat)[0]}: ${
-                Object.values(stat)[0]
-              }`}</p>
-            ))}
-          </div>
-        )}
+  <div className="participant-tooltip"  style={{ maxHeight: "150px", overflow: "auto" }}>
+    <p>{`Participant: ${hoveredParticipant.name}`}</p>
+    {categoryTypes.map((type) => (
+      <p key={type}>{`${type}s: ${categories
+        .filter(
+          (cat) =>
+            cat.type === type &&
+            cat.participants.includes(hoveredParticipant.id)
+        )
+        .map((cat) => cat.name)
+        .join(", ")}`}</p>
+    ))}
+    <p>{`Items: ${items
+      .filter((item) => item.holderId.includes(hoveredParticipant.id))
+      .map((item) => item.name)
+      .join(", ")}`}</p>
+    <p>{`Factions: ${factions
+      .filter((faction) =>
+        faction.participants.includes(hoveredParticipant.id)
+      )
+      .map((faction) => faction.name)
+      .join(", ")}`}</p>
+    {statPerception.map((perception) => (
+      <p key={perception.statName}>{`${perception.statName}: ${calculatePercentileCategory(
+        hoveredParticipant,
+        participants,
+        perception.statName,
+        statPerception
+      )}`}</p>
+    ))}
+  </div>
+)}
+
 
         <div>
           <h3>Selected Players:</h3>

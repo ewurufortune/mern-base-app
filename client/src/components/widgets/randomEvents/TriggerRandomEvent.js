@@ -3,6 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button } from "antd";
 import { setStats } from "state";
 import _ from "lodash";
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export default function TriggerRandomEvent() {
   const dispatch = useDispatch();
@@ -12,14 +15,19 @@ export default function TriggerRandomEvent() {
   const readOnlyCategories = useSelector((state) => state.user.categories);
   const readOnlyItems = useSelector((state) => state.user.items);
   const date = useSelector((state) => state.user.date);
+const recentEventsReadOnly = useSelector((state) => state.user.recentEvents);
 
   const [executeEvent, setExecuteEvent] = useState(true);
 
+const recentEvents = _.cloneDeep(recentEventsReadOnly);
   const participants = _.cloneDeep(readOnlyParticipants);
   const categories = _.cloneDeep(readOnlyCategories);
   const items = _.cloneDeep(readOnlyItems);
 
   const executeRandomEvents = () => {
+
+          const executedEvents = [];
+
     randomEvents.forEach((event) => {
       let filteredParticipants = participants;
 
@@ -307,15 +315,38 @@ export default function TriggerRandomEvent() {
         // Execute the event's consequences
         executeEventConsequences(event);
       }
-    });
 
+      const executedEvent = {
+        id: uuidv4(), // Generate a unique ID for the executed event
+        eventTypeId: event.eventId, // Use the ID of the generatedEvent or a suitable identifier
+        title: event.eventTitle,
+        isRead:false,
+        description: `${event.eventTitle} - ${event.eventDescription}`,
+      };
+
+      executedEvents.push(executedEvent);
+
+
+    });
+   const updatedRecentEvents= [...recentEvents, ...executedEvents];
+ dispatch(setStats({ recentEvents: updatedRecentEvents }));
+   console.log(recentEvents);
     // Dispatch the updated participants array if needed
-    console.log(participants);
   };
 
   return (
     <div>
       <Button onClick={executeRandomEvents}>Execute Random Events</Button>
+      {/* <div>
+        <h2>Recent Events:</h2>
+        <ul>
+          {recentEvents.map((event) => (
+            <li key={event.id}>
+              <strong>{event.title}</strong> - {event.description}
+            </li>
+          ))}
+        </ul>
+      </div> */}
     </div>
   );
 }

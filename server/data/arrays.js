@@ -40,6 +40,7 @@ const mainLogs = [];
       id:1,
       name: "The Fall of Savitar",
       type: "Storyline",
+      exclusive:true,
       participants: [1, 4],
       logs: [
         {
@@ -53,6 +54,7 @@ const mainLogs = [];
       id:2 ,
       name: "Great Escape",
       type: "Storyline",
+      exclusive:true,
       participants: [1, 2],
       logs: [
         {
@@ -66,6 +68,7 @@ const mainLogs = [];
       id:3 ,
       name: "Mass Effect",
       type: "Storyline",
+      exclusive:true,
       participants: [1, 3, 2],
       logs: [
         {
@@ -79,6 +82,7 @@ const mainLogs = [];
       id: 4,
       name: "Westeros",
       type: "Location",
+      exclusive:true,
       participants: [1, 4],
       logs: [
         {
@@ -92,6 +96,7 @@ const mainLogs = [];
       id: 5,
       name: "Ba Sing Se",
       type: "Location",
+      exclusive:true,
       participants: [1, 3, 4],
       logs: [
         {
@@ -108,10 +113,30 @@ const mainLogs = [];
   ]
 
   const relationships = [
-    {name: "master Student",affectedStats:[1,2],duration:1, participants: [1, 2],frequency:'week' },
+    {id:1, name:'Master Student', participants:[1,2], frequency:'week',relationshipStrength:0, relationshipStrengthText:'Neutral'}
   ];
+// {name, participants, frequency,relationshipStrength, relationshipStrengthText}
+const recentEvents=[
+  {
+    id: "2bd6cb3d-c002-4717-b44f6-66c53ada8c74",
+    eventTypeId: "1694197990275",
+    title: "The First stand",
+    description: "The Last stant - the begining"
+},
+{
+  id: "2bd6cb3d-c002-4717-5b4f6-66c53ada8c74",
+  eventTypeId: "1694197990275",
+  title: "The Middle stand",
+  description: "The Last stant - the begining"
+},
+{
+  id: "2bd6cb3d-c002-471767-b4f6-66c53ada8c74",
+  eventTypeId: "1694197990275",
+  title: "The Last stand",
+  description: "The Last stant - the begining"
+},
 
-
+]
   const items = [
     {
       id:1,
@@ -131,7 +156,7 @@ const mainLogs = [];
   ];
 
   const stats = [
-    {id:1, statName: "overness", label: "Major Overness Success", change: 5 ,bio:'Astat that changes'},
+    {id:1, statName: "overness", label: "Major Overness Success", change: 5 ,bio:'Astat that changes',},
     {id:2, statName: "overness", label: "Major Overness Loss", change: -5 ,bio:'Astat that changes'},
     {id:3, statName: "reputation", label: "Major Reputation Gain", change: 5 ,bio:'Astat that changes'},
     {id:4, statName: "reputation", label: "Major Reputation Loss", change: -5 ,bio:'Astat that changes'},
@@ -154,7 +179,10 @@ const mainLogs = [];
       numberOfParticipants: 2,
     },
   ];
-const statPerception=[]
+const statPerception=[
+{  statName:'overness',top1:'Legend',top5Percentile:'Maineventer',top10Percentile:'Upper MidCard', top20Percentile:'MidCard',top40Percentile:'Lower MidCard', top80Percentile:'jobbers',top20Percentile:'jabaronis'},
+{  statName:'relevance',top1:'Legend',top5Percentile:'Maineventer',top10Percentile:'Upper MidCard', top20Percentile:'MidCard',top40Percentile:'Lower MidCard', top80Percentile:'jobbers',top20Percentile:'jabaronis'},
+]
   const date = new Date(2023, 6, 10, 15, 30);
 
   export {
@@ -167,6 +195,7 @@ const statPerception=[]
     stats,
     randomEvents,
     relationships,
+    recentEvents,
     arcs,
     statPerception
   };

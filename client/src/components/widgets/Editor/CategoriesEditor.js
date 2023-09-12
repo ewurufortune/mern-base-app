@@ -12,8 +12,25 @@ import {
   Select,
   Collapse,
 } from "antd";
+import { v4 as uuidv4 } from "uuid";
 
 const EditableContext = React.createContext(null);
+
+
+const isParticipantSelectedInSameType = (participantId, categoryId, categories) => {
+  const category = categories.find((cat) => cat.id === categoryId);
+  if (!category || !category.exclusive) {
+    return false; // If the category doesn't exist or is not exclusive, return false
+  }
+
+  // Check if the participant is selected in another category of the same type
+  return categories.some(
+    (cat) =>
+      cat.id !== categoryId &&
+      cat.type === category.type &&
+      cat.participants.includes(participantId)
+  );
+};
 
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
@@ -129,7 +146,7 @@ const CategoryEditor = () => {
       ...record,
       participants: [...filteredSelectedParticipants],
     };
-  
+
     const clonedCategories = _.cloneDeep(categories);
     const categoryIndex = clonedCategories.findIndex(
       (category) => category.id === updatedRecord.id
@@ -139,14 +156,28 @@ const CategoryEditor = () => {
       clonedCategories[categoryIndex] = updatedRecord;
     }
     console.log(updatedRecord);
-   dispatch(setStats({ categories: clonedCategories }));
+    dispatch(setStats({ categories: clonedCategories }));
     setSelectedParticipants(updatedRecord);
   };
-  
+
   const handleDelete = (id) => {
     const newData = dataSource.filter((item) => item.id !== id);
     setDataSource(newData);
-     dispatch(setStats({ categories: newData }));
+    dispatch(setStats({ categories: newData }));
+  };
+
+  const handleToggle = (id, checked) => {
+    const updatedData = dataSource.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          exclusive: checked,
+        };
+      }
+      return item;
+    });
+
+    setDataSource(updatedData);
   };
 
   const defaultColumns = [
@@ -162,6 +193,16 @@ const CategoryEditor = () => {
       width: "30%",
       editable: true,
     },
+    {
+      title: "Exclusive",
+      dataIndex: "exclusive",
+      render: (_, record) => (
+        <Switch
+          checked={record.exclusive}
+          onChange={(checked) => handleToggle(record.id, checked)}
+        />
+      ),
+    },
 
     {
       title: "Participants",
@@ -176,18 +217,24 @@ const CategoryEditor = () => {
           record={record}
           handleSave={handleSave}
         >
-<Select
+       <Select
   mode="multiple"
   placeholder="Select participants"
   maxTagCount="responsive"
   filterOption={false} // Disable option filtering
   allowClear
-  style={{ width: '300px' }}
+  style={{ width: "300px" }}
   value={record.participants} // Use record.participants
   onChange={(selectedParticipants) => {
     // Filter out the selected participants that don't have corresponding names
-    const filteredSelectedParticipants = selectedParticipants.filter(id =>
-      participants.some(participant => participant.id === id && participant.name !== "")
+    const filteredSelectedParticipants = selectedParticipants.filter(
+      (id) =>
+        participants.some(
+          (participant) =>
+            participant.id === id &&
+            participant.name !== "" &&
+            !isParticipantSelectedInSameType(id, record.id, dataSource)
+        )
     );
     handleParticipantChange(record, filteredSelectedParticipants); // Pass the record and filtered selected participants
   }}
@@ -196,12 +243,17 @@ const CategoryEditor = () => {
     .slice() // Create a copy of the participants array
     .sort((a, b) => b.stats[0].relevance - a.stats[0].relevance) // Sort by relevance in descending order
     .map((participant) => (
-      <Select.Option key={participant.id} value={participant.id}>
+      <Select.Option
+        key={participant.id}
+        value={participant.id}
+        disabled={
+          isParticipantSelectedInSameType(participant.id, record.id, dataSource)
+        }
+      >
         {participant.name}
       </Select.Option>
     ))}
 </Select>
-
 
         </EditableCell>
       ),
@@ -224,11 +276,11 @@ const CategoryEditor = () => {
 
   const handleAdd = () => {
     const newData = {
-      id: count + 1,
-      name: "Wilderness"+1,
-        type: "Location",
+      id: uuidv4(),
+      name: "Wilderness" + 1,
+      type: "Location",
       isActive: true, // Set the initial value to true
-      participants: [1, ],
+      participants: [1],
       logs: [
         {
           description: "An Intresting description",
@@ -236,8 +288,6 @@ const CategoryEditor = () => {
           date: new Date(2023, 6, 10, 15, 30),
         },
       ],
-
-   
     };
     setDataSource([...dataSource, newData]);
     setCount(count + 1);
@@ -256,7 +306,6 @@ const CategoryEditor = () => {
     setDataSource(newData);
     console.log(newData);
     dispatch(setStats({ categories: newData }));
-
   };
 
   const components = {

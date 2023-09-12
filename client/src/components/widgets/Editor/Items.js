@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Form, Input, Popconfirm, Table, Switch } from 'antd';
 import { setStats } from 'state';
+import { v4 as uuidv4 } from 'uuid';
 
 const EditableContext = React.createContext(null);
 
@@ -158,7 +159,7 @@ const ItemsEditor = () => {
  const handleAdd = () => {
   const newData = {
    
-    id: count + 1,
+    id: uuidv4(),
 
         name: "Championship",
         style: " Champion",

@@ -1,80 +1,110 @@
-import React, { useState, useRef } from 'react';
-import { Radio, Space, Tabs } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import _ from 'lodash';
+import './EventNotification.css';
+import { setStats } from 'state';
+import { Tag } from 'antd';
+
 const EventNotifications = () => {
-    const initialItems = [
-        {
-          key: '1',
-          label: 'Tab 1',
-          children: 'Content of Tab Pane 1',
-        },
-        {
-          key: '2',
-          label: 'Tab 2',
-          children: 'Content of Tab Pane 2',
-        },
-        {
-          key: '3',
-          label: 'Tab 3',
-          children: 'Content of Tab Pane 3',
-        },
-      ];
+  const dispatch = useDispatch();
 
+  const recentEventsReadOnly = useSelector((state) => state.user.recentEvents);
+  const recentEvents = _.cloneDeep(recentEventsReadOnly);
 
-    const [activeKey, setActiveKey] = useState(initialItems[0].key);
-    const [items, setItems] = useState(initialItems);
-    const newTabIndex = useRef(0);
-    const onChange = (newActiveKey) => {
-      setActiveKey(newActiveKey);
-    };
-    const add = () => {
-      const newActiveKey = `newTab${newTabIndex.current++}`;
-      const newPanes = [...items];
-      newPanes.push({
-        label: 'New Tab',
-        children: 'Content of new Tab',
-        key: newActiveKey,
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  useEffect(() => {
+    // No need to set eventsList, use recentEvents directly
+  }, [recentEvents]);
+
+  const handleEventClick = (event) => {
+    if (!event.isRead) {
+      // Mark the event as read if it's unread
+      const updatedEventsList = recentEvents.map((ev) =>
+        ev.id === event.id ? { ...ev, isRead: true } : ev
+      );
+      dispatch(setStats({ recentEvents: updatedEventsList }));
+    }
+    setSelectedEvent(event);
+  };
+
+  const handleDeleteEvent = () => {
+    // Delete the currently viewed recent event
+    if (selectedEvent) {
+      const updatedEventsList = recentEvents.filter((event) => event.id !== selectedEvent.id);
+      dispatch(setStats({ recentEvents: updatedEventsList }));
+      setSelectedEvent(null);
+    }
+  };
+
+  const markAsRead = () => {
+    // Mark the currently viewed event as read
+    if (selectedEvent) {
+      const updatedEventsList = recentEvents.map((event) => {
+        if (event.id === selectedEvent.id) {
+          return { ...event, isRead: true };
+        }
+        return event;
       });
-      setItems(newPanes);
-      setActiveKey(newActiveKey);
-    };
-    const remove = (targetKey) => {
-      let newActiveKey = activeKey;
-      let lastIndex = -1;
-      items.forEach((item, i) => {
-        if (item.key === targetKey) {
-          lastIndex = i - 1;
-        }
-      });
-      const newPanes = items.filter((item) => item.key !== targetKey);
-      if (newPanes.length && newActiveKey === targetKey) {
-        if (lastIndex >= 0) {
-          newActiveKey = newPanes[lastIndex].key;
-        } else {
-          newActiveKey = newPanes[0].key;
-        }
-      }
-      setItems(newPanes);
-      setActiveKey(newActiveKey);
-    };
-    const onEdit = (targetKey, action) => {
-        if (action === 'add') {
-          add();
-        } else {
-          remove(targetKey);
-        }
-      };
+      dispatch(setStats({ recentEvents: updatedEventsList }));
+      setSelectedEvent({ ...selectedEvent, isRead: true });
+    }
+  };
+
+  const markAllAsRead = () => {
+    const updatedEventsList = recentEvents.map((event) => ({
+      ...event,
+      isRead: true,
+    }));
+    dispatch(setStats({ recentEvents: updatedEventsList }));
+    setSelectedEvent(null);
+  };
+
+  const clearAll = () => {
+    dispatch(setStats({ recentEvents: [] }));
+    setSelectedEvent(null);
+  };
+
   return (
-    <>
+    <div className="event-container">
+      <div className="event-list">
+        <div className="action-buttons">
+        <Tag>{recentEvents.length} Messages</Tag>
+        <Tag color="red">Unread: {recentEvents.filter((event) => !event.isRead).length}</Tag>
+          <button onClick={markAllAsRead}>Mark All as Read</button>
+          <button onClick={clearAll}>Clear All</button>
+        </div>
+        <ul  style={{maxHeight:'300px',minHeight:'300px', overflow:'auto'}}>
+  {recentEvents.map((event) => (
+    <li
+      key={event.id}
+      onClick={() => handleEventClick(event)}
+      className={event.isRead ? 'read' : 'unread'}
+    >
+      <div className="scrollable-title-box">
+        <div>{event.title}</div> {/* Apply the scrollable-title class */}
+      </div>
+      {!event.isRead && <span className="dot" />}
+    </li>
+  ))}
+</ul>
+{/* style={{maxHeight:'100px', overflow:'hidden'}} */}
 
-         <Tabs
-      type="editable-card"
-      tabPosition={'left'}
-      onChange={onChange}
-      activeKey={activeKey}
-      onEdit={onEdit}
-      items={items}
-    />
-    </>
+      </div>
+      <div style={{maxHeight:'350px',minHeight:'350px', overflow:'auto'}} className="event-description">
+        {selectedEvent && (
+          <div >
+            <h2>{selectedEvent.title}</h2>
+            <p>{selectedEvent.description}</p>
+            {!selectedEvent.isRead && (
+              <button onClick={markAsRead}>Mark as Read</button>
+            )}
+            <button onClick={handleDeleteEvent}>Delete</button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
+
 export default EventNotifications;

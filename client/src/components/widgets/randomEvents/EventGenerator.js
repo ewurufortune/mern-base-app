@@ -131,12 +131,19 @@ function EventGenerator() {
     setStatChangeAmount(0);
   };
 
+  function generateEventId() {
+    // You can use a library like uuid or generate your own unique IDs
+    // For simplicity, here's a basic example using a timestamp
+    return Date.now().toString();
+  }
+
   const generateEvent = () => {
     if (!eventTitle) {
       alert("Event title is required."); // Display an alert message
       return; // Exit the function if no title is provided
     }
     const generatedEvent = {
+      eventId: generateEventId(),
       eventTitle,
       eventRarity,
       selectedEventComponents,
@@ -179,7 +186,7 @@ function EventGenerator() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Event Generator</h1>
-      <div>
+      <div style={{ width: "20%" }}>
         <p>Event Title:</p>
         <Input
           placeholder="Enter event title"
@@ -198,7 +205,8 @@ function EventGenerator() {
         </p>
       </div>
       <Form>
-        <Form.Item label="Select Event Rarity">
+
+        <Form.Item label="Select Event Rarity" style={{ width: "20%" }} >
           <Select
             placeholder="Select event rarity"
             value={eventRarity}
@@ -210,7 +218,7 @@ function EventGenerator() {
             <Option value="very-rare">Very Rare</Option>
           </Select>
         </Form.Item>
-        <Form.Item label="Select Mode">
+        <Form.Item label="People Involved" >
           <Radio.Group
             value={selectedSelectionMode}
             onChange={(e) => {
@@ -238,7 +246,7 @@ function EventGenerator() {
           </div>
         )}
 
-        <Form.Item label="Select Event Components">
+        <Form.Item label="Select Event Components" style={{ width: "50%" }}>
           <Select
             mode="multiple"
             placeholder="Select event components"
