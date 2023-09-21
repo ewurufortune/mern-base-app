@@ -16,22 +16,6 @@ import { v4 as uuidv4 } from "uuid";
 
 const EditableContext = React.createContext(null);
 
-
-const isParticipantSelectedInSameType = (participantId, categoryId, categories) => {
-  const category = categories.find((cat) => cat.id === categoryId);
-  if (!category || !category.exclusive) {
-    return false; // If the category doesn't exist or is not exclusive, return false
-  }
-
-  // Check if the participant is selected in another category of the same type
-  return categories.some(
-    (cat) =>
-      cat.id !== categoryId &&
-      cat.type === category.type &&
-      cat.participants.includes(participantId)
-  );
-};
-
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -130,28 +114,28 @@ const EditableCell = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const CategoryEditor = () => {
+const RelationshipsEditor = () => {
   const user = useSelector((state) => state.user);
-  const categories = useSelector((state) => state.user.categories);
+  const relationships = useSelector((state) => state.user.relationships);
   const participants = useSelector((state) => state.user.participants);
   const dispatch = useDispatch();
   const [selectedParticipants, setSelectedParticipants] = useState([]);
 
-  const [dataSource, setDataSource] = useState(categories);
-  const [count, setCount] = useState(categories.length);
+  const [dataSource, setDataSource] = useState(relationships);
+  const [count, setCount] = useState(relationships.length);
 
   useEffect(() => {
-    setDataSource(categories);
-  }, [categories]);
+    setDataSource(relationships);
+  }, [relationships]);
 
   const handleParticipantChange = (record, filteredSelectedParticipants) => {
     // Spread the filteredSelectedParticipants into the record.participants array
     const updatedRecord = {
       ...record,
-      participants: [...filteredSelectedParticipants],
+      relationships: [...filteredSelectedParticipants],
     };
 
-    const clonedCategories = _.cloneDeep(categories);
+    const clonedCategories = _.cloneDeep(relationships);
     const categoryIndex = clonedCategories.findIndex(
       (category) => category.id === updatedRecord.id
     );
@@ -160,29 +144,14 @@ const CategoryEditor = () => {
       clonedCategories[categoryIndex] = updatedRecord;
     }
     console.log(updatedRecord);
-    dispatch(setStats({ categories: clonedCategories }));
+    dispatch(setStats({ relationships: clonedCategories }));
     setSelectedParticipants(updatedRecord);
   };
 
   const handleDelete = (id) => {
     const newData = dataSource.filter((item) => item.id !== id);
     setDataSource(newData);
-    dispatch(setStats({ categories: newData }));
-  };
-
-  const handleToggle = (id, checked) => {
-    const updatedData = dataSource.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          exclusive: checked,
-        };
-      }
-      return item;
-    });
-
-    setDataSource(updatedData);
-     dispatch(setStats({ categories: dataSource }));
+    dispatch(setStats({ relationships: newData }));
   };
 
   const defaultColumns = [
@@ -193,20 +162,16 @@ const CategoryEditor = () => {
       editable: true,
     },
     {
-      title: "Type",
-      dataIndex: "type",
+      title: "frequency",
+      dataIndex: "frequency",
       width: "30%",
       editable: true,
     },
     {
-      title: "Exclusive",
-      dataIndex: "exclusive",
-      render: (_, record) => (
-        <Switch
-          checked={record.exclusive}
-          onChange={(checked) => handleToggle(record.id, checked)}
-        />
-      ),
+      title: "relationshipStrength",
+      dataIndex: "relationshipStrength",
+      width: "30%",
+      editable: true,
     },
 
     {
@@ -222,44 +187,29 @@ const CategoryEditor = () => {
           record={record}
           handleSave={handleSave}
         >
-       <Select
-  mode="multiple"
-  placeholder="Select participants"
-  maxTagCount="responsive"
-  filterOption={false} // Disable option filtering
-  allowClear
-  style={{ width: "300px" }}
-  value={record.participants} // Use record.participants
-  onChange={(selectedParticipants) => {
-    // Filter out the selected participants that don't have corresponding names
-    const filteredSelectedParticipants = selectedParticipants.filter(
-      (id) =>
-        participants.some(
-          (participant) =>
-            participant.id === id &&
-            participant.name !== "" &&
-            !isParticipantSelectedInSameType(id, record.id, dataSource)
-        )
-    );
-    handleParticipantChange(record, filteredSelectedParticipants); // Pass the record and filtered selected participants
-  }}
->
-  {participants
-    .slice() // Create a copy of the participants array
-    .sort((a, b) => b.stats[0].relevance - a.stats[0].relevance) // Sort by relevance in descending order
-    .map((participant) => (
-      <Select.Option
-        key={participant.id}
-        value={participant.id}
-        disabled={
-          isParticipantSelectedInSameType(participant.id, record.id, dataSource)
-        }
-      >
-        {participant.name}
-      </Select.Option>
-    ))}
-</Select>
-
+          <Select
+            mode="multiple"
+            placeholder="Select participants"
+            maxTagCount="responsive"
+            filterOption={false} // Disable option filtering
+            allowClear
+            style={{ width: "300px" }}
+            value={record.participants} // Use record.participants
+            onChange={(selectedParticipants) => {
+              // Filter out the selected participants that don't have corresponding names
+              
+              handleParticipantChange(record, selectedParticipants); // Pass the record and filtered selected participants
+            }}
+          >
+            {participants
+              .slice() // Create a copy of the participants array
+              .sort((a, b) => b.stats[0].relevance - a.stats[0].relevance) // Sort by relevance in descending order
+              .map((participant) => (
+                <Select.Option key={participant.id} value={participant.id}>
+                  {participant.name}
+                </Select.Option>
+              ))}
+          </Select>
         </EditableCell>
       ),
     },
@@ -280,24 +230,16 @@ const CategoryEditor = () => {
   ];
 
   const handleAdd = () => {
-   const newDate= new Date(2023, 6, 10, 15, 30)
     const newData = {
       id: uuidv4(),
-      name: "Wilderness" + 1,
-      type: "Location",
-      isActive: true, // Set the initial value to true
-      participants: [1],
-      logs: [
-        {
-          description: "An Intresting description",
-          rating: 50,
-          date: newDate.toString(),
-        },
-      ],
+      name: "Father Son" + 1,
+      participants: [1], // Set the initial value to true
+      frequency: 0,
+      relationshipStrength: 0,
+      relationshipStrengthText: "Neutral",
     };
     setDataSource([...dataSource, newData]);
-    console.log('here');
-    dispatch(setStats({ categories: [...dataSource, newData] }));
+    dispatch(setStats({ relationships: dataSource }));
     setCount(count + 1);
   };
 
@@ -313,7 +255,7 @@ const CategoryEditor = () => {
     });
     setDataSource(newData);
     console.log(newData);
-    dispatch(setStats({ categories: newData }));
+    dispatch(setStats({ relationships: newData }));
   };
 
   const components = {
@@ -348,7 +290,7 @@ const CategoryEditor = () => {
           marginBottom: 16,
         }}
       >
-        Add A Categrory
+        Add A Relationship
       </Button>
       <Table
         components={components}
@@ -357,29 +299,9 @@ const CategoryEditor = () => {
         dataSource={dataSource}
         columns={columns}
         rowKey="id"
-        expandable={{
-          expandedRowRender: (record) => (
-            <div>
-              <h3>Logs:</h3>
-              <Collapse>
-                {record.logs.map((log, index) => (
-                  <Collapse.Panel header={`Log ${index + 1}`} key={index}>
-                    <div>
-                      <p>Description: {log?.description}</p>
-                      <p>Rating: {log?.segmentRating}</p>
-                      <p>Date: {log?.date?.toString()}</p>
-                    </div>
-                  </Collapse.Panel>
-                ))}
-              </Collapse>
-            </div>
-          ),
-          // ...
-        }}
       />
     </div>
   );
 };
 
-
-export default CategoryEditor;
+export default RelationshipsEditor;

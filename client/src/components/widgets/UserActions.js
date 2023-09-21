@@ -12,12 +12,12 @@ import {
   ConfigProvider,
   theme,
 } from "antd";
-
+import { CaretDownFilled } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import TabComponent from "./tabsComponent/TabsComponent";
-import { setStats } from "state";
+import { setStats, setLastDate } from "state";
 import _ from "lodash";
 
 export default function UserActions({ clientId }) {
@@ -81,11 +81,7 @@ export default function UserActions({ clientId }) {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
-      }}
-    >
+    <>
       <div>
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -104,32 +100,28 @@ export default function UserActions({ clientId }) {
         </Snackbar>
         {/* Your content here */}
       </div>
-      <Button onClick={handleClick}>
-        Change Theme to {isDarkMode ? "Light" : "Dark"}
-      </Button>
+
       <Card
         bordered={false}
-        theme={isDarkMode ? "Light" : "Dark"}
+        // theme={isDarkMode ? "Light" : "Dark"}
         style={{
           width: "100%",
         }}
       >
         <div
-          style={
-            {
-              // cursor: isDragging ? 'grabbing' : 'grab',
-              // width: '100vw',
-              // height: '100vh',
-              // overflow: 'hidden',
-              // userSelect: 'none', // Disable text selection during dragging
-            }
-          }
+          style={{
+            // cursor: isDragging ? 'grabbing' : 'grab',
+            width: "100vw",
+            height: "100vh",
+            // overflow: 'hidden',
+            // userSelect: 'none', // Disable text selection during dragging
+          }}
           // onMouseDown={handleMouseDown}
         >
           <NewSegment initialSegment={["Initial Segment"]} />
         </div>
       </Card>
-    </ConfigProvider>
+    </>
   );
 }
 
@@ -183,7 +175,16 @@ function Segment({ removeSegment }) {
 
   const dispatch = useDispatch();
 
-  const { participants, categories, factions, stats, items, date, arcs , statPerception} = user;
+  const {
+    participants,
+    categories,
+    factions,
+    stats,
+    items,
+    date,
+    arcs,
+    statPerception,
+  } = user;
 
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [observers, setObservers] = useState([]);
@@ -224,22 +225,24 @@ function Segment({ removeSegment }) {
       setDescriptionError("Description cannot be blank");
       return;
     }
-    applySelectedStats();
+    const regexDescription = applySelectedStats();
 
     // Calculate the segment rating
     const segmentRating = calculateNumberRating();
 
     // Parse the date into a Date object if needed
     const parsedDate = typeof date === "string" ? new Date(date) : date;
+
+    dispatch(setLastDate(parsedDate.toISOString()));
+
     const newDateEnd = updateDate(parsedDate, dateChangeValue, dateChangeUnit);
-    dispatch(setStats({ date: newDateEnd }));
 
     // Prepare detailed account information
     const accountInfo = {
       title: title,
       dateStart: parsedDate.toISOString(),
       dateEnd: newDateEnd,
-      description: description,
+      description: regexDescription,
       participants: selectedParticipants,
       categories: Object.values(selectedCategoryTypes),
       segmentRating: segmentRating.toFixed(2) || 0.0, // Convert to fixed decimals
@@ -281,19 +284,26 @@ function Segment({ removeSegment }) {
 
     handleShowSegmentRating();
     removeSegment();
+    dispatch(setStats({ date: newDateEnd }));
   };
   const handleDeselectAll = () => {
     setSelectedParticipants([]);
   };
-  
 
-  const calculatePercentileCategory = (participant, participants, statName, statPerception) => {
-    const statValue = participant.stats.find((stat) => Object.keys(stat)[0] === statName);
-  
+  const calculatePercentileCategory = (
+    participant,
+    participants,
+    statName,
+    statPerception
+  ) => {
+    const statValue = participant.stats.find(
+      (stat) => Object.keys(stat)[0] === statName
+    );
+
     if (!statValue) {
       return "Unclear";
     }
-  
+
     const sortedStats = participants
       .map((p) => {
         const pStat = p.stats.find((s) => Object.keys(s)[0] === statName);
@@ -301,30 +311,46 @@ function Segment({ removeSegment }) {
       })
       .filter((value) => value !== null)
       .sort((a, b) => b - a);
-  
+
     const participantValue = Object.values(statValue)[0];
-    const percentile = sortedStats.indexOf(participantValue) / (sortedStats.length - 1) * 100;
-  
+    const percentile =
+      (sortedStats.indexOf(participantValue) / (sortedStats.length - 1)) * 100;
+
     if (percentile <= 1) {
-      return statPerception.find((s) => s.statName === statName)?.top1 || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top1 || "Unclear"
+      );
     } else if (percentile <= 5) {
-      return statPerception.find((s) => s.statName === statName)?.top5Percentile || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top5Percentile ||
+        "Unclear"
+      );
     } else if (percentile <= 10) {
-      return statPerception.find((s) => s.statName === statName)?.top10Percentile || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top10Percentile ||
+        "Unclear"
+      );
     } else if (percentile <= 20) {
-      return statPerception.find((s) => s.statName === statName)?.top20Percentile || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top20Percentile ||
+        "Unclear"
+      );
     } else if (percentile <= 40) {
-      return statPerception.find((s) => s.statName === statName)?.top40Percentile || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top40Percentile ||
+        "Unclear"
+      );
     } else {
-      return statPerception.find((s) => s.statName === statName)?.top80Percentile || "Unclear";
+      return (
+        statPerception.find((s) => s.statName === statName)?.top80Percentile ||
+        "Unclear"
+      );
     }
   };
-  
-  
-
 
   const applySelectedStats = () => {
     transferItem();
+    let regexDescription;
 
     setSelectedParticipants((prevSelectedParticipants) => {
       const updatedParticipants = prevSelectedParticipants.map(
@@ -333,28 +359,32 @@ function Segment({ removeSegment }) {
           const matchingEntries = tempSelectedStats.filter(
             (entry) => entry.participantId === participantId
           );
-    
+
           if (!matchingEntries.length) {
             return participantId;
           }
-    
-          const participantIndex = participants.findIndex((p) => p.id === participantId);
-    
+
+          const participantIndex = participants.findIndex(
+            (p) => p.id === participantId
+          );
+
           if (participantIndex === -1) {
             return participantId;
           }
-    
-          const updatedParticipant = _.cloneDeep(participants[participantIndex]);
-    
+
+          const updatedParticipant = _.cloneDeep(
+            participants[participantIndex]
+          );
+
           matchingEntries.forEach((tempEntry) => {
             const selectedStatInfo = stats.find(
               (stat) => stat.label === tempEntry.selectedStat
             );
-    
+
             if (!selectedStatInfo) {
               return; // Move to the next matching entry
             }
-    
+
             const statName = selectedStatInfo.statName.toLowerCase();
             const existingStat = updatedParticipant.stats.find(
               (stat) => stat[statName] !== undefined
@@ -362,11 +392,11 @@ function Segment({ removeSegment }) {
             const existingRelevance = updatedParticipant.stats.find(
               (stat) => stat["relevance"] !== undefined
             );
-    
+
             if (existingRelevance) {
               existingRelevance["relevance"] += 1;
             }
-    
+
             if (existingStat) {
               existingStat[statName] += selectedStatInfo.change;
             } else {
@@ -375,9 +405,10 @@ function Segment({ removeSegment }) {
               });
             }
           });
-    
+
           return updatedParticipant;
-        });
+        }
+      );
 
       const clonedParticipants = _.cloneDeep(participants);
 
@@ -421,12 +452,18 @@ function Segment({ removeSegment }) {
       });
       dispatch(setStats({ participants: clonedParticipants }));
 
-      logDescription(description, selectedParticipantsNames, observerNames);
+      regexDescription = logDescription(
+        description,
+        selectedParticipantsNames,
+        observerNames
+      );
+      setDescription(regexDescription);
       setTempSelectedStats([]); // Clear tempSelectedStats after applying changes
       return updatedParticipantsArray;
     });
+
+    return regexDescription;
   };
-console.log(selectedParticipants);
   function updateDate(currentDate, changeValue, changeUnit) {
     const newDate = new Date(currentDate);
     switch (changeUnit) {
@@ -556,8 +593,9 @@ console.log(selectedParticipants);
         name || "observer"
       );
     }
-
+    setDescription(replacedDescription);
     console.log("Replaced Description:", replacedDescription);
+    return replacedDescription;
   };
 
   const calculateNumberRating = () => {
@@ -640,8 +678,17 @@ console.log(selectedParticipants);
     return participants;
   };
 
+  // Define a custom CSS class for the caret icon
+  const customCaretIconStyle = {
+    color: "rgba(255, 255, 255, 0.85)", // Light white color
+  };
+
   const filteredParticipants = sortParticipants(
     participants.filter((participant) => {
+      if (!participant.isActive) {
+        return false; // Skip inactive participants
+      }
+
       const selectedCategoryParticipants = {};
       for (const type of Object.keys(selectedCategoryTypes)) {
         selectedCategoryParticipants[type] =
@@ -671,9 +718,9 @@ console.log(selectedParticipants);
   return (
     <Card
       style={{
-        width: 900,
-        // marginLeft: 190,
-        display: "flex",
+        minWidth: "920px",
+        marginLeft: 190,
+        // display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
       }}
@@ -681,38 +728,57 @@ console.log(selectedParticipants);
       <div>
         <p>Date: {new Date(date).toDateString()}</p>
         <div style={{ display: "flex", alignItems: "center" }}>
-          {categoryTypes.map((type) => (
-            <div key={type} style={{ marginRight: "20px" }}>
-              <span>{`Select ${type}:`}</span>
-              <Select
-                style={{ marginLeft: "5px" }}
-                value={selectedCategoryTypes[type] || "None"}
-                onChange={(value) =>
-                  setSelectedCategoryTypes((prev) => ({
-                    ...prev,
-                    [type]: value,
-                  }))
-                }
+          <div
+            className="category-filter"
+            style={{
+              maxHeight: "50px",
+              overflow: "auto",
+              width: "90%",
+              border: "1px solid red",
+              display: "flex",
+              flexWrap: "wrap",
+              padding: "10px",
+            }}
+          >
+            {categoryTypes.map((type) => (
+              <div
+                key={type}
+                style={{ marginTop: "5px", marginBottom: "10px" }}
               >
-                <Select.Option value="None">None</Select.Option>
-                {categories
-                  .filter((cat) => cat.type === type)
-                  .map((cat) => (
-                    <Select.Option key={cat.name} value={cat.name}>
-                      {cat.name}
-                    </Select.Option>
-                  ))}
-              </Select>
-            </div>
-          ))}
+                <Select
+                  bordered={true}
+                  style={{ marginLeft: "5px" }}
+                  suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
+                  // value={selectedCategoryTypes[type] || `None`}
+                  placeholder={`Select ${type}`}
+                  onChange={(value) =>
+                    setSelectedCategoryTypes((prev) => ({
+                      ...prev,
+                      [type]: value,
+                    }))
+                  }
+                >
+                  <Select.Option value="None">None</Select.Option>
+                  {categories
+                    .filter((cat) => cat.type === type)
+                    .map((cat) => (
+                      <Select.Option key={cat.name} value={cat.name}>
+                        {cat.name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </div>
+            ))}
+          </div>
           <div style={{ marginLeft: "20px" }}>
-            <span>Sort by:</span>
             <Select
+              bordered={true}
               style={{ marginLeft: "5px" }}
               value={selectedStat || "None"}
               onChange={(value) => setSelectedStat(value)}
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
             >
-              <Select.Option value="None">None</Select.Option>
+              <Select.Option value="None">Sort By </Select.Option>
               {statNames.map((statName) => (
                 <Select.Option key={statName} value={statName}>
                   {statName}
@@ -722,75 +788,114 @@ console.log(selectedParticipants);
           </div>
         </div>
 
-        <div>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <input
             type="text"
             placeholder="Search participants..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ marginRight: "10px" }} // Add margin to the input
           />
+          <Button onClick={handleDeselectAll} style={{ marginRight: "10px" }}>
+            Deselect All
+          </Button>
+          <Checkbox
+            checked={isObserver}
+            onChange={(e) => setIsObserver(e.target.checked)}
+          >
+            Is Observer
+          </Checkbox>
         </div>
-        <Button onClick={handleDeselectAll}>Deselect All</Button>
-        <Checkbox
-          checked={isObserver}
-          onChange={(e) => setIsObserver(e.target.checked)}
+
+        <div
+          className=""
+          style={{
+            maxHeight: "50px",
+            overflow: "auto",
+            width: "90%",
+            border: "1px solid red",
+            display: "flex",
+            flexWrap: "wrap",
+            padding: "10px",
+          }}
         >
-          Is Observer
-        </Checkbox>
-        <div>
-          {filteredParticipants.map((participant) => (
-            <button
-              key={participant.id}
-              className="participant-button"
-              onMouseEnter={() => setHoveredParticipant(participant)}
-              onClick={() => toggleParticipant(participant.id)}
-              style={{
-                background: selectedParticipants.includes(participant.id)
-                  ? "lightblue"
-                  : observers.includes(participant.id)
-                  ? "green"
-                  : "white",
-              }}
-            >
-              {participant.name}
-            </button>
-          ))}
+          {filteredParticipants
+            .filter((participant) => participant.isActive) // Filter out inactive participants
+            .map((participant) => (
+              <button
+                key={participant.id}
+                className="participant-button"
+                onMouseEnter={() => setHoveredParticipant(participant)}
+                onClick={() => toggleParticipant(participant.id)}
+                style={{
+                  background: selectedParticipants.includes(participant.id)
+                    ? "lightblue"
+                    : observers.includes(participant.id)
+                    ? "green"
+                    : "white",
+                }}
+              >
+                {participant.name}
+              </button>
+            ))}
         </div>
 
         {hoveredParticipant && (
-  <div className="participant-tooltip"  style={{ maxHeight: "150px", overflow: "auto" }}>
-    <p>{`Participant: ${hoveredParticipant.name}`}</p>
-    {categoryTypes.map((type) => (
-      <p key={type}>{`${type}s: ${categories
-        .filter(
-          (cat) =>
-            cat.type === type &&
-            cat.participants.includes(hoveredParticipant.id)
-        )
-        .map((cat) => cat.name)
-        .join(", ")}`}</p>
-    ))}
-    <p>{`Items: ${items
-      .filter((item) => item.holderId.includes(hoveredParticipant.id))
-      .map((item) => item.name)
-      .join(", ")}`}</p>
-    <p>{`Factions: ${factions
-      .filter((faction) =>
-        faction.participants.includes(hoveredParticipant.id)
-      )
-      .map((faction) => faction.name)
-      .join(", ")}`}</p>
-    {statPerception.map((perception) => (
-      <p key={perception.statName}>{`${perception.statName}: ${calculatePercentileCategory(
-        hoveredParticipant,
-        participants,
-        perception.statName,
-        statPerception
-      )}`}</p>
-    ))}
-  </div>
-)}
+          <div
+            className="participant-tooltip"
+            style={{ maxHeight: "150px", overflow: "auto" }}
+          >
+            <img
+              src={hoveredParticipant.image}
+              alt={`${hoveredParticipant.name}`}
+              width={120}
+              height={120}
+              style={{ verticalAlign: "middle" }} // Add this style
+            />
+     <span
+  style={{
+    marginTop: "100px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    verticalAlign: "middle",
+    fontFamily: "cursive, sans-serif", // Specify a stylish font family
+  }}
+>
+  {`${hoveredParticipant.name}`}
+</span>
 
+            {categoryTypes.map((type) => (
+              <p key={type}>{`${type}s: ${categories
+                .filter(
+                  (cat) =>
+                    cat.type === type &&
+                    cat.participants.includes(hoveredParticipant.id)
+                )
+                .map((cat) => cat.name)
+                .join(", ")}`}</p>
+            ))}
+            <p>{`Items: ${items
+              .filter((item) => item.holderId.includes(hoveredParticipant.id))
+              .map((item) => item.name)
+              .join(", ")}`}</p>
+            <p>{`Factions: ${factions
+              .filter((faction) =>
+                faction.participants.includes(hoveredParticipant.id)
+              )
+              .map((faction) => faction.name)
+              .join(", ")}`}</p>
+            {statPerception.map((perception) => (
+              <p key={perception.statName}>{`${
+                perception.statName
+              }: ${calculatePercentileCategory(
+                hoveredParticipant,
+                participants,
+                perception.statName,
+                statPerception
+              )}`}</p>
+            ))}
+          </div>
+        )}
 
         <div>
           <h3>Selected Players:</h3>
@@ -814,7 +919,11 @@ console.log(selectedParticipants);
         </div>
 
         <div style={{ maxWidth: "300px" }}>
-          <Select placeholder="Select an arc" onChange={handleArcSelect}>
+          <Select
+            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
+            placeholder="Select an arc"
+            onChange={handleArcSelect}
+          >
             {arcs.map((arc, index) => (
               <Select.Option key={index} value={index}>
                 {arc.title}
@@ -873,6 +982,7 @@ console.log(selectedParticipants);
                   style={{
                     minWidth: 200,
                   }}
+                  suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
                   mode="multiple"
                   value={tempSelectedStats
                     .filter((entry) => entry.participantId === participant.id)
@@ -891,23 +1001,13 @@ console.log(selectedParticipants);
             );
           })}
         </div>
-        <div>
-          <span>Selected Participants:</span>
-          <p>
-            {selectedParticipants
-              .map(
-                (participantId) =>
-                  participants.find((p) => p.id === participantId)?.name
-              )
-              .join(", ")}
-          </p>
-        </div>
 
         <div>
           <div>
             <span>Items:</span>
             <Select
               placeholder="Select Item to Transfer"
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
               value={selectedItem ? selectedItem.name : undefined}
               onChange={(value) => {
                 const selected = items.find((item) => item.name === value);
@@ -932,6 +1032,9 @@ console.log(selectedParticipants);
                 </p>
                 <Space>
                   <Select
+                    suffixIcon={
+                      <CaretDownFilled style={customCaretIconStyle} />
+                    } // Use the suffixIcon prop to add the caret
                     placeholder="Transfer Item"
                     value={transferToParticipantId || undefined}
                     onChange={(value) => setTransferToParticipantId(value)}
@@ -982,6 +1085,7 @@ console.log(selectedParticipants);
             <Space>
               <Select
                 value={dateChangeUnit}
+                suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
                 onChange={(value) => setDateChangeUnit(value)}
               >
                 <Select.Option value="seconds">Seconds</Select.Option>

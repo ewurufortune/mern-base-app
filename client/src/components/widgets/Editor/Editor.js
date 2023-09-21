@@ -8,6 +8,10 @@ import Arcs from './Arcs'
 import ItemsEditor from './Items';
 import CategoriesEditor from './CategoriesEditor';
 import StatsPerceptionEditor from './StatPerceptionEditor';
+import EventsEditor from './EventsEditor';
+import RelationshipEvents from '../randomEvents/RelationshipEvents';
+import RelationshipsEditor from './RelationshipsEditor';
+
 const items=[
     {
         key:1,
@@ -42,6 +46,18 @@ const items=[
     key:5,
     label:'Categories',
     children:      <CategoriesEditor />
+
+},
+{
+  key:7,
+  label:'Events ',
+  children:      <EventsEditor />
+
+},
+{
+  key:8,
+  label:'Relationships ',
+  children:      <RelationshipsEditor />
 
 },
 

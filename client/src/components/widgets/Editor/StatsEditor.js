@@ -108,6 +108,10 @@ const StatsEditor = () => {
   const [dataSource, setDataSource] = useState(stats);
   const [count, setCount] = useState(stats.length);
 
+  useEffect(() => {
+    setDataSource(stats);
+  }, [stats]);
+
   const handleDelete = (id) => {
     const newData = dataSource.filter((item) => item.id !== id);
     setDataSource(newData);

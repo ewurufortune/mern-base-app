@@ -86,12 +86,128 @@ export const createPost = async (req, res) => {
 /* READ POSTS */
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 }); // Sort by creation date in descending order
-    res.status(200).json(posts);
+    const mostLikedPosts = await Post.aggregate([
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          firstName: 1,
+          categories: 1,
+          mainLogs: 1,
+          participants: 1,
+          published: 1,
+          likes: { $objectToArray: "$likes" },
+          comments: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          __v: 1,
+          items: 1,
+          statPerception: 1,
+        },
+      },
+      {
+        $unwind: "$likes",
+      },
+      {
+        $match: {
+          "likes.v": true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userId: { $first: "$userId" },
+          firstName: { $first: "$firstName" },
+          categories: { $first: "$categories" },
+          mainLogs: { $first: "$mainLogs" },
+          participants: { $first: "$participants" },
+          published: { $first: "$published" },
+          likes: { $first: "$likes" },
+          comments: { $first: "$comments" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          __v: { $first: "$__v" },
+          items: { $first: "$items" },
+          statPerception: { $first: "$statPerception" },
+          likeCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { likeCount: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+    
+    
+    // Get the top 10 recently liked posts
+    const recentlyLikedPosts = await Post.find()
+      .sort({ updatedAt: -1 })
+      .limit(10);
+
+    // Get the top 10 most recent posts
+    const recentPosts = await Post.find().sort({ createdAt: -1 }).limit(10);
+
+    // Combine the results into a single array
+    const combinedPosts = {
+      mostLikedPosts,
+      recentlyLikedPosts,
+      recentPosts,
+    };
+    console.log(combinedPosts);
+    res.status(200).json(combinedPosts);
   } catch (err) {
     res
       .status(500)
       .json({ message: "Error retrieving posts", error: err.message });
+  }
+};
+export const publishPost = async (req, res) => {
+  try {
+    const { id, firstName, mainLogs, participants, categories, items, statPerception } = req.body;
+
+    if (!id) {
+      console.log(req.body);
+      console.log("no userId");
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    // Check if the user has a published post
+    const existingPublishedPost = await Post.findOne({
+      userId: id,
+      published: true,
+    });
+
+    if (existingPublishedPost) {
+      // Update the existing published post
+      existingPublishedPost.mainLogs = mainLogs;
+      existingPublishedPost.participants = participants;
+      existingPublishedPost.categories = categories;
+      await existingPublishedPost.save();
+      res.status(200).json(existingPublishedPost);
+    } else {
+      // Create a new published post
+      const newPublishedPost = new Post({
+        userId: id,
+        firstName,
+        mainLogs,
+        participants,
+        categories,
+        items,
+        statPerception,
+        likes: new Map([[id, true]]), // Initialize likes with the user's ID as a key
+        comments: [], // Initialize comments as an empty array
+        published: true,
+      });
+      await newPublishedPost.save();
+      res.status(201).json(newPublishedPost);
+    }
+  } catch (err) {
+    console.error("Error publishing/updating post:", err);
+    res
+      .status(500)
+      .json({ message: "Error publishing/updating post", error: err.message });
   }
 };
 
@@ -103,7 +219,7 @@ export const likePost = async (req, res) => {
     const post = await Post.findById(id);
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(404).json({ message: "Post not found" });
     }
 
     // Check if the user has already liked the post
@@ -121,11 +237,12 @@ export const likePost = async (req, res) => {
 
     res.status(200).json(post);
   } catch (err) {
-    console.error('Error updating post like:', err);
-    res.status(500).json({ message: 'Error updating post like', error: err.message });
+    console.error("Error updating post like:", err);
+    res
+      .status(500)
+      .json({ message: "Error updating post like", error: err.message });
   }
 };
-
 
 export const replaceUser = async (req, res) => {
   try {
@@ -134,23 +251,7 @@ export const replaceUser = async (req, res) => {
       firstName,
       lastName,
       email,
-      alignment,
-      popularity,
-      wealth,
-      friends,
-      savegame,
-      charisma,
-      isChampion,
-      pastFeuds,
-      inRingSkill,
-      currentPotentialFeud,
-      activeFeud,
-      currentChampionshipHeld,
-      titleReigns,
-      tags,
-      currentCompany,
       location,
-      viewedProfile,
       impressions,
     } = req.body;
 

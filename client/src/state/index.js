@@ -4,6 +4,7 @@ import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: "light",
+  lastDate:null,
   user: null,
   token: null,
   posts: [],
@@ -47,6 +48,10 @@ export const authSlice = createSlice({
       state.activeTab = action.payload;
     }
     ,
+    setLastDate: (state, action) => {
+      state.lastDate = action.payload;
+      console.log(action.payload);
+    },
 
     setStats: (state, action) => {
       console.log(action.payload);
@@ -76,6 +81,6 @@ export const authSlice = createSlice({
 });
 
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost , setFirstname,setFirstName,setStats,setDecisionButtonClicked,setUser,setActiveTab} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost,setLastDate , setFirstname,setFirstName,setStats,setDecisionButtonClicked,setUser,setActiveTab} =
   authSlice.actions;
 export default authSlice.reducer;

@@ -91,6 +91,9 @@ const ParticipantEditor = () => {
   const dispatch = useDispatch();
 
   const [dataSource, setDataSource] = useState(participants);
+  useEffect(() => {
+    setDataSource(participants);
+  }, [participants]);
   const [count, setCount] = useState(participants.length);
 
   const uniqueStatNamesFromStats = Array.from(
@@ -114,8 +117,10 @@ const ParticipantEditor = () => {
       }
       return item;
     });
-
+console.log(updatedData);
     setDataSource(updatedData);
+    dispatch(setStats({ participants: updatedData }));
+
   };
 
   const defaultColumns = [
@@ -123,6 +128,12 @@ const ParticipantEditor = () => {
       title: "Name",
       dataIndex: "name",
       width: "30%",
+      editable: true,
+    },
+    {
+      title: "Profile",
+      dataIndex: "image",
+      width: "10%",
       editable: true,
     },
     {
@@ -185,9 +196,11 @@ const ParticipantEditor = () => {
       name: `Agent ${count + 1}`,
       isActive: true, // Set the initial value to true
       bio: "",
+      image:'https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png',
       stats: [{ relevance: 0 }],
     };
     setDataSource([...dataSource, newData]);
+     dispatch(setStats({ participants: [...dataSource, newData] }));
     setCount(count + 1);
   };
 

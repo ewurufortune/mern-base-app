@@ -112,6 +112,9 @@ const Arcs = () => {
           expanded: false, // Initialize the expanded state for each row
         }))
       );
+      useEffect(() => {
+        setDataSource(arcs);
+      }, [arcs]);
         const [count, setCount] = useState(arcs.length);
 
  

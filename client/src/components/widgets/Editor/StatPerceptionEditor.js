@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import './StatPerceptionEditor.css'
 import StatPerception from "../statPerception/StatPerception";
 
+
 const EditableContext = React.createContext(null);
 
 const EditableRow = ({ index, ...props }) => {
@@ -216,6 +217,10 @@ const StatsPerceptionEditor = () => {
   const dispatch = useDispatch();
 
   const [dataSource, setDataSource] = useState(statPerceptionReadOnly);
+
+  useEffect(() => {
+    setDataSource(statPerceptionReadOnly);
+  }, [statPerceptionReadOnly]);
 
   const handleSave = (row) => {
     const newData = dataSource.map((item) => {

@@ -8,26 +8,41 @@ const Feed = () => {
   const token=useSelector((state) => state.token);
   const [posts, setPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Track loading state
 
-  useEffect(() => {
-    // Fetch posts from your backend API here
-    // You can use the Fetch API, Axios, or any other library of your choice
+
+
+  // Define the fetchPosts function
+  const fetchPosts = () => {
+    setIsLoading(true); // Set loading state to true
     fetch('http://localhost:3001/auth/getPosts', {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` // Include the token in the Authorization header
-    },
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
     })
       .then((response) => response.json())
       .then((data) => {
-        // Set the retrieved posts in the state
-        setPosts(data);
+        console.log(data);
+        setPosts(data.mostLikedPosts);
+        setIsLoading(false); // Set loading state to false when done
       })
       .catch((error) => {
         console.error('Error fetching posts:', error);
+        setIsLoading(false); // Set loading state to false on error
       });
-  }, []); // The empty dependency array ensures that this effect runs only once, similar to componentDidMount
+  };
+
+  useEffect(() => {
+    // Call the fetchPosts function when the component mounts
+    fetchPosts();
+  }, [token]); // The dependency array ensures the effect re-runs when the token changes
+
+  const handleRefresh = () => {
+    // Call the fetchPosts function to refresh the feed
+    fetchPosts();
+  };
 
   const handleLike = (postId) => {
     // Send a request to your backend to like the post with the given postId
@@ -70,13 +85,10 @@ const Feed = () => {
   
   return (
     <div>
+     <button onClick={handleRefresh}>Refresh Feed</button>
     {posts.map((post) => (
       <div key={post._id} className="post">
-        <h3>{post.firstName} {post.lastName}</h3>
-        <p>{post.description}</p>
-        {post.picturePath && (
-          <img src={post.picturePath} alt="Post" />
-        )}
+        <h3>{post.firstName} </h3>
         <div>
           <button onClick={() => handleLike(post._id)}>
             {likedPosts.includes(post._id) ? 'Unlike' : 'Like'}

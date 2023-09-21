@@ -1,0 +1,78 @@
+.save-game-button{
+    margin-right: 156px;
+    margin-bottom: -10px;
+    color:lightgreen;
+    position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .save-game-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+
+  /* SCROLLBAR */
+  /* Customize scrollbar track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track color */
+  }
+  
+  /* Customize scrollbar thumb */
+  ::-webkit-scrollbar-thumb {
+    background: #888; /* Thumb color */
+    border-radius: 10px; /* Rounded corners for the thumb */
+    width: 2px; /* Adjust the width as needed */
+  }
+  
+  /* Customize scrollbar buttons (arrows) */
+  ::-webkit-scrollbar-button {
+    background: #ccc; /* Button color */
+  }
+  
+  /* Customize scrollbar on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Thumb color on hover */
+  }
+  
+
+  /* style antd elements */
+  /* Customize the border color for Ant Design components */
+
+/* Example for Select */
+.ant-select-selector {
+    border-color: #1890ff; /* Bright blue border color */
+  }
+  
+  /* Example for Button */
+  .ant-btn {
+    border-color: #1890ff; /* Bright blue border color */
+  }
+  
+  /* Example for Checkbox */
+  .ant-checkbox-wrapper {
+    border-color: #1890ff; /* Bright blue border color */
+  }
+
+  /* Customize the border color of the radio buttons */
+.ant-radio-wrapper {
+    border-color: #1890ff; /* Bright blue border color */
+  }
+/* CSS to increase the brightness of the placeholder text */
+/* Increase the brightness of the placeholder text */
+.ant-select-selector .ant-select-selection-placeholder {
+    color: rgba(128, 128, 128)
+    ; /* Light white color with transparency */
+  }
+  
+   /* Change the border color of the checkbox circle */
+   .ant-checkbox-checked .ant-checkbox-inner {
+    background-color:  green !important;;
+    border-color:  green !important;;
+  }
+
+
+  /* Hide the scrollbar for the category-filter element */
+.category-filter::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar width */
+  }
+

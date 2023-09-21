@@ -10,16 +10,26 @@ const PostSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    lastName: {
-      type: String,
+    categories: {
+      type: Array,
       required: true,
     },
-    description: {
-      type: String, // Add the description field
-      required: true, // Or set to false depending on your requirements
+    mainLogs: {
+      type: Array, 
+      required: true, 
     },
-    picturePath: {
-      type: String, // Add the picturePath field
+    participants: {
+      type: Array, 
+    },
+    items: {
+      type: Array, 
+    },
+    statPerception: {
+      type: Array, 
+    },
+    published: {
+      type: Boolean,
+      default: false, // Default to false, indicating the post is not published initially
     },
     likes: {
       type: Map,
@@ -32,6 +42,7 @@ const PostSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 const Post = mongoose.model("Post", PostSchema);
 

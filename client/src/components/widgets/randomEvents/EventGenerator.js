@@ -94,7 +94,7 @@ function EventGenerator() {
   const [eventTitle, setEventTitle] = useState("");
   const [titleCharCount, setTitleCharCount] = useState(0);
 
-  const [eventRarity, setEventRarity] = useState("common");
+  const [eventRarity, setEventRarity] = useState("random");
 
   const handleEventComponentChange = (selectedComponents) => {
     setSelectedEventComponents(selectedComponents);
@@ -105,8 +105,8 @@ function EventGenerator() {
   };
 
   const resetState = () => {
-    setEventTitle("")
-    setEventRarity("common")
+    setEventTitle("");
+    setEventRarity("random");
     setSelectedEventComponents([]);
     setSelectedConsequenceComponents([]);
     setStatRange([0, 100]);
@@ -122,7 +122,7 @@ function EventGenerator() {
     setSelectedItemChange("");
     setSelectedItemPercentile(null);
     setSelectedCategoryChange([]);
-    setSelectedSelectionMode('single');
+    setSelectedSelectionMode("single");
     setSelectedPercentile(null);
     setEventDescription("");
     setConsequenceDescription("");
@@ -205,20 +205,20 @@ function EventGenerator() {
         </p>
       </div>
       <Form>
-
-        <Form.Item label="Select Event Rarity" style={{ width: "20%" }} >
+        <Form.Item label="Select Event Rarity" style={{ width: "100%" }}>
           <Select
             placeholder="Select event rarity"
             value={eventRarity}
             onChange={setEventRarity}
           >
-            <Option value="common">Common</Option>
-            <Option value="uncommon">Uncommon</Option>
-            <Option value="rare">Rare</Option>
-            <Option value="very-rare">Very Rare</Option>
+                      <Option value="random">Random</Option>
+
+            <Option value="weekly">Weekly</Option>
+            <Option value="monthly">Monthly</Option>
+            <Option value="yearly">Yearly</Option>
           </Select>
         </Form.Item>
-        <Form.Item label="People Involved" >
+        <Form.Item label="People Involved">
           <Radio.Group
             value={selectedSelectionMode}
             onChange={(e) => {
@@ -443,9 +443,10 @@ function EventGenerator() {
                   <Radio value="top40">Top 40%</Radio>
                   <Radio value="bottom50">Bottom 50%</Radio>
                   <Radio value="random">Random</Radio>
-                  {selectedSelectionMode === "multiple" && (
                     <Radio value="subject">Subject</Radio>
-                  )}
+                  {/* {selectedSelectionMode === "multiple" && (
+                    <Radio value="subject">Subject</Radio>
+                  )} */}
                 </Radio.Group>
               </div>
             )}
@@ -460,6 +461,7 @@ function EventGenerator() {
               <div key={type}>
                 <p>{type}</p>
                 <Select
+                  style={{ minWidth: 200 }}
                   mode="multiple"
                   placeholder={`Select ${type} categories`}
                   value={selectedCategoryChangeByType[type] || []}
@@ -484,40 +486,37 @@ function EventGenerator() {
                     ))}
                 </Select>
 
-                {selectedCategoryChangeByType[type] &&
-                  selectedCategoryChangeByType[type].length > 0 && (
-                    <div>
-                      <p>Add:</p>
-                      <Select
-                        mode="multiple"
-                        placeholder={`Select ${type} categories`}
-                        options={categories
-                          .filter((category) => category.type === type)
-                          .map((category) => ({
-                            label: category.name,
-                            value: category.id,
-                          }))
-                          .filter(
-                            (category) =>
-                              !selectedCategoryChangeByType[type].includes(
-                                category.value
-                              )
-                          )}
-                        value={selectedNewCategories[type] || []}
-                        onChange={(selected) => {
-                          setSelectedNewCategories({
-                            ...selectedNewCategories,
-                            [type]: selected,
-                          });
-                        }}
-                        filterOption={(input, option) =>
-                          option.label
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      />
-                    </div>
-                  )}
+                <div>
+                  <p>Add:</p>
+                  <Select
+                   style={{ minWidth: 200 }}
+                    mode="multiple"
+                    placeholder={`Select ${type} categories`}
+                    options={categories
+                      .filter((category) => category.type === type)
+                      .map((category) => ({
+                        label: category.name,
+                        value: category.id,
+                      }))
+                      .filter(
+                        (category) =>
+                          !selectedCategoryChangeByType[type]?.includes(
+                            category.value
+                          )
+                      )}
+                    value={selectedNewCategories[type] || []}
+                    onChange={(selected) => {
+                      setSelectedNewCategories({
+                        ...selectedNewCategories,
+                        [type]: selected,
+                      });
+                    }}
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>
