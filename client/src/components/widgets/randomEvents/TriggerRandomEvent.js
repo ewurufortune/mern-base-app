@@ -432,7 +432,7 @@ export default function TriggerRandomEvent() {
   };
   return (
     <div>
-      <Button onClick={executeRandomEvents}>Execute Random Events</Button>
+      {/* <Button onClick={executeRandomEvents}>Execute Random Events</Button> */}
       {/* <div>
         <h2>Recent Events:</h2>
         <ul>

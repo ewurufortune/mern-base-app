@@ -131,13 +131,14 @@ console.log(updatedData);
       editable: true,
     },
     {
-      title: "Profile",
+      title: "Profile Image",
       dataIndex: "image",
       width: "10%",
       editable: true,
+      ellipsis: true,
     },
     {
-      title: "IsActive",
+      title: "Active",
       dataIndex: "isActive",
       render: (_, record) => (
         <Switch

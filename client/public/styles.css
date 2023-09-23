@@ -1,3 +1,9 @@
+body {
+  background-color: grey; /* Set your desired grey color here */
+  margin: 0; /* Reset default body margin */
+  padding: 0; /* Reset default body padding */
+}
+
 .save-game-button{
     margin-right: 156px;
     margin-bottom: -10px;
@@ -13,26 +19,28 @@
 
   /* SCROLLBAR */
   /* Customize scrollbar track */
+/* Track color */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Track color */
-  }
-  
-  /* Customize scrollbar thumb */
-  ::-webkit-scrollbar-thumb {
-    background: #888; /* Thumb color */
-    border-radius: 10px; /* Rounded corners for the thumb */
-    width: 2px; /* Adjust the width as needed */
-  }
-  
-  /* Customize scrollbar buttons (arrows) */
-  ::-webkit-scrollbar-button {
-    background: #ccc; /* Button color */
-  }
-  
-  /* Customize scrollbar on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Thumb color on hover */
-  }
+    background: #f1f1f1;
+}
+
+/* Thumb color */
+::-webkit-scrollbar-thumb {
+    background: #333; /* Darker color for the thumb */
+    border-radius: 10px;
+    width: 1px; /* Adjust the width for a thinner scrollbar */
+}
+
+/* Button color */
+::-webkit-scrollbar-button {
+    background: #ccc;
+}
+
+/* Thumb color on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #111; /* Darker color for thumb on hover */
+}
+
   
 
   /* style antd elements */
@@ -76,3 +84,99 @@
     width: 0; /* Remove scrollbar width */
   }
 
+
+  /* BOLDEN ALL TEXT */
+  /* Apply bold font-weight to all text inside paragraphs */
+p {
+    font-weight: bold;
+  }
+  
+  /* Apply bold font-weight to all text inside headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+  }
+  
+  /* Apply bold font-weight to all text inside span elements */
+  span {
+    font-weight: bold;
+  }
+  
+  /* Apply bold font-weight to all text inside div elements */
+  div {
+    font-weight: bold;
+  }
+  
+  /* Apply bold font-weight to all text inside other specific elements as needed */
+
+  
+  .rotating-border {
+    width: fit-content;
+    position: relative;
+    border: 2px solid;
+    border-radius: 40px !important;
+    border-image: linear-gradient(90deg, #ffa500, #0f9d58);
+    border-image-slice: 1;
+    animation: rotateBorderColor 5s linear infinite;
+    padding: 10px;
+  }
+  
+  @keyframes rotateBorderColor {
+    0% {
+      border-image-source: linear-gradient(90deg, #ffa500, #0f9d58);
+    }
+    25% {
+      border-image-source: linear-gradient(90deg, #0f9d58, #ffa500);
+    }
+    50% {
+      border-image-source: linear-gradient(90deg, #ffa500, #0f9d58);
+    }
+    75% {
+      border-image-source: linear-gradient(90deg, #0f9d58, #ffa500);
+    }
+    100% {
+      border-image-source: linear-gradient(90deg, #ffa500, #0f9d58);
+    }
+  }
+  
+
+  .participant-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px; /* Adjust the gap between elements as needed */
+  }
+  
+/* CSS for changing the placeholder color to light grey */
+/* Target Input placeholder */
+.custom-input input::placeholder {
+    color: lightgrey !important;
+  }
+  
+  /* Target TextArea placeholder */
+  .custom-textarea textarea::placeholder {
+    color: lightgrey !important;
+  }
+  
+  /* SORT BY BUTTON */
+
+  /* CSS */
+  .button-70 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    border-radius: 6px;
+    color: #3D3D3D;
+    background: #fff;
+    border: none;
+    box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .button-11:focus {
+    box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
+    outline: 0;
+  }

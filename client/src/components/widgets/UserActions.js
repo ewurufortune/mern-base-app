@@ -9,16 +9,21 @@ import {
   Col,
   Row,
   Checkbox,
+  Typography,
+  Tag,
+  Input,
   ConfigProvider,
   theme,
 } from "antd";
-import { CaretDownFilled } from "@ant-design/icons";
+import { CaretDownFilled, FileDoneOutlined  } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import TabComponent from "./tabsComponent/TabsComponent";
 import { setStats, setLastDate } from "state";
 import _ from "lodash";
+
+const { TextArea } = Input;
 
 export default function UserActions({ clientId }) {
   const user = useSelector((state) => state.user);
@@ -204,6 +209,7 @@ function Segment({ removeSegment }) {
   const [descriptionError, setDescriptionError] = useState("");
   const [dateChangeValue, setDateChangeValue] = useState(0);
   const [dateChangeUnit, setDateChangeUnit] = useState("seconds"); // Default unit
+
 
   const [detailedAccount, setDetailedAccount] = useState({
     title: "",
@@ -680,7 +686,7 @@ function Segment({ removeSegment }) {
 
   // Define a custom CSS class for the caret icon
   const customCaretIconStyle = {
-    color: "rgba(255, 255, 255, 0.85)", // Light white color
+    color: "lightgreen", // Light white color
   };
 
   const filteredParticipants = sortParticipants(
@@ -719,6 +725,7 @@ function Segment({ removeSegment }) {
     <Card
       style={{
         minWidth: "920px",
+        marginTop:'-40px',
         marginLeft: 190,
         // display: "flex",
         justifyContent: "center",
@@ -733,8 +740,8 @@ function Segment({ removeSegment }) {
             style={{
               maxHeight: "50px",
               overflow: "auto",
-              width: "90%",
-              border: "1px solid red",
+              width: "70%",
+              // border: "1px solid red",
               display: "flex",
               flexWrap: "wrap",
               padding: "10px",
@@ -778,7 +785,7 @@ function Segment({ removeSegment }) {
               onChange={(value) => setSelectedStat(value)}
               suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
             >
-              <Select.Option value="None">Sort By </Select.Option>
+              <Select.Option value="None">Sort Participants</Select.Option>
               {statNames.map((statName) => (
                 <Select.Option key={statName} value={statName}>
                   {statName}
@@ -813,7 +820,7 @@ function Segment({ removeSegment }) {
             maxHeight: "50px",
             overflow: "auto",
             width: "90%",
-            border: "1px solid red",
+            // border: "1px solid red",
             display: "flex",
             flexWrap: "wrap",
             padding: "10px",
@@ -840,21 +847,21 @@ function Segment({ removeSegment }) {
             ))}
         </div>
 
-        {hoveredParticipant && (
-          <div
-            className="participant-tooltip"
-            style={{ maxHeight: "150px", overflow: "auto" }}
-          >
-            <img
-              src={hoveredParticipant.image}
-              alt={`${hoveredParticipant.name}`}
-              width={120}
-              height={120}
-              style={{ verticalAlign: "middle" }} // Add this style
-            />
-     <span
+      {hoveredParticipant && (
+  <div
+    className="participant-tooltip"
+    style={{ display: "flex", alignItems: "center", maxHeight: "150px", overflow: "auto" }}
+  >
+<img
+  src={hoveredParticipant.image}
+  alt={`${hoveredParticipant.name}`}
+  width={120}
+  height={120}
+  style={{ verticalAlign: "middle", margin: "5px" }}
+/>
+<span
   style={{
-    marginTop: "100px",
+    marginTop: "20px", // Adjust the marginTop value to position the name higher
     fontWeight: "bold",
     fontSize: "18px",
     verticalAlign: "middle",
@@ -864,100 +871,190 @@ function Segment({ removeSegment }) {
   {`${hoveredParticipant.name}`}
 </span>
 
-            {categoryTypes.map((type) => (
-              <p key={type}>{`${type}s: ${categories
-                .filter(
-                  (cat) =>
-                    cat.type === type &&
-                    cat.participants.includes(hoveredParticipant.id)
-                )
-                .map((cat) => cat.name)
-                .join(", ")}`}</p>
-            ))}
-            <p>{`Items: ${items
-              .filter((item) => item.holderId.includes(hoveredParticipant.id))
-              .map((item) => item.name)
-              .join(", ")}`}</p>
-            <p>{`Factions: ${factions
-              .filter((faction) =>
-                faction.participants.includes(hoveredParticipant.id)
-              )
-              .map((faction) => faction.name)
-              .join(", ")}`}</p>
-            {statPerception.map((perception) => (
-              <p key={perception.statName}>{`${
-                perception.statName
-              }: ${calculatePercentileCategory(
-                hoveredParticipant,
-                participants,
-                perception.statName,
-                statPerception
-              )}`}</p>
-            ))}
-          </div>
-        )}
+    <div style={{ marginLeft: "100px", marginTop:100 }}>
 
-        <div>
-          <h3>Selected Players:</h3>
-          <p>
-            {selectedParticipants
-              .map(
-                (participantId) =>
-                  participants.find((p) => p.id === participantId)?.name
-              )
-              .join(", ")}
-          </p>
-          <h3>Selected Observers:</h3>
-          <p>
-            {observers
-              .map(
-                (participantId) =>
-                  participants.find((p) => p.id === participantId)?.name
-              )
-              .join(", ")}
-          </p>
-        </div>
 
-        <div style={{ maxWidth: "300px" }}>
-          <Select
-            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
-            placeholder="Select an arc"
-            onChange={handleArcSelect}
-          >
-            {arcs.map((arc, index) => (
-              <Select.Option key={index} value={index}>
-                {arc.title}
-              </Select.Option>
-            ))}
-          </Select>
+      {statPerception.map((perception) => (
+        <div key={perception.statName} style={{ marginBottom: "8px" }}>
+        <Tag color="purple">
+  {`${perception.statName.charAt(0).toUpperCase()}${perception.statName.slice(1)} (${
+    hoveredParticipant.stats.find((stat) =>
+      stat.hasOwnProperty(perception.statName)
+    )
+      ? hoveredParticipant.stats.find((stat) =>
+          stat.hasOwnProperty(perception.statName)
+        )[perception.statName]
+      : ""
+  })`}
+</Tag>
 
-          <div>
-            <span>Title:</span>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                setTitleError(""); // Clear the error when input changes
-              }}
-            />
-            {titleError && (
-              <p className="error-message" style={{ color: "red" }}>
-                {titleError}
-              </p>
+          <Typography.Text style={{ opacity: 0.8 }}>
+            {calculatePercentileCategory(
+              hoveredParticipant,
+              participants,
+              perception.statName,
+              statPerception
             )}
-          </div>
+          </Typography.Text>
+        </div>
+      ))}
+      {categoryTypes.map((type) => (
+        <div key={type} style={{ marginBottom: "8px" }}>
+        <Tag color="blue">{`${type.charAt(0).toUpperCase()}${type.slice(1)}s`}</Tag>
+          <Typography.Text style={{ opacity: 0.8 }}>
+            {categories
+              .filter(
+                (cat) =>
+                  cat.type === type &&
+                  cat.participants.includes(hoveredParticipant.id)
+              )
+              .map((cat) => cat.name)
+              .join(", ")}
+          </Typography.Text>
+        </div>
+      ))}
 
+      <div style={{ marginBottom: "8px" }}>
+        <Tag color="green">Items</Tag>
+        <Typography.Text style={{ opacity: 0.8 }}>
+          {items
+            .filter((item) =>
+              item.holderId.includes(hoveredParticipant.id)
+            )
+            .map((item) => item.name)
+            .join(", ")}
+        </Typography.Text>
+      </div>
+
+      <div>
+      <Tag color="yellow">Biography</Tag>
+
+       { hoveredParticipant.bio}
+      </div>
+    </div>
+    
+  </div>
+)}
+
+
+<div
+  className=""
+  style={{
+    maxHeight: "300px",
+    overflow: "auto",
+    width: "90%",
+    // border: "1px solid red",
+    // display: "flex",
+    flexWrap: "wrap",
+    padding: "10px",
+  }}
+>
+  {selectedParticipants.length > 0 && (
+    <>
+      <h3>Selected Players:</h3>
+      <p>
+        {selectedParticipants.map((participantId, index) => {
+          const participantName = participants.find(
+            (p) => p.id === participantId
+          )?.name;
+          return (
+            <React.Fragment key={participantId}>
+              {participantName}
+              {index < selectedParticipants.length - 1 ? ", " : ""}
+              {index === selectedParticipants.length - 2 ? " and " : ""}
+            </React.Fragment>
+          );
+        })}
+      </p>
+    </>
+  )}
+  {observers.length > 0 && (
+    <>
+      <h3>Selected Observers:</h3>
+      <p>
+        {observers.map((participantId, index) => {
+          const participantName = participants.find(
+            (p) => p.id === participantId
+          )?.name;
+          return (
+            <React.Fragment key={participantId}>
+              {participantName}
+              {index < observers.length - 1 ? ", " : ""}
+              {index === observers.length - 2 ? " & " : ""}
+            </React.Fragment>
+          );
+        })}
+      </p>
+    </>
+  )}
+</div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px" /* Add spacing between elements */,
+            margin: "20px 0",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+            <Select
+              placeholder="Select an arc"
+              onChange={handleArcSelect}
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+            >
+              {arcs.map((arc, index) => (
+                <Select.Option key={index} value={index}>
+                  {arc.title}
+                </Select.Option>
+              ))}
+            </Select>
+
+            <div>
+              <Input
+                placeholder="Title"
+                type="text"
+                value={title}
+                allowClear
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  setTitleError(""); // Clear the error when input changes
+                }}
+                style={{
+                  borderColor: "#CCCCCC",
+                  borderWidth: "1px",
+                  color: "#CCCCCC",
+                }}
+                className="custom-input" // Add a custom class for styling
+
+              />
+
+              {titleError && (
+                <Typography.Text className="error-message" type="danger">
+                  {titleError}
+                </Typography.Text>
+              )}
+            </div>
+          </div>
           {/* Description textarea */}
-          <div>
-            <span>Description:</span>
-            <textarea
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                setDescriptionError(""); // Clear the error when input changes
-              }}
-            />
+          <div style={{ minWidth: 250, minHeight: 200 }}>
+          <TextArea
+  placeholder="Description"
+  showCount
+  maxLength={5000}
+  style={{ minWidth: 400, minHeight: 200, fontSize: '18px' }} // Adjust the fontSize value as needed
+  autoSize
+  value={description}
+  bordered={true}
+  onChange={(e) => {
+    setDescription(e.target.value);
+    setDescriptionError(""); // Clear the error when input changes
+  }}
+  className="custom-textarea" // Add a custom class for styling
+
+/>
+
             {descriptionError && (
               <p className="error-message" style={{ color: "red" }}>
                 {descriptionError}
@@ -965,8 +1062,7 @@ function Segment({ removeSegment }) {
             )}
           </div>
         </div>
-        <div>
-          <h3>Selected Players:</h3>
+        <div className="participant-grid">
           {selectedParticipants.map((participantId) => {
             const participant = participants.find(
               (p) => p.id === participantId
@@ -975,14 +1071,14 @@ function Segment({ removeSegment }) {
               return null; // Skip rendering if participant is not found
             }
             return (
-              <div key={participant.id}>
+              <div key={participant.id} className="rotating-border">
                 <p>{participant.name}</p>
                 <Select
-                  placeholder="Select Participant"
+                  placeholder="Specify Stat Changes"
                   style={{
                     minWidth: 200,
                   }}
-                  suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
+                  suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
                   mode="multiple"
                   value={tempSelectedStats
                     .filter((entry) => entry.participantId === participant.id)
@@ -1004,9 +1100,12 @@ function Segment({ removeSegment }) {
 
         <div>
           <div>
-            <span>Items:</span>
             <Select
-              placeholder="Select Item to Transfer"
+              placeholder={
+                filteredItems.length === 0
+                  ? "No Item holder selected"
+                  : "Select Item to Transfer"
+              }
               suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
               value={selectedItem ? selectedItem.name : undefined}
               onChange={(value) => {
@@ -1071,42 +1170,46 @@ function Segment({ removeSegment }) {
             </p>
           )}
         </div>
-        <div style={{ maxWidth: "200px" }}>
-          <h3>Date Change</h3>
-          <div>
-            <span>Change by:</span>
-            <InputNumber
-              min={-100000}
-              max={1000000}
-              size="small"
-              value={dateChangeValue}
-              onChange={(value) => setDateChangeValue(value)}
-            />
-            <Space>
-              <Select
-                value={dateChangeUnit}
-                suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
-                onChange={(value) => setDateChangeUnit(value)}
-              >
-                <Select.Option value="seconds">Seconds</Select.Option>
-                <Select.Option value="minutes">Minutes</Select.Option>
-                <Select.Option value="hours">Hours</Select.Option>
-                <Select.Option value="days">Days</Select.Option>
-                <Select.Option value="weeks">Weeks</Select.Option>
-                <Select.Option value="months">Months</Select.Option>
-                <Select.Option value="years">Years</Select.Option>
-              </Select>
-            </Space>
-          </div>
-        </div>
+        <div style={{ display: "flex", alignItems: "center", maxWidth: "200px" }}>
+  <div style={{ display: "flex", alignItems: "center", marginTop:40, marginBottom:30 }}>
+    <span style={{ marginRight: "10px" }}>Advance Date by:</span>
+    <InputNumber
+      min={-100000}
+      max={1000000}
+      size="small"
+      value={dateChangeValue}
+      onChange={(value) => setDateChangeValue(value)}
+    />
+    <Select
+      value={dateChangeUnit}
+      suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
+      onChange={(value) => setDateChangeUnit(value)}
+    >
+      <Select.Option value="seconds">Seconds</Select.Option>
+      <Select.Option value="minutes">Minutes</Select.Option>
+      <Select.Option value="hours">Hours</Select.Option>
+      <Select.Option value="days">Days</Select.Option>
+      <Select.Option value="weeks">Weeks</Select.Option>
+      <Select.Option value="months">Months</Select.Option>
+      <Select.Option value="years">Years</Select.Option>
+    </Select>
+  </div>
+</div>
+
         {showNumberRating && (
           <div>
             <h3>Number Rating: {calculateNumberRating()}</h3>
           </div>
         )}
         {/* End Segment Button */}
-        <button onClick={() => handleEndSegment()}>End Segment</button>
-      </div>
+        <Button
+  type="primary"
+  size="large"
+  icon={<FileDoneOutlined  />}
+  onClick={() => handleEndSegment()}
+>
+  End Segment
+</Button>      </div>
     </Card>
   );
 }

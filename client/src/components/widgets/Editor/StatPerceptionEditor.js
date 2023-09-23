@@ -306,18 +306,18 @@ const StatsPerceptionEditor = () => {
   });
 
   return (
-    <div>
+    <div style={{ overflow: 'auto', minWidth: '400px' }}>
     <StatPerception />
-      <Table
-        components={components}
-        rowClassName={() => "editable-row"}
-        bordered
-        dataSource={dataSource}
-        columns={columns}
-        rowKey="id"
-      
-      />
-    </div>
+    <Table
+      components={components}
+      rowClassName={() => 'editable-row'}
+      bordered
+      dataSource={dataSource}
+      columns={columns}
+      rowKey="id"
+    />
+  </div>
+  
   );
 };
 

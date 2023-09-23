@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Collapse, Input, Button, Select, Tabs } from "antd";
+import { Collapse, Input, Button, Select, Tabs, Tag, Typography, List, ConfigProvider} from "antd";
 import { setStats } from "state";
 import _ from "lodash";
 import { Segmented } from "antd";
+import { CaretDownFilled  } from "@ant-design/icons";
 
-const postTypes = ["mostLikedPosts", "recentlyLikedPosts", "recentPosts"];
-
+  // Define a custom CSS class for the caret icon
+  const customCaretIconStyle = {
+    color: "lightgreen", // Light white color
+  };
+  const postTypes = [
+    { label: "Most Liked Posts", value: "mostLikedPosts" },
+    { label: "Recently Liked Posts", value: "recentlyLikedPosts" },
+    { label: "Recent Posts", value: "recentPosts" },
+    
+  ];
 // const [selectedPostCategories,setSelectedPostCategories]=useState([])
 // const [selectedPostMainLogs,setSelectedPostCategory]=useState([])
 // const [selectedPostParticipants,setSelectedPostParticipants]=useState([])
@@ -46,7 +55,7 @@ export default function MainLogs() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState([]);
-  const [selectedPostType, setSelectedPostType] = useState("mostLikedPosts");
+  const [selectedPostType, setSelectedPostType] = useState(postTypes[0].value);
 
   const handlePostTypeChange = (value) => {
     console.log(value);
@@ -179,20 +188,55 @@ export default function MainLogs() {
     new Set(categories.map((category) => category.type))
   );
 
-  const filteredLogs = mainLogs
-    .filter(
-      (log) =>
-        selectedParticipants.length === 0 ||
-        selectedParticipants.every((participantId) =>
-          log.participants.includes(participantId)
-        )
-    )
-    .filter((log) =>
-      Object.entries(selectedCategoryNames).every(
-        ([categoryType, categoryName]) =>
-          !categoryName || log.categories.includes(categoryName)
+  function calculateDuration(start, end) {
+    const startTime = new Date(start).getTime();
+    const endTime = new Date(end).getTime();
+    const durationInMilliseconds = endTime - startTime;
+  
+    const millisecondsPerSecond = 1000;
+    const millisecondsPerMinute = 60 * millisecondsPerSecond;
+    const millisecondsPerHour = 60 * millisecondsPerMinute;
+    const millisecondsPerDay = 24 * millisecondsPerHour;
+    const millisecondsPerYear = 365 * millisecondsPerDay;
+  
+    const years = Math.floor(durationInMilliseconds / millisecondsPerYear);
+    const days = Math.floor((durationInMilliseconds % millisecondsPerYear) / millisecondsPerDay);
+    const hours = Math.floor((durationInMilliseconds % millisecondsPerDay) / millisecondsPerHour);
+    const minutes = Math.floor((durationInMilliseconds % millisecondsPerHour) / millisecondsPerMinute);
+    const seconds = Math.floor((durationInMilliseconds % millisecondsPerMinute) / millisecondsPerSecond);
+  
+    let formattedDuration = '';
+    if (years > 0) formattedDuration += `${years} years `;
+    if (days > 0) formattedDuration += `${days} days `;
+    if (hours > 0) formattedDuration += `${hours} hours `;
+    if (minutes > 0) formattedDuration += `${minutes} minutes `;
+    if (seconds > 0) formattedDuration += `${seconds} seconds`;
+  
+    return formattedDuration.trim(); // Remove trailing space
+  }
+  
+ 
+  
+const filteredLogs = mainLogs
+  .filter(
+    (log) =>
+      selectedParticipants.length === 0 ||
+      selectedParticipants.every((participantId) =>
+        log.participants.includes(participantId)
       )
-    );
+  )
+  .filter((log) =>
+    Object.entries(selectedCategoryNames).every(
+      ([categoryType, categoryName]) =>
+        !categoryName || log.categories.includes(categoryName)
+    )
+  )
+  .map((log) => {
+    // Calculate duration for each log and add it to the log object
+    const duration = calculateDuration(log.dateStart, log.dateEnd);
+    return { ...log, duration };
+  });
+
 
   console.log(filteredLogs); // Output the filtered logs to the console for monitoring
 
@@ -380,6 +424,7 @@ export default function MainLogs() {
     }
   };
 
+  
   const viewOtherPosts = [
     {
       key: "1",
@@ -388,45 +433,55 @@ export default function MainLogs() {
         <>
           {" "}
           {/* Display a list of posts */}
-          {selectedPostType}
           <Segmented
-            options={postTypes}
-            value={selectedPostType}
-            onChange={setSelectedPostType}
-          />
-          ;
+  options={postTypes}
+  value={selectedPostType}
+  onChange={setSelectedPostType}
+/>
+
+          
           <div>
-            <h3>Select a Post</h3>
-            <ul>
-              {posts?.[selectedPostType]?.map((post) => (
-                <li key={post._id} onClick={() => handlePostSelection(post)}>
-                  {selectedPostType === "mostLikedPosts" && (
-                    <span>Most Liked Post: </span>
-                  )}
-                  {selectedPostType === "recentlyLikedPosts" && (
-                    <span>Recently Liked Post: </span>
-                  )}
-                  {selectedPostType === "recentPosts" && (
-                    <span>Recent Post: </span>
-                  )}
-                  {post.firstName},
-                  {post.likeCount !== undefined
-                    ? post.likeCount
-                    : countLikes(post.likes, selectedPostType)}{" "}
-                  Likes.
-                  <button
-                    onClick={() => handleLike(post._id, selectedPostType)}
-                  >
-                    {likedPosts.includes(post._id) ? "Unlike" : "Like"}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <h3>Tap a post to Preview</h3>
+            <List
+  dataSource={posts?.[selectedPostType]}
+  loading={isLoading} // Set loading to true or false based on your loading state
+  renderItem={(post) => (
+    <List.Item
+      key={post._id}
+      actions={[
+        <Button
+          type="link"
+          onClick={() => handleLike(post._id, selectedPostType)}
+        >
+          {likedPosts.includes(post._id) ? "Unlike" : "Like"}
+        </Button>,
+      ]}
+      onClick={() => handlePostSelection(post)}
+      style={{ lineHeight: "1.2", maxWidth: "300px" }} // Adjust line height and width as needed
+    >
+      <div>
+        {selectedPostType === "mostLikedPosts" && <span>Most Liked Post: </span>}
+        {selectedPostType === "recentlyLikedPosts" && (
+          <span>🟢</span>
+        )}
+        {selectedPostType === "recentPosts" && <span>🟢 </span>}
+        {post.firstName},{" "}
+        {post.likeCount !== undefined
+          ? post.likeCount
+          : countLikes(post.likes, selectedPostType)}{" "}
+        Likes.
+      </div>
+    </List.Item>
+  )}
+/>
+
+
+
           </div>
           {/* Display selected post */}
           {selectedPost && (
             <div>
-              <h3>Selected Post</h3>
+              <h3>Preview</h3>
               <div>
                 {/* Display the mainLogs, categories, and Participants from selectedPost */}
                 <div>
@@ -502,20 +557,63 @@ export default function MainLogs() {
           <Button onClick={handleViewPost}>
             {viewMode ? "Exit View" : "View Post"}
           </Button>
-          <button onClick={handleRefresh}>Refresh Feed</button>
+          <button
+  onClick={handleRefresh}
+  style={{
+    backgroundColor: "blue",
+    color: "white",
+    borderRadius: "5px",
+    padding: "6px 12px", // Adjust padding for a smaller button
+    border: "none",
+    cursor: "pointer",
+    fontSize: "14px", // Adjust font size for a smaller button
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center", // Center content vertically
+  }}
+>
+  <span style={{ marginRight: "4px" }}>
+    <i className="fas fa-sync-alt"></i> {/* Add your icon here */}
+  </span>
+  Refresh Feed
+</button>
+
         </>
       ),
     },
-  ];
+  ]
   return (
+    <ConfigProvider
+  theme={{
+    components: {
+      Segmented: {
+        itemSelectedColor:'rgba(144, 238, 144, 1)'  ,
+        // itemSelectedBg:'rgba(144, 238, 144, 1)' ,
+        itemHoverColor:'rgba(144, 238, 144, 1)' ,
+            },
+    },
+  }}
+>
     <div>
       <h2>Main Logs</h2>
       <div>
-        <Button onClick={handlePublishUpdate}>Publish/Update Post</Button>
-        <div>
+      
+        <div
+          className=""
+          style={{
+            maxHeight: "50px",
+            overflow: "auto",
+            width: "90%",
+            border: "1px solid red",
+            display: "flex",
+            flexWrap: "wrap",
+            padding: "10px",
+          }}
+        >
           {/* Create a button for each unique stat */}
           {allStats.map((statName) => (
             <button
+            className="button-70"
               key={statName}
               onClick={() => sortParticipantsByStat(statName)}
             >
@@ -526,6 +624,7 @@ export default function MainLogs() {
 
         {/* Create a Select component for filtering by isActive */}
         <Select
+         suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
           placeholder="Filter by Activity"
           onChange={(value) => setFilterIsActive(value)}
           style={{ width: 200, marginBottom: 16 }}
@@ -538,6 +637,7 @@ export default function MainLogs() {
         {/* Create a Select component for filtering by category */}
         <Select
           placeholder="Filter by Category"
+          suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
           onChange={(value) => setFilterCategory(value)}
           style={{ width: 200, marginBottom: 16 }}
         >
@@ -549,6 +649,18 @@ export default function MainLogs() {
           ))}
         </Select>
 
+        <div
+          className=""
+          style={{
+            maxHeight: "50px",
+            overflow: "auto",
+            width: "90%",
+            border: "1px solid red",
+            display: "flex",
+            flexWrap: "wrap",
+            padding: "10px",
+          }}
+        >
         {/* Render filtered participants */}
         {filteredParticipants.map((participant) => (
           <Button
@@ -571,53 +683,113 @@ export default function MainLogs() {
           </Button>
         ))}
       </div>
-
+      </div>  
       {hoveredParticipant && (
-        <div
-          className="participant-tooltip"
-          style={{ maxHeight: "150px", overflow: "auto" }}
-        >
-          <img
-            src={hoveredParticipant.image}
-            alt={` ${hoveredParticipant.name}`}
-            width={150}
-            height={150}
-          />
-          <span>{`Participant: ${hoveredParticipant.name}`}</span>
-          {categoryTypes.map((type) => (
-            <p key={type}>{`${type}s: ${categories
+  <div
+    className="participant-tooltip"
+    style={{ display: "flex", alignItems: "center", maxHeight: "150px", overflow: "auto" }}
+  >
+<img
+  src={hoveredParticipant.image}
+  alt={`${hoveredParticipant.name}`}
+  width={120}
+  height={120}
+  style={{ verticalAlign: "middle", margin: "5px" }}
+/>
+<span
+  style={{
+    marginTop: "20px", // Adjust the marginTop value to position the name higher
+    fontWeight: "bold",
+    fontSize: "18px",
+    verticalAlign: "middle",
+    fontFamily: "cursive, sans-serif", // Specify a stylish font family
+  }}
+>
+  {`${hoveredParticipant.name}`}
+</span>
+
+    <div style={{ marginLeft: "100px", marginTop:100 }}>
+
+
+      {statPerception.map((perception) => (
+        <div key={perception.statName} style={{ marginBottom: "8px" }}>
+          <Tag color="purple">
+            {`${perception.statName} (${
+              hoveredParticipant.stats.find((stat) =>
+                stat.hasOwnProperty(perception.statName)
+              )
+                ? hoveredParticipant.stats.find((stat) =>
+                    stat.hasOwnProperty(perception.statName)
+                  )[perception.statName]
+                : ""
+            })`}
+          </Tag>
+          <Typography.Text style={{ opacity: 0.8 }}>
+            {calculatePercentileCategory(
+              hoveredParticipant,
+              participants,
+              perception.statName,
+              statPerception
+            )}
+          </Typography.Text>
+        </div>
+      ))}
+      {categoryTypes.map((type) => (
+        <div key={type} style={{ marginBottom: "8px" }}>
+          <Tag color="blue">{`${type}s`}</Tag>
+          <Typography.Text style={{ opacity: 0.8 }}>
+            {categories
               .filter(
                 (cat) =>
                   cat.type === type &&
                   cat.participants.includes(hoveredParticipant.id)
               )
               .map((cat) => cat.name)
-              .join(", ")}`}</p>
-          ))}
-          <p>{`Items: ${items
-            .filter((item) => item.holderId.includes(hoveredParticipant.id))
-            .map((item) => item.name)
-            .join(", ")}`}</p>
-
-          {statPerception.map((perception) => (
-            <p key={perception.statName}>{`${
-              perception.statName
-            }: ${calculatePercentileCategory(
-              hoveredParticipant,
-              participants,
-              perception.statName,
-              statPerception
-            )}`}</p>
-          ))}
+              .join(", ")}
+          </Typography.Text>
         </div>
-      )}
+      ))}
+
+      <div style={{ marginBottom: "8px" }}>
+        <Tag color="green">Items</Tag>
+        <Typography.Text style={{ opacity: 0.8 }}>
+          {items
+            .filter((item) =>
+              item.holderId.includes(hoveredParticipant.id)
+            )
+            .map((item) => item.name)
+            .join(", ")}
+        </Typography.Text>
+      </div>
       <div>
+      <Tag color="yellow">About</Tag>
+
+       { hoveredParticipant.bio}
+      </div>
+    </div>
+    
+  </div>
+  
+)}
+<div
+          className=""
+          style={{
+            maxHeight: "300px",
+            overflow: "auto",
+            width: "90%",
+            border: "1px solid red",
+            display: "flex",
+            flexWrap: "wrap",
+            padding: "10px",
+          }}
+        >
         {categoryTypes.map((categoryType) => (
           <div key={categoryType} style={{ marginBottom: "16px" }}>
-            <h3>{categoryType} Category</h3>
+            <h3>Filter {categoryType}</h3>
             <Select
               placeholder={`Select ${categoryType} Category`}
               value={selectedCategoryNames[categoryType] || null}
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
               onChange={(value) =>
                 setSelectedCategoryNames((prevState) => ({
                   ...prevState,
@@ -639,39 +811,58 @@ export default function MainLogs() {
         ))}
       </div>
       <div>
+      <Button onClick={handlePublishUpdate}>Publish Save</Button>
+      <Collapse items={viewOtherPosts} defaultActiveKey={['1']} />
+
         {/* Open All button */}
         <Button onClick={handleOpenAll}>Open All</Button>
         {/* Close All button */}
         <Button onClick={handleCloseAll}>Close All</Button>
       </div>
-      <Collapse items={viewOtherPosts} defaultActiveKey={['1']} />;
+      <div style={{ overflow: 'auto', maxHeight: '600px' }}>
+
       <Collapse bordered={false} activeKey={activeKey} onChange={setActiveKey}>
         {filteredLogs.map((log, logIndex) => (
-          <Collapse.Panel header={log.title} key={logIndex}>
-            <div>
-              <strong>Date Start: </strong>
-              {new Date(log.dateStart).toLocaleString()}
+<Collapse.Panel
+  header={log.title + `    ${new Date(log.dateEnd).toLocaleString()}`}
+  key={logIndex}
+  style={{ fontSize: "14px" }} // Adjust the font size as needed
+>            <div>
+              <strong>Duration: </strong>
+              {log.duration}
             </div>
             <div>
               <strong>Date End: </strong>
               {new Date(log.dateEnd).toLocaleString()}
             </div>
             <div>
-              <strong>Participants: </strong>
-              {log.participants.map((participantId) => (
-                <span key={participantId}>
-                  {getParticipantName(participantId)},{" "}
-                </span>
-              ))}
+            <strong>Participants: </strong>
+{
+  log.participants.length === 0 ? (
+    <span>No Important Participant</span>
+  ) : (
+    log.participants.map((participantId) => (
+      <span key={participantId}>
+        {getParticipantName(participantId)},{" "}
+      </span>
+    ))
+  )
+}
+
             </div>
             <div>
-              <strong>Categories: </strong>
-              {log.categories.join(", ")}
-            </div>
-            <div>
+  <strong>Categories: </strong>
+  {log.categories.length === 0 ? (
+    <span>None</span>
+  ) : (
+    log.categories.join(", ")
+  )}
+</div>
+
+            {/* <div>
               <strong>Segment Rating: </strong>
               {log.segmentRating}
-            </div>
+            </div> */}
 
             {/* Moved the inner loop for log descriptions outside of Collapse.Panel */}
             <div key={logIndex}>
@@ -711,6 +902,9 @@ export default function MainLogs() {
           </Collapse.Panel>
         ))}
       </Collapse>
+      </div>
+
     </div>
-  );
+    </ConfigProvider>
+  )
 }

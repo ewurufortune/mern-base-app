@@ -92,13 +92,11 @@ const playerInformation = [
 ];
 
 
-export default function OverallTab() {
+export default function OverallTab({isDarkMode}) {
   const activeTab = useSelector((state) => state.activeTab);
   const recentEvents = useSelector((state) => state.user.recentEvents);
   const user = useSelector((state) => state.user);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const { defaultAlgorithm, darkAlgorithm } = theme;
 
 
   const [unreadCount, setUnreadCount] = useState(0);
@@ -178,14 +176,11 @@ export default function OverallTab() {
     }
     return entry;
   });
-  const handleClick = () => {
-    setIsDarkMode((previousValue) => !previousValue);
-  };
+  console.log(isDarkMode);
+
   return (
 <ConfigProvider
-      theme={{
-        algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
-      }}
+      
     >
      <Card
         bordered={false}
@@ -195,9 +190,7 @@ export default function OverallTab() {
           height:'100vw'
         }}
       >
-     <Button onClick={handleClick}>
-        Change Theme to {isDarkMode ? "Light" : "Dark"}
-      </Button>
+  
     {contextHolder}
     <Tabs
       defaultActiveKey="1"
