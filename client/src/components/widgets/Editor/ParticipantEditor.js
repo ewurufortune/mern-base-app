@@ -204,6 +204,18 @@ console.log(updatedData);
      dispatch(setStats({ participants: [...dataSource, newData] }));
     setCount(count + 1);
   };
+  // Create an object to store editedBio state for each row
+  const [editedBios, setEditedBios] = useState({});
+
+  // ...
+
+  // Function to toggle editing mode for a specific row
+  const toggleEdit = (id) => {
+    setEditedBios((prevEditedBios) => ({
+      ...prevEditedBios,
+      [id]: dataSource.find((item) => item.id === id)?.bio || "", // Initialize with the current bio
+    }));
+  };
 
   const handleSave = (row) => {
     const newData = dataSource.map((item) => {
@@ -262,9 +274,18 @@ console.log(updatedData);
         expandable={{
           expandedRowRender: (record) => (
             <EditableBio
-              initialBio={record.bio}
-              onSave={(editedBio) => handleSave({ ...record, bio: editedBio })}
-            />
+            initialBio={record.bio}
+            editedBio={editedBios[record.id] || ""} // Pass editedBio for the specific row
+            onSave={(editedBio) => handleSave({ ...record, bio: editedBio })}
+            setEditedBio={(editedBio) => {
+              // Update the editedBio for the specific row
+              setEditedBios((prevEditedBios) => ({
+                ...prevEditedBios,
+                [record.id]: editedBio,
+              }));
+            }}
+            toggleEdit={() => toggleEdit(record.id)} // Pass a function to toggle editing mode
+          />
           ),
           rowExpandable: (record) => record.name !== "Not Expandable",
         }}
@@ -273,21 +294,24 @@ console.log(updatedData);
   );
 };
 
-const EditableBio = ({ initialBio, onSave }) => {
+const EditableBio = ({ initialBio, onSave, editedBio, setEditedBio, toggleEdit }) => {
   const [editing, setEditing] = useState(false);
-  const [editedBio, setEditedBio] = useState(initialBio);
 
-  const toggleEdit = () => {
+  const toggleEditMode = () => {
     setEditing(!editing);
+    if (!editing) {
+      toggleEdit(); // Toggle editing mode in the parent component
+    }
   };
 
   const handleBioChange = (e) => {
-    setEditedBio(e.target.value);
+    setEditedBio(e.target.value); // Update editedBio in the parent component
   };
 
   const handleSaveBio = () => {
     onSave(editedBio);
-    toggleEdit();
+    console.log(editedBio);
+    toggleEditMode();
   };
 
   return (
@@ -301,11 +325,12 @@ const EditableBio = ({ initialBio, onSave }) => {
             onBlur={handleSaveBio}
           />
         ) : (
-          initialBio
+          editedBio || initialBio // Display editedBio if available, otherwise, display initialBio
         )}
       </p>
-      <Button onClick={toggleEdit}>{editing ? "Save" : "Edit"}</Button>
+      <Button onClick={toggleEditMode}>{editing ? "Save" : "Edit"}</Button>
     </div>
   );
 };
+
 export default ParticipantEditor;

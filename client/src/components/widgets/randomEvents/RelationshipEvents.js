@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Collapse, Input, Button, Select } from "antd";
 import { setStats } from "state";
@@ -1218,17 +1218,23 @@ console.log(eventStrings);
       console.log("No relationships available to generate an event.");
     }
   };
-  
+  const isInitialMount = useRef(true); // Create a ref to track the initial mount
+
 
   // Use useEffect to listen for changes in yourState
   useEffect(() => {
     // This effect will run whenever date changes
-    if (randomEventCount < 3) {
-      handleRandomEventClick();
-      setRandomEventCount(randomEventCount + 1);
+    if (!isInitialMount.current) {
+      if (randomEventCount < 3) {
+        handleRandomEventClick();
+        setRandomEventCount(randomEventCount + 1);
+      } else {
+        // Component has now mounted
+        setHasMounted(true);
+      }
     } else {
-      // Component has now mounted
-      setHasMounted(true);
+      // Set the ref to false after the initial render
+      isInitialMount.current = false;
     }
   }, [dateReadOnly, randomEventCount, hasMounted]);
 

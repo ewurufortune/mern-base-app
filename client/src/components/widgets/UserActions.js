@@ -231,6 +231,8 @@ function Segment({ removeSegment }) {
       setDescriptionError("Description cannot be blank");
       return;
     }
+
+    console.log('Deccription',description);
     const regexDescription = applySelectedStats();
 
     // Calculate the segment rating
@@ -356,7 +358,7 @@ function Segment({ removeSegment }) {
 
   const applySelectedStats = () => {
     transferItem();
-    let regexDescription;
+    let regexDescription=description;
 
     setSelectedParticipants((prevSelectedParticipants) => {
       const updatedParticipants = prevSelectedParticipants.map(
@@ -1098,7 +1100,7 @@ function Segment({ removeSegment }) {
           })}
         </div>
 
-        <div>
+        <div  style={{marginTop: 50}}>
           <div>
             <Select
               placeholder={
@@ -1160,15 +1162,7 @@ function Segment({ removeSegment }) {
               </div>
             )}
           </div>
-          {selectedItem && (
-            <p>
-              Current Holder:{" "}
-              {
-                participants.find((p) => selectedItem.holderId.includes(p.id))
-                  ?.name
-              }
-            </p>
-          )}
+      
         </div>
         <div style={{ display: "flex", alignItems: "center", maxWidth: "200px" }}>
   <div style={{ display: "flex", alignItems: "center", marginTop:40, marginBottom:30 }}>

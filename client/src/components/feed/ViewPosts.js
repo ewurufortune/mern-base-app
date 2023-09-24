@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 const Feed = () => {
   const user = useSelector((state) => state.user);
@@ -90,9 +91,14 @@ const Feed = () => {
       <div key={post._id} className="post">
         <h3>{post.firstName} </h3>
         <div>
-          <button onClick={() => handleLike(post._id)}>
-            {likedPosts.includes(post._id) ? 'Unlike' : 'Like'}
-          </button>
+        <button onClick={() => handleLike(post._id)}>
+  {likedPosts.includes(post._id) ? (
+    <FontAwesomeIcon icon={faGem} style={{ color: '#f51414' }} />
+  ) : (
+    <FontAwesomeIcon icon={faGem} style={{ color: 'blue' }} />
+  )}
+</button>
+
           <span>{countLikes(post.likes)} Likes</span>
         </div>
       </div>
@@ -103,3 +109,6 @@ const Feed = () => {
 };
 
 export default Feed;
+
+
+

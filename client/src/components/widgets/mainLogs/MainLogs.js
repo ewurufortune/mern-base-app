@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Collapse, Input, Button, Select, Tabs, Tag, Typography, List, ConfigProvider} from "antd";
+import {
+  Collapse,
+  Input,
+  Button,
+  Select,
+  Tabs,
+  Tag,
+  Typography,
+  List,
+  ConfigProvider,
+} from "antd";
 import { setStats } from "state";
 import _ from "lodash";
 import { Segmented } from "antd";
-import { CaretDownFilled  } from "@ant-design/icons";
+import { CaretDownFilled } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGem } from "@fortawesome/free-solid-svg-icons";
 
-  // Define a custom CSS class for the caret icon
-  const customCaretIconStyle = {
-    color: "lightgreen", // Light white color
-  };
-  const postTypes = [
-    { label: "Most Liked Posts", value: "mostLikedPosts" },
-    { label: "Recently Liked Posts", value: "recentlyLikedPosts" },
-    { label: "Recent Posts", value: "recentPosts" },
-    
-  ];
+// Define a custom CSS class for the caret icon
+const customCaretIconStyle = {
+  color: "lightgreen", // Light white color
+};
+const postTypes = [
+  { label: "Most Liked Posts", value: "mostLikedPosts" },
+  { label: "Recently Liked Posts", value: "recentlyLikedPosts" },
+  { label: "Recent Posts", value: "recentPosts" },
+];
 // const [selectedPostCategories,setSelectedPostCategories]=useState([])
 // const [selectedPostMainLogs,setSelectedPostCategory]=useState([])
 // const [selectedPostParticipants,setSelectedPostParticipants]=useState([])
@@ -192,51 +203,56 @@ export default function MainLogs() {
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
     const durationInMilliseconds = endTime - startTime;
-  
+
     const millisecondsPerSecond = 1000;
     const millisecondsPerMinute = 60 * millisecondsPerSecond;
     const millisecondsPerHour = 60 * millisecondsPerMinute;
     const millisecondsPerDay = 24 * millisecondsPerHour;
     const millisecondsPerYear = 365 * millisecondsPerDay;
-  
+
     const years = Math.floor(durationInMilliseconds / millisecondsPerYear);
-    const days = Math.floor((durationInMilliseconds % millisecondsPerYear) / millisecondsPerDay);
-    const hours = Math.floor((durationInMilliseconds % millisecondsPerDay) / millisecondsPerHour);
-    const minutes = Math.floor((durationInMilliseconds % millisecondsPerHour) / millisecondsPerMinute);
-    const seconds = Math.floor((durationInMilliseconds % millisecondsPerMinute) / millisecondsPerSecond);
-  
-    let formattedDuration = '';
+    const days = Math.floor(
+      (durationInMilliseconds % millisecondsPerYear) / millisecondsPerDay
+    );
+    const hours = Math.floor(
+      (durationInMilliseconds % millisecondsPerDay) / millisecondsPerHour
+    );
+    const minutes = Math.floor(
+      (durationInMilliseconds % millisecondsPerHour) / millisecondsPerMinute
+    );
+    const seconds = Math.floor(
+      (durationInMilliseconds % millisecondsPerMinute) / millisecondsPerSecond
+    );
+
+    let formattedDuration = "";
     if (years > 0) formattedDuration += `${years} years `;
     if (days > 0) formattedDuration += `${days} days `;
     if (hours > 0) formattedDuration += `${hours} hours `;
     if (minutes > 0) formattedDuration += `${minutes} minutes `;
     if (seconds > 0) formattedDuration += `${seconds} seconds`;
-  
+
     return formattedDuration.trim(); // Remove trailing space
   }
-  
- 
-  
-const filteredLogs = mainLogs
-  .filter(
-    (log) =>
-      selectedParticipants.length === 0 ||
-      selectedParticipants.every((participantId) =>
-        log.participants.includes(participantId)
-      )
-  )
-  .filter((log) =>
-    Object.entries(selectedCategoryNames).every(
-      ([categoryType, categoryName]) =>
-        !categoryName || log.categories.includes(categoryName)
-    )
-  )
-  .map((log) => {
-    // Calculate duration for each log and add it to the log object
-    const duration = calculateDuration(log.dateStart, log.dateEnd);
-    return { ...log, duration };
-  });
 
+  const filteredLogs = mainLogs
+    .filter(
+      (log) =>
+        selectedParticipants.length === 0 ||
+        selectedParticipants.every((participantId) =>
+          log.participants.includes(participantId)
+        )
+    )
+    .filter((log) =>
+      Object.entries(selectedCategoryNames).every(
+        ([categoryType, categoryName]) =>
+          !categoryName || log.categories.includes(categoryName)
+      )
+    )
+    .map((log) => {
+      // Calculate duration for each log and add it to the log object
+      const duration = calculateDuration(log.dateStart, log.dateEnd);
+      return { ...log, duration };
+    });
 
   console.log(filteredLogs); // Output the filtered logs to the console for monitoring
 
@@ -299,15 +315,8 @@ const filteredLogs = mainLogs
       return 0; // Handle the case where likes is undefined or null
     }
 
-    if (
-      selectedPostType === "mostLikedPosts" &&
-      likes.likeCount !== undefined
-    ) {
-      return likes.likeCount;
-    } else {
-      const trueLikes = Object.values(likes).filter((value) => value === true);
-      return trueLikes.length;
-    }
+    const trueLikes = Object.values(likes).filter((value) => value === true);
+    return trueLikes.length;
   };
 
   const [sortedParticipants, setSortedParticipants] = useState([
@@ -424,7 +433,6 @@ const filteredLogs = mainLogs
     }
   };
 
-  
   const viewOtherPosts = [
     {
       key: "1",
@@ -434,49 +442,55 @@ const filteredLogs = mainLogs
           {" "}
           {/* Display a list of posts */}
           <Segmented
-  options={postTypes}
-  value={selectedPostType}
-  onChange={setSelectedPostType}
-/>
-
-          
+            options={postTypes}
+            value={selectedPostType}
+            onChange={setSelectedPostType}
+          />
           <div>
             <h3>Tap a post to Preview</h3>
             <List
-  dataSource={posts?.[selectedPostType]}
-  loading={isLoading} // Set loading to true or false based on your loading state
-  renderItem={(post) => (
-    <List.Item
-      key={post._id}
-      actions={[
-        <Button
-          type="link"
-          onClick={() => handleLike(post._id, selectedPostType)}
-        >
-          {likedPosts.includes(post._id) ? "Unlike" : "Like"}
-        </Button>,
-      ]}
-      onClick={() => handlePostSelection(post)}
-      style={{ lineHeight: "1.2", maxWidth: "300px" }} // Adjust line height and width as needed
-    >
-      <div>
-        {selectedPostType === "mostLikedPosts" && <span>Most Liked Post: </span>}
-        {selectedPostType === "recentlyLikedPosts" && (
-          <span>🟢</span>
-        )}
-        {selectedPostType === "recentPosts" && <span>🟢 </span>}
-        {post.firstName},{" "}
-        {post.likeCount !== undefined
-          ? post.likeCount
-          : countLikes(post.likes, selectedPostType)}{" "}
-        Likes.
-      </div>
-    </List.Item>
-  )}
-/>
-
-
-
+              dataSource={posts?.[selectedPostType]}
+              loading={isLoading} // Set loading to true or false based on your loading state
+              renderItem={(post) => (
+                <List.Item
+                  key={post._id}
+                  actions={[
+                    <Button
+                      type="link"
+                      onClick={() => handleLike(post._id, selectedPostType)}
+                      className="like-button" // Add a class name for styling
+                    >
+                      {likedPosts.includes(post._id) ? (
+                        <FontAwesomeIcon
+                          icon={faGem}
+                          style={{ color: "#f51414" }}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faGem}
+                          style={{ color: "blue" }}
+                        />
+                      )}
+                    </Button>,
+                  ]}
+                  onClick={() => handlePostSelection(post)}
+                  style={{ lineHeight: "1.2", maxWidth: "300px" }}
+                  className="list-item"
+                >
+                  <div>
+                    {selectedPostType === "mostLikedPosts" && (
+                      <span>Most Liked Post: </span>
+                    )}
+                    {selectedPostType === "recentlyLikedPosts" && (
+                      <span>🟢</span>
+                    )}
+                    {selectedPostType === "recentPosts" && <span>🟢 </span>}
+                    {post.firstName}, {countLikes(post.likes, selectedPostType)}{" "}
+                    Likes.
+                  </div>
+                </List.Item>
+              )}
+            />
           </div>
           {/* Display selected post */}
           {selectedPost && (
@@ -493,7 +507,7 @@ const filteredLogs = mainLogs
                     Main Logs: <span>{selectedPost.mainLogs.length}</span>{" "}
                   </strong>
                 </div>
-                <div>
+                <div style={{ maxHeight: "200px", overflow: "auto" }}>
                   <strong>Categories: </strong>
                   {selectedPost.categories.map((category, index) => (
                     <span key={index}>
@@ -502,7 +516,8 @@ const filteredLogs = mainLogs
                     </span>
                   ))}
                 </div>
-                <div>
+
+                <div style={{ maxHeight: "200px", overflow: "auto" }}>
                   <strong>Items: </strong>
                   {selectedPost.items?.map((item, index) => (
                     <span key={index}>
@@ -511,17 +526,21 @@ const filteredLogs = mainLogs
                     </span>
                   ))}
                 </div>
-                <div>
-                  <strong>Participants: </strong>
-                  {selectedPost.participants.map((participant, index) => (
-                    <span key={index}>
-                      {participant.name}
-                      {index !== selectedPost.participants.length - 1
-                        ? ", "
-                        : ""}
-                    </span>
-                  ))}
+
+                <div style={{ maxHeight: "200px", overflow: "auto" }}>
+                  <div>
+                    <strong>Participants: </strong>
+                    {selectedPost.participants.map((participant, index) => (
+                      <span key={index}>
+                        {participant.name}
+                        {index !== selectedPost.participants.length - 1
+                          ? ", "
+                          : ""}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
                 <div>
                   {/* Your other JSX code */}
                   {viewMode && (
@@ -558,220 +577,219 @@ const filteredLogs = mainLogs
             {viewMode ? "Exit View" : "View Post"}
           </Button>
           <button
-  onClick={handleRefresh}
-  style={{
-    backgroundColor: "blue",
-    color: "white",
-    borderRadius: "5px",
-    padding: "6px 12px", // Adjust padding for a smaller button
-    border: "none",
-    cursor: "pointer",
-    fontSize: "14px", // Adjust font size for a smaller button
-    fontWeight: "bold",
-    display: "flex",
-    alignItems: "center", // Center content vertically
-  }}
->
-  <span style={{ marginRight: "4px" }}>
-    <i className="fas fa-sync-alt"></i> {/* Add your icon here */}
-  </span>
-  Refresh Feed
-</button>
-
+            onClick={handleRefresh}
+            style={{
+              backgroundColor: "blue",
+              color: "white",
+              borderRadius: "5px",
+              padding: "6px 12px", // Adjust padding for a smaller button
+              border: "none",
+              cursor: "pointer",
+              fontSize: "14px", // Adjust font size for a smaller button
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center", // Center content vertically
+            }}
+          >
+            <span style={{ marginRight: "4px" }}>
+              <i className="fas fa-sync-alt"></i> {/* Add your icon here */}
+            </span>
+            Refresh Feed
+          </button>
         </>
       ),
     },
-  ]
+  ];
   return (
     <ConfigProvider
-  theme={{
-    components: {
-      Segmented: {
-        itemSelectedColor:'rgba(144, 238, 144, 1)'  ,
-        // itemSelectedBg:'rgba(144, 238, 144, 1)' ,
-        itemHoverColor:'rgba(144, 238, 144, 1)' ,
-            },
-    },
-  }}
->
-    <div>
-      <h2>Main Logs</h2>
+      theme={{
+        components: {
+          Segmented: {
+            itemSelectedColor: "rgba(144, 238, 144, 1)",
+            // itemSelectedBg:'rgba(144, 238, 144, 1)' ,
+            itemHoverColor: "rgba(144, 238, 144, 1)",
+          },
+        },
+      }}
+    >
       <div>
-      
-        <div
-          className=""
-          style={{
-            maxHeight: "50px",
-            overflow: "auto",
-            width: "90%",
-            border: "1px solid red",
-            display: "flex",
-            flexWrap: "wrap",
-            padding: "10px",
-          }}
-        >
-          {/* Create a button for each unique stat */}
-          {allStats.map((statName) => (
-            <button
-            className="button-70"
-              key={statName}
-              onClick={() => sortParticipantsByStat(statName)}
-            >
-              Sort by {statName}
-            </button>
-          ))}
-        </div>
-
-        {/* Create a Select component for filtering by isActive */}
-        <Select
-         suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
-          placeholder="Filter by Activity"
-          onChange={(value) => setFilterIsActive(value)}
-          style={{ width: 200, marginBottom: 16 }}
-        >
-          <Select.Option value={null}>All</Select.Option>
-          <Select.Option value={true}>Active</Select.Option>
-          <Select.Option value={false}>Inactive</Select.Option>
-        </Select>
-
-        {/* Create a Select component for filtering by category */}
-        <Select
-          placeholder="Filter by Category"
-          suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
-          onChange={(value) => setFilterCategory(value)}
-          style={{ width: 200, marginBottom: 16 }}
-        >
-          <Select.Option value={null}>All</Select.Option>
-          {categories.map((category) => (
-            <Select.Option key={category.name} value={category.name}>
-              {category.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <div
-          className=""
-          style={{
-            maxHeight: "50px",
-            overflow: "auto",
-            width: "90%",
-            border: "1px solid red",
-            display: "flex",
-            flexWrap: "wrap",
-            padding: "10px",
-          }}
-        >
-        {/* Render filtered participants */}
-        {filteredParticipants.map((participant) => (
-          <Button
-            key={participant.id}
-            onMouseEnter={() => setHoveredParticipant(participant)}
-            onClick={() =>
-              setSelectedParticipants((prevSelected) =>
-                prevSelected.includes(participant.id)
-                  ? prevSelected.filter((id) => id !== participant.id)
-                  : [...prevSelected, participant.id]
-              )
-            }
-            type={
-              selectedParticipants.includes(participant.id)
-                ? "primary"
-                : "default"
-            }
+        <h2>Main Logs</h2>
+        <div>
+          <div
+            className=""
+            style={{
+              maxHeight: "50px",
+              overflow: "auto",
+              width: "90%",
+              border: "1px solid red",
+              display: "flex",
+              flexWrap: "wrap",
+              padding: "10px",
+            }}
           >
-            {participant.name}
-          </Button>
-        ))}
-      </div>
-      </div>  
-      {hoveredParticipant && (
-  <div
-    className="participant-tooltip"
-    style={{ display: "flex", alignItems: "center", maxHeight: "150px", overflow: "auto" }}
-  >
-<img
-  src={hoveredParticipant.image}
-  alt={`${hoveredParticipant.name}`}
-  width={120}
-  height={120}
-  style={{ verticalAlign: "middle", margin: "5px" }}
-/>
-<span
-  style={{
-    marginTop: "20px", // Adjust the marginTop value to position the name higher
-    fontWeight: "bold",
-    fontSize: "18px",
-    verticalAlign: "middle",
-    fontFamily: "cursive, sans-serif", // Specify a stylish font family
-  }}
->
-  {`${hoveredParticipant.name}`}
-</span>
+            {/* Create a button for each unique stat */}
+            {allStats.map((statName) => (
+              <button
+                className="button-70"
+                key={statName}
+                onClick={() => sortParticipantsByStat(statName)}
+              >
+                Sort by {statName}
+              </button>
+            ))}
+          </div>
 
-    <div style={{ marginLeft: "100px", marginTop:100 }}>
+          {/* Create a Select component for filtering by isActive */}
+          <Select
+            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+            placeholder="Filter by Activity"
+            onChange={(value) => setFilterIsActive(value)}
+            style={{ width: 200, marginBottom: 16 }}
+          >
+            <Select.Option value={null}>All</Select.Option>
+            <Select.Option value={true}>Active</Select.Option>
+            <Select.Option value={false}>Inactive</Select.Option>
+          </Select>
 
+          {/* Create a Select component for filtering by category */}
+          <Select
+            placeholder="Filter by Category"
+            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+            onChange={(value) => setFilterCategory(value)}
+            style={{ width: 200, marginBottom: 16 }}
+          >
+            <Select.Option value={null}>All</Select.Option>
+            {categories.map((category) => (
+              <Select.Option key={category.name} value={category.name}>
+                {category.name}
+              </Select.Option>
+            ))}
+          </Select>
 
-      {statPerception.map((perception) => (
-        <div key={perception.statName} style={{ marginBottom: "8px" }}>
-          <Tag color="purple">
-            {`${perception.statName} (${
-              hoveredParticipant.stats.find((stat) =>
-                stat.hasOwnProperty(perception.statName)
-              )
-                ? hoveredParticipant.stats.find((stat) =>
-                    stat.hasOwnProperty(perception.statName)
-                  )[perception.statName]
-                : ""
-            })`}
-          </Tag>
-          <Typography.Text style={{ opacity: 0.8 }}>
-            {calculatePercentileCategory(
-              hoveredParticipant,
-              participants,
-              perception.statName,
-              statPerception
-            )}
-          </Typography.Text>
+          <div
+            className=""
+            style={{
+              maxHeight: "50px",
+              overflow: "auto",
+              width: "90%",
+              border: "1px solid red",
+              display: "flex",
+              flexWrap: "wrap",
+              padding: "10px",
+            }}
+          >
+            {/* Render filtered participants */}
+            {filteredParticipants.map((participant) => (
+              <Button
+                key={participant.id}
+                onMouseEnter={() => setHoveredParticipant(participant)}
+                onClick={() =>
+                  setSelectedParticipants((prevSelected) =>
+                    prevSelected.includes(participant.id)
+                      ? prevSelected.filter((id) => id !== participant.id)
+                      : [...prevSelected, participant.id]
+                  )
+                }
+                type={
+                  selectedParticipants.includes(participant.id)
+                    ? "primary"
+                    : "default"
+                }
+              >
+                {participant.name}
+              </Button>
+            ))}
+          </div>
         </div>
-      ))}
-      {categoryTypes.map((type) => (
-        <div key={type} style={{ marginBottom: "8px" }}>
-          <Tag color="blue">{`${type}s`}</Tag>
-          <Typography.Text style={{ opacity: 0.8 }}>
-            {categories
-              .filter(
-                (cat) =>
-                  cat.type === type &&
-                  cat.participants.includes(hoveredParticipant.id)
-              )
-              .map((cat) => cat.name)
-              .join(", ")}
-          </Typography.Text>
-        </div>
-      ))}
+        {hoveredParticipant && (
+          <div
+            className="participant-tooltip"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              maxHeight: "150px",
+              overflow: "auto",
+            }}
+          >
+            <img
+              src={hoveredParticipant.image}
+              alt={`${hoveredParticipant.name}`}
+              width={120}
+              height={120}
+              style={{ verticalAlign: "middle", margin: "5px" }}
+            />
+            <span
+              style={{
+                marginTop: "20px", // Adjust the marginTop value to position the name higher
+                fontWeight: "bold",
+                fontSize: "18px",
+                verticalAlign: "middle",
+                fontFamily: "cursive, sans-serif", // Specify a stylish font family
+              }}
+            >
+              {`${hoveredParticipant.name}`}
+            </span>
 
-      <div style={{ marginBottom: "8px" }}>
-        <Tag color="green">Items</Tag>
-        <Typography.Text style={{ opacity: 0.8 }}>
-          {items
-            .filter((item) =>
-              item.holderId.includes(hoveredParticipant.id)
-            )
-            .map((item) => item.name)
-            .join(", ")}
-        </Typography.Text>
-      </div>
-      <div>
-      <Tag color="yellow">About</Tag>
+            <div style={{ marginLeft: "100px", marginTop: 100 }}>
+              {statPerception.map((perception) => (
+                <div key={perception.statName} style={{ marginBottom: "8px" }}>
+                  <Tag color="purple">
+                    {`${perception.statName} (${
+                      hoveredParticipant.stats.find((stat) =>
+                        stat.hasOwnProperty(perception.statName)
+                      )
+                        ? hoveredParticipant.stats.find((stat) =>
+                            stat.hasOwnProperty(perception.statName)
+                          )[perception.statName]
+                        : ""
+                    })`}
+                  </Tag>
+                  <Typography.Text style={{ opacity: 0.8 }}>
+                    {calculatePercentileCategory(
+                      hoveredParticipant,
+                      participants,
+                      perception.statName,
+                      statPerception
+                    )}
+                  </Typography.Text>
+                </div>
+              ))}
+              {categoryTypes.map((type) => (
+                <div key={type} style={{ marginBottom: "8px" }}>
+                  <Tag color="blue">{`${type}s`}</Tag>
+                  <Typography.Text style={{ opacity: 0.8 }}>
+                    {categories
+                      .filter(
+                        (cat) =>
+                          cat.type === type &&
+                          cat.participants.includes(hoveredParticipant.id)
+                      )
+                      .map((cat) => cat.name)
+                      .join(", ")}
+                  </Typography.Text>
+                </div>
+              ))}
 
-       { hoveredParticipant.bio}
-      </div>
-    </div>
-    
-  </div>
-  
-)}
-<div
+              <div style={{ marginBottom: "8px" }}>
+                <Tag color="green">Items</Tag>
+                <Typography.Text style={{ opacity: 0.8 }}>
+                  {items
+                    .filter((item) =>
+                      item.holderId.includes(hoveredParticipant.id)
+                    )
+                    .map((item) => item.name)
+                    .join(", ")}
+                </Typography.Text>
+              </div>
+              <div>
+                <Tag color="yellow">About</Tag>
+
+                {hoveredParticipant.bio}
+              </div>
+            </div>
+          </div>
+        )}
+        <div
           className=""
           style={{
             maxHeight: "300px",
@@ -783,128 +801,129 @@ const filteredLogs = mainLogs
             padding: "10px",
           }}
         >
-        {categoryTypes.map((categoryType) => (
-          <div key={categoryType} style={{ marginBottom: "16px" }}>
-            <h3>Filter {categoryType}</h3>
-            <Select
-              placeholder={`Select ${categoryType} Category`}
-              value={selectedCategoryNames[categoryType] || null}
-              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
-              onChange={(value) =>
-                setSelectedCategoryNames((prevState) => ({
-                  ...prevState,
-                  [categoryType]: value,
-                }))
-              }
-              style={{ width: "200px" }}
-            >
-              <Select.Option value={null}>All</Select.Option>
-              {categories
-                .filter((category) => category.type === categoryType)
-                .map((category) => (
-                  <Select.Option key={category.name} value={category.name}>
-                    {category.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </div>
-        ))}
-      </div>
-      <div>
-      <Button onClick={handlePublishUpdate}>Publish Save</Button>
-      <Collapse items={viewOtherPosts} defaultActiveKey={['1']} />
-
-        {/* Open All button */}
-        <Button onClick={handleOpenAll}>Open All</Button>
-        {/* Close All button */}
-        <Button onClick={handleCloseAll}>Close All</Button>
-      </div>
-      <div style={{ overflow: 'auto', maxHeight: '600px' }}>
-
-      <Collapse bordered={false} activeKey={activeKey} onChange={setActiveKey}>
-        {filteredLogs.map((log, logIndex) => (
-<Collapse.Panel
-  header={log.title + `    ${new Date(log.dateEnd).toLocaleString()}`}
-  key={logIndex}
-  style={{ fontSize: "14px" }} // Adjust the font size as needed
->            <div>
-              <strong>Duration: </strong>
-              {log.duration}
+          {categoryTypes.map((categoryType) => (
+            <div key={categoryType} style={{ marginBottom: "16px" }}>
+              <h3>Filter {categoryType}</h3>
+              <Select
+                placeholder={`Select ${categoryType} Category`}
+                value={selectedCategoryNames[categoryType] || null}
+                suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+                onChange={(value) =>
+                  setSelectedCategoryNames((prevState) => ({
+                    ...prevState,
+                    [categoryType]: value,
+                  }))
+                }
+                style={{ width: "200px" }}
+              >
+                <Select.Option value={null}>All</Select.Option>
+                {categories
+                  .filter((category) => category.type === categoryType)
+                  .map((category) => (
+                    <Select.Option key={category.name} value={category.name}>
+                      {category.name}
+                    </Select.Option>
+                  ))}
+              </Select>
             </div>
-            <div>
-              <strong>Date End: </strong>
-              {new Date(log.dateEnd).toLocaleString()}
-            </div>
-            <div>
-            <strong>Participants: </strong>
-{
-  log.participants.length === 0 ? (
-    <span>No Important Participant</span>
-  ) : (
-    log.participants.map((participantId) => (
-      <span key={participantId}>
-        {getParticipantName(participantId)},{" "}
-      </span>
-    ))
-  )
-}
+          ))}
+        </div>
+        <div>
+          <Button onClick={handlePublishUpdate}>Publish Save</Button>
+          <Collapse items={viewOtherPosts} defaultActiveKey={["1"]} />
 
-            </div>
-            <div>
-  <strong>Categories: </strong>
-  {log.categories.length === 0 ? (
-    <span>None</span>
-  ) : (
-    log.categories.join(", ")
-  )}
-</div>
-
-            {/* <div>
+          {/* Open All button */}
+          <Button onClick={handleOpenAll}>Open All</Button>
+          {/* Close All button */}
+          <Button onClick={handleCloseAll}>Close All</Button>
+        </div>
+        <div style={{ overflow: "auto", maxHeight: "600px" }}>
+          <Collapse
+            bordered={false}
+            activeKey={activeKey}
+            onChange={setActiveKey}
+          >
+            {filteredLogs.map((log, logIndex) => (
+              <Collapse.Panel
+                header={
+                  log.title + `    ${new Date(log.dateEnd).toLocaleString()}`
+                }
+                key={logIndex}
+                style={{ fontSize: "14px" }} // Adjust the font size as needed
+              >
+                {" "}
+                <div>
+                  <strong>Duration: </strong>
+                  {log.duration}
+                </div>
+                <div>
+                  <strong>Date End: </strong>
+                  {new Date(log.dateEnd).toLocaleString()}
+                </div>
+                <div>
+                  <strong>Participants: </strong>
+                  {log.participants.length === 0 ? (
+                    <span>No Important Participant</span>
+                  ) : (
+                    log.participants.map((participantId) => (
+                      <span key={participantId}>
+                        {getParticipantName(participantId)},{" "}
+                      </span>
+                    ))
+                  )}
+                </div>
+                <div>
+                  <strong>Categories: </strong>
+                  {log.categories.length === 0 ? (
+                    <span>None</span>
+                  ) : (
+                    log.categories.join(", ")
+                  )}
+                </div>
+                {/* <div>
               <strong>Segment Rating: </strong>
               {log.segmentRating}
             </div> */}
-
-            {/* Moved the inner loop for log descriptions outside of Collapse.Panel */}
-            <div key={logIndex}>
-              <h3>{log.title}</h3>
-              {editingLogIndex === logIndex ? (
-                <textarea
-                  value={editedDescriptions[logIndex] || ""}
-                  onChange={(e) =>
-                    setEditedDescriptions((prevState) => ({
-                      ...prevState,
-                      [logIndex]: e.target.value,
-                    }))
-                  }
-                  onBlur={() => handleSaveDescription(logIndex)}
-                  rows={5}
-                />
-              ) : (
-                <div>
-                  {log.description && (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: log.description.replace(/\n/g, "<br />"),
-                      }}
+                {/* Moved the inner loop for log descriptions outside of Collapse.Panel */}
+                <div key={logIndex}>
+                  <h3>{log.title}</h3>
+                  {editingLogIndex === logIndex ? (
+                    <textarea
+                      value={editedDescriptions[logIndex] || ""}
+                      onChange={(e) =>
+                        setEditedDescriptions((prevState) => ({
+                          ...prevState,
+                          [logIndex]: e.target.value,
+                        }))
+                      }
+                      onBlur={() => handleSaveDescription(logIndex)}
+                      rows={5}
                     />
+                  ) : (
+                    <div>
+                      {log.description && (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: log.description.replace(/\n/g, "<br />"),
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {editingLogIndex !== logIndex && (
+                    <button
+                      onClick={() => handleEditDescription(logIndex)}
+                      disabled={viewMode}
+                    >
+                      Edit Description
+                    </button>
                   )}
                 </div>
-              )}
-              {editingLogIndex !== logIndex && (
-                <button
-                  onClick={() => handleEditDescription(logIndex)}
-                  disabled={viewMode}
-                >
-                  Edit Description
-                </button>
-              )}
-            </div>
-          </Collapse.Panel>
-        ))}
-      </Collapse>
+              </Collapse.Panel>
+            ))}
+          </Collapse>
+        </div>
       </div>
-
-    </div>
     </ConfigProvider>
-  )
+  );
 }

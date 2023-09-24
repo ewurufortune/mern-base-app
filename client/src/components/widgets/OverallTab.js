@@ -186,20 +186,22 @@ export default function OverallTab({isDarkMode}) {
         bordered={false}
         theme={isDarkMode ? "Light" : "Dark"}
         style={{
-          width: "100%",
+          width: "100vw",
           height:'100vw'
         }}
       >
   
     {contextHolder}
     <Tabs
-      defaultActiveKey="1"
-      items={updatedPlayerInformation} // Use the updated array
-      onChange={onChange}
-      // theme={isDarkMode ? "Light" : "Dark"}
-      activeKey={activeTab}
-      tabBarExtraContent={operations}
-    />
+  defaultActiveKey="1"
+  items={updatedPlayerInformation}
+  onChange={onChange}
+  activeKey={activeTab}
+  tabBarExtraContent={operations}
+  style={{ height: '100vw', overflow: 'auto' }}
+/>
+
+
     </Card>
     </ConfigProvider >
     

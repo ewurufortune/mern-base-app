@@ -68,20 +68,21 @@ const EventNotifications = () => {
   return (
     <div className="event-container">
       <div className="event-list">
-        <div className="action-buttons">
+        <div className="action-buttons" style={{margin:30}}>
         <Tag>{recentEvents.length} Messages</Tag>
         <Tag color="red">Unread: {recentEvents.filter((event) => !event.isRead).length}</Tag>
-          <button onClick={markAllAsRead}>Mark All as Read</button>
-          <button onClick={clearAll}>Clear All</button>
+          <button className="button-8" onClick={markAllAsRead}>Mark All as Read</button>
+          <button className="button-8" onClick={clearAll}>Clear All</button>
         </div>
-        <ul  style={{maxHeight:'300px',minHeight:'300px', overflow:'auto'}}>
+<ul style={{ maxHeight: '300px', minHeight: '300px', overflow: 'auto', margin:30}}>
         {recentEvents.slice().reverse().map((event) => (
   <li
+  style={{backgroundColor: '#7FB77E'}}
     key={event.id}
     onClick={() => handleEventClick(event)}
     className={event.isRead ? 'read' : 'unread'}
   >
-    <div className="scrollable-title-box">
+    <div className="scrollable-title-box" >
       <div>{event.title}</div> {/* Apply the scrollable-title class */}
     </div>
     {!event.isRead && <span className="dot" />}
@@ -93,14 +94,14 @@ const EventNotifications = () => {
 
 </div>
   {selectedEvent && (
-    <div>
+    <div style={{ maxHeight: '300px', minHeight: '300px',maxWidth:'500px', overflow: 'auto', marginTop: 70, border: '1px solid #00FF00', borderRadius: '4px', padding: '10px' }}>
       <h2>{selectedEvent.title}</h2>
       {/* Use dangerouslySetInnerHTML to render line breaks */}
       <p dangerouslySetInnerHTML={{ __html: selectedEvent.description.replace(/\n/g, '<br>') }}></p>
       {!selectedEvent.isRead && (
-        <button onClick={markAsUnread}>Mark as Unread</button>
+        <button className="button-8" onClick={markAsUnread}>Mark as Unread</button>
       )}
-      <button onClick={handleDeleteEvent}>Delete</button>
+      <button className="button-8" onClick={handleDeleteEvent}>Delete</button>
     </div>
   )}
 </div>

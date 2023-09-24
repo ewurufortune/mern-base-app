@@ -96,7 +96,8 @@ export const getPosts = async (req, res) => {
           mainLogs: 1,
           participants: 1,
           published: 1,
-          likes: { $objectToArray: "$likes" },
+          likes: 1,
+          // { $objectToArray: "$likes" },
           comments: 1,
           createdAt: 1,
           updatedAt: 1,
@@ -105,14 +106,14 @@ export const getPosts = async (req, res) => {
           statPerception: 1,
         },
       },
-      {
-        $unwind: "$likes",
-      },
-      {
-        $match: {
-          "likes.v": true,
-        },
-      },
+      // {
+      //   $unwind: "$likes",
+      // },
+      // {
+      //   $match: {
+      //     "likes.v": true,
+      //   },
+      // },
       {
         $group: {
           _id: "$_id",
