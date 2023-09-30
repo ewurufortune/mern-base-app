@@ -105,11 +105,21 @@ export default function OverallTab({isDarkMode}) {
   const replaceUser = async (user) => {
     const bodyData = {
       id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      location: user.location,
-      impressions: user.impressions,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
     };
   
     try {
@@ -176,7 +186,6 @@ export default function OverallTab({isDarkMode}) {
     }
     return entry;
   });
-  console.log(isDarkMode);
 
   return (
 <ConfigProvider

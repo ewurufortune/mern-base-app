@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch,  } from "react-redux";
 import {
   Collapse,
   Input,
@@ -10,10 +10,11 @@ import {
   Typography,
   List,
   ConfigProvider,
+  message,
 } from "antd";
 import { setStats } from "state";
 import _ from "lodash";
-import { Segmented } from "antd";
+import { Segmented, Col, Row } from "antd";
 import { CaretDownFilled } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGem } from "@fortawesome/free-solid-svg-icons";
@@ -254,8 +255,6 @@ export default function MainLogs() {
       return { ...log, duration };
     });
 
-  console.log(filteredLogs); // Output the filtered logs to the console for monitoring
-
   const [activeKey, setActiveKey] = useState([]);
   const [allPanelsOpen, setAllPanelsOpen] = useState(false);
 
@@ -267,6 +266,21 @@ export default function MainLogs() {
   const handleCloseAll = () => {
     setActiveKey([]);
     setAllPanelsOpen(false);
+  };
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Sucessfully published your save',
+    });
+  };
+
+  const error = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Failed to publish your save.',
+    });
   };
 
   const handlePublishUpdate = async () => {
@@ -295,7 +309,9 @@ export default function MainLogs() {
         // const data = await response.json();
         // // Handle the response, e.g., display a success message
         console.log("Post published/updated successfully");
+        success()
       } else {
+        error()
         // Handle error responses, e.g., display an error message
         console.error("Error publishing/updating post:", response.statusText);
       }
@@ -441,161 +457,188 @@ export default function MainLogs() {
         <>
           {" "}
           {/* Display a list of posts */}
-          <Segmented
-            options={postTypes}
-            value={selectedPostType}
-            onChange={setSelectedPostType}
-          />
-          <div>
-            <h3>Tap a post to Preview</h3>
-            <List
-              dataSource={posts?.[selectedPostType]}
-              loading={isLoading} // Set loading to true or false based on your loading state
-              renderItem={(post) => (
-                <List.Item
-                  key={post._id}
-                  actions={[
-                    <Button
-                      type="link"
-                      onClick={() => handleLike(post._id, selectedPostType)}
-                      className="like-button" // Add a class name for styling
-                    >
-                      {likedPosts.includes(post._id) ? (
-                        <FontAwesomeIcon
-                          icon={faGem}
-                          style={{ color: "#f51414" }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faGem}
-                          style={{ color: "blue" }}
-                        />
-                      )}
-                    </Button>,
-                  ]}
-                  onClick={() => handlePostSelection(post)}
-                  style={{ lineHeight: "1.2", maxWidth: "300px" }}
-                  className="list-item"
-                >
-                  <div>
-                    {selectedPostType === "mostLikedPosts" && (
-                      <span>Most Liked Post: </span>
-                    )}
-                    {selectedPostType === "recentlyLikedPosts" && (
-                      <span>🟢</span>
-                    )}
-                    {selectedPostType === "recentPosts" && <span>🟢 </span>}
-                    {post.firstName}, {countLikes(post.likes, selectedPostType)}{" "}
-                    Likes.
-                  </div>
-                </List.Item>
-              )}
-            />
-          </div>
-          {/* Display selected post */}
-          {selectedPost && (
-            <div>
-              <h3>Preview</h3>
+          <Row gutter={16}>
+          <Col xs={24} sm={24} md={12} lg={9} xl={9}>
+              <Segmented
+                options={postTypes}
+                value={selectedPostType}
+                onChange={setSelectedPostType}
+              />
               <div>
-                {/* Display the mainLogs, categories, and Participants from selectedPost */}
-                <div>
-                  <strong>Title: {selectedPost.firstName} </strong>
-                  <span>{countLikes(selectedPost.likes)} Likes</span>
-                </div>
-                <div>
-                  <strong>
-                    Main Logs: <span>{selectedPost.mainLogs.length}</span>{" "}
-                  </strong>
-                </div>
-                <div style={{ maxHeight: "200px", overflow: "auto" }}>
-                  <strong>Categories: </strong>
-                  {selectedPost.categories.map((category, index) => (
-                    <span key={index}>
-                      {category.name}
-                      {index !== selectedPost.categories.length - 1 ? ", " : ""}
-                    </span>
-                  ))}
-                </div>
-
-                <div style={{ maxHeight: "200px", overflow: "auto" }}>
-                  <strong>Items: </strong>
-                  {selectedPost.items?.map((item, index) => (
-                    <span key={index}>
-                      {item.name}
-                      {index !== selectedPost.items.length - 1 ? ", " : ""}
-                    </span>
-                  ))}
-                </div>
-
-                <div style={{ maxHeight: "200px", overflow: "auto" }}>
+                <h3>Tap a post to Preview</h3>
+                <List
+                  dataSource={posts?.[selectedPostType]}
+                  loading={isLoading} // Set loading to true or false based on your loading state
+                  renderItem={(post) => (
+                    <List.Item
+                      key={post._id}
+                      actions={[
+                        <Button
+                          type="link"
+                          onClick={() => handleLike(post._id, selectedPostType)}
+                          className="like-button" // Add a class name for styling
+                        >
+                          {likedPosts.includes(post._id) ? (
+                            <FontAwesomeIcon
+                              icon={faGem}
+                              style={{ color: "#f51414" }}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faGem}
+                              style={{ color: "blue" }}
+                            />
+                          )}
+                        </Button>,
+                      ]}
+                      onClick={() => handlePostSelection(post)}
+                      style={{ lineHeight: "1.2", maxWidth: "300px" }}
+                      className="list-item"
+                    >
+                      <div>
+                        {selectedPostType === "mostLikedPosts" && (
+                          <span>Most Liked Post: </span>
+                        )}
+                        {selectedPostType === "recentlyLikedPosts" && (
+                          <span>🟢</span>
+                        )}
+                        {selectedPostType === "recentPosts" && <span>🟢 </span>}
+                        {post.firstName},{" "}
+                        {countLikes(post.likes, selectedPostType)} Likes.
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={9} xl={9} style={{ marginLeft: "10%" }}>
+              {/* Display selected post */}
+              {selectedPost && (
+                <div style={{ width: "100%" }}>
+                  <h3>Preview</h3>
                   <div>
-                    <strong>Participants: </strong>
-                    {selectedPost.participants.map((participant, index) => (
-                      <span key={index}>
-                        {participant.name}
-                        {index !== selectedPost.participants.length - 1
-                          ? ", "
-                          : ""}
-                      </span>
-                    ))}
+                    {/* Display the mainLogs, categories, and Participants from selectedPost */}
+                    <div>
+                      <strong>Title: {selectedPost.firstName} </strong>
+                      <span>{countLikes(selectedPost.likes)} Likes</span>
+                    </div>
+                    <div>
+                      <strong>
+                        Main Logs: <span>{selectedPost.mainLogs.length}</span>{" "}
+                      </strong>
+                    </div>
+                    <div style={{ maxHeight: "200px", overflow: "auto" }}>
+                      <strong>Categories: </strong>
+                      {selectedPost.categories.map((category, index) => (
+                        <span key={index}>
+                          {category.name}
+                          {index !== selectedPost.categories.length - 1
+                            ? ", "
+                            : ""}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div style={{ maxHeight: "200px", overflow: "auto" }}>
+                      <strong>Items: </strong>
+                      {selectedPost.items?.map((item, index) => (
+                        <span key={index}>
+                          {item.name}
+                          {index !== selectedPost.items.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div style={{ maxHeight: "200px", overflow: "auto" }}>
+                      <div>
+                        <strong>Participants: </strong>
+                        {selectedPost.participants.map((participant, index) => (
+                          <span key={index}>
+                            {participant.name}
+                            {index !== selectedPost.participants.length - 1
+                              ? ", "
+                              : ""}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      {/* Your other JSX code */}
+                      {viewMode && (
+                        <div>
+                          {/* Button to copy and dispatch participants array */}
+                          <Button
+                            onClick={() =>
+                              copyAndDispatch("participants", participants)
+                            }
+                            style={{ marginRight: "8px", marginBottom: "8px" }}
+                          >
+                            Copy Participants
+                          </Button>
+
+                          {/* Button to copy and dispatch items array */}
+                          <Button
+                            onClick={() => copyAndDispatch("items", items)}
+                            style={{ marginRight: "8px", marginBottom: "8px" }}
+                          >
+                            Copy Items
+                          </Button>
+
+                          {/* Button to copy and dispatch categories array */}
+                          <Button
+                            onClick={() =>
+                              copyAndDispatch("categories", categories)
+                            }
+                            style={{ marginRight: "8px", marginBottom: "8px" }}
+                          >
+                            Copy Categories
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                <div>
-                  {/* Your other JSX code */}
-                  {viewMode && (
-                    <div>
-                      {/* Button to copy and dispatch participants array */}
-                      <Button
-                        onClick={() =>
-                          copyAndDispatch("participants", participants)
-                        }
-                      >
-                        Copy Participants
-                      </Button>
-
-                      {/* Button to copy and dispatch items array */}
-                      <Button onClick={() => copyAndDispatch("items", items)}>
-                        Copy Items
-                      </Button>
-
-                      {/* Button to copy and dispatch categories array */}
-                      <Button
-                        onClick={() =>
-                          copyAndDispatch("categories", categories)
-                        }
-                      >
-                        Copy Categories
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          <Button onClick={handleViewPost}>
-            {viewMode ? "Exit View" : "View Post"}
-          </Button>
-          <button
-            onClick={handleRefresh}
+              )}
+            </Col>
+          </Row>
+          <div>
+            <Button onClick={handleViewPost} style={{ marginBottom: "8px" }}>
+              {viewMode ? "Exit View" : "View Post"}
+            </Button>
+            <button
+              onClick={handleRefresh}
+              style={{
+                backgroundColor: "blue",
+                color: "white",
+                borderRadius: "5px",
+                padding: "6px 12px",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px", // Add margin to the button
+              }}
+            >
+              <span style={{ marginRight: "4px" }}>
+                <i className="fas fa-sync-alt"></i>
+              </span>
+              Refresh Feed
+            </button>
+          </div>
+          <div
             style={{
-              backgroundColor: "blue",
-              color: "white",
-              borderRadius: "5px",
-              padding: "6px 12px", // Adjust padding for a smaller button
-              border: "none",
-              cursor: "pointer",
-              fontSize: "14px", // Adjust font size for a smaller button
-              fontWeight: "bold",
+              marginTop: "1.4%",
+              marginBottom: "1.4%",
               display: "flex",
-              alignItems: "center", // Center content vertically
+              justifyContent: "center",
             }}
           >
-            <span style={{ marginRight: "4px" }}>
-              <i className="fas fa-sync-alt"></i> {/* Add your icon here */}
-            </span>
-            Refresh Feed
-          </button>
+          {contextHolder}
+            <Button onClick={handlePublishUpdate}>Publish My Save</Button>
+          </div>
         </>
       ),
     },
@@ -639,37 +682,40 @@ export default function MainLogs() {
             ))}
           </div>
 
-          {/* Create a Select component for filtering by isActive */}
-          <Select
-            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
-            placeholder="Filter by Activity"
-            onChange={(value) => setFilterIsActive(value)}
-            style={{ width: 200, marginBottom: 16 }}
-          >
-            <Select.Option value={null}>All</Select.Option>
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
-          </Select>
-
-          {/* Create a Select component for filtering by category */}
-          <Select
-            placeholder="Filter by Category"
-            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
-            onChange={(value) => setFilterCategory(value)}
-            style={{ width: 200, marginBottom: 16 }}
-          >
-            <Select.Option value={null}>All</Select.Option>
-            {categories.map((category) => (
-              <Select.Option key={category.name} value={category.name}>
-                {category.name}
-              </Select.Option>
-            ))}
-          </Select>
+          <div style={{ marginTop: 16 }}>
+            {" "}
+            {/* Add marginTop to the containing div */}
+            {/* Create a Select component for filtering by isActive */}
+            <Select
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+              placeholder="Filter by Activity"
+              onChange={(value) => setFilterIsActive(value)}
+              style={{ width: 200, marginBottom: 16 }}
+            >
+              <Select.Option value={null}>All</Select.Option>
+              <Select.Option value={true}>Active</Select.Option>
+              <Select.Option value={false}>Inactive</Select.Option>
+            </Select>
+            {/* Create a Select component for filtering by category */}
+            <Select
+              placeholder="Filter by Category"
+              suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+              onChange={(value) => setFilterCategory(value)}
+              style={{ width: 200, marginBottom: 16 }}
+            >
+              <Select.Option value={null}>All</Select.Option>
+              {categories.map((category) => (
+                <Select.Option key={category.name} value={category.name}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
 
           <div
             className=""
             style={{
-              maxHeight: "50px",
+              maxHeight: "90px",
               overflow: "auto",
               width: "90%",
               border: "1px solid red",
@@ -680,24 +726,31 @@ export default function MainLogs() {
           >
             {/* Render filtered participants */}
             {filteredParticipants.map((participant) => (
-              <Button
-                key={participant.id}
-                onMouseEnter={() => setHoveredParticipant(participant)}
-                onClick={() =>
-                  setSelectedParticipants((prevSelected) =>
-                    prevSelected.includes(participant.id)
-                      ? prevSelected.filter((id) => id !== participant.id)
-                      : [...prevSelected, participant.id]
-                  )
-                }
-                type={
-                  selectedParticipants.includes(participant.id)
-                    ? "primary"
-                    : "default"
-                }
-              >
-                {participant.name}
-              </Button>
+              <button
+  key={participant.id}
+  // onMouseEnter={() => }
+  onClick={() => {
+        setHoveredParticipant(participant); // Set the hovered participant
+        setSelectedParticipants((prevSelected) =>
+          prevSelected.includes(participant.id)
+            ? prevSelected.filter((id) => id !== participant.id)
+            : [...prevSelected, participant.id]
+        );
+      }}
+  style={{
+    background: selectedParticipants.includes(participant.id)
+      ? "lightblue"
+      : "white",
+    borderLeft: "2px solid black", // Add a black border on the left
+    borderBottom: "2px solid black", // Add a black border on the bottom
+    borderRadius: "0", // Make the button rectangular by removing border-radius
+    transition: "border-color 0.3s", // Add a smooth transition for border color change
+  }}
+  className="rectangular-button" // Add a class for additional styling if needed
+>
+  {participant.name}
+</button>
+
             ))}
           </div>
         </div>
@@ -829,13 +882,24 @@ export default function MainLogs() {
           ))}
         </div>
         <div>
-          <Button onClick={handlePublishUpdate}>Publish Save</Button>
-          <Collapse items={viewOtherPosts} defaultActiveKey={["1"]} />
+          <div
+            style={{
+              marginTop: "1.4%",
+              marginBottom: "1.4%",
+              paddingRight: "10%",
+            }}
+          >
+            <Collapse items={viewOtherPosts} />
+          </div>
 
-          {/* Open All button */}
-          <Button onClick={handleOpenAll}>Open All</Button>
-          {/* Close All button */}
-          <Button onClick={handleCloseAll}>Close All</Button>
+          <div style={{ marginBottom: 16 }}>
+            {" "}
+            {/* Add marginBottom to the containing div */}
+            {/* Open All button */}
+            <Button onClick={handleOpenAll}>Open All</Button>
+            {/* Close All button */}
+            <Button onClick={handleCloseAll}>Close All</Button>
+          </div>
         </div>
         <div style={{ overflow: "auto", maxHeight: "600px" }}>
           <Collapse

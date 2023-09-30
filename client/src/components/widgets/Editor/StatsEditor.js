@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Form, Input, Popconfirm, Table, Switch } from "antd";
+import { Button, Form, Input, Popconfirm, Table, Switch, Space, message } from "antd";
 import { setStats } from "state";
 import { v4 as uuidv4 } from "uuid";
+import _ from "lodash";
 
 const EditableContext = React.createContext(null);
 
@@ -41,25 +42,84 @@ const EditableCell = ({
       [dataIndex]: record[dataIndex],
     });
   };
+  const user = useSelector((state) => state.user);
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
 
   const save = async () => {
     try {
       const values = await form.validateFields();
-
+  
       // Additional validation for number inputs
       if (dataIndex === "change" && isNaN(values[dataIndex])) {
         throw new Error(`${title} must be a number.`);
       }
-
+  
+      // Add a condition to handle the statName property
+      if (dataIndex === "statName") {
+        // Remove spaces and convert to lowercase
+        values[dataIndex] = values[dataIndex].replace(/\s/g, "").toLowerCase();
+      }
+  
+      // Explicitly parse the 'change' property as a number
+      if (dataIndex === "change") {
+        values[dataIndex] = parseFloat(values[dataIndex]);
+      }
+  
       toggleEdit();
       handleSave({
         ...record,
         ...values,
       });
+      replaceUser(user)
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
   };
+
+  
 
   let childNode = children;
   if (editable) {
@@ -102,12 +162,60 @@ const EditableCell = ({
 const StatsEditor = () => {
   const user = useSelector((state) => state.user);
   const stats = useSelector((state) => state.user.stats);
+  const participantsReadOnly = useSelector((state) => state.user.participants);
+  const participants=_.cloneDeep(participantsReadOnly)
+  const statPerceptionReadOnly = useSelector((state) => state.user.statPerception);
+  const statPerception=_.cloneDeep(statPerceptionReadOnly)
   // { statName: "overness", label: "Major Overness Success", change: 5 },
   const dispatch = useDispatch();
 
   const [dataSource, setDataSource] = useState(stats);
   const [count, setCount] = useState(stats.length);
 
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
   useEffect(() => {
     setDataSource(stats);
   }, [stats]);
@@ -116,7 +224,60 @@ const StatsEditor = () => {
     const newData = dataSource.filter((item) => item.id !== id);
     setDataSource(newData);
     dispatch(setStats({ stats: newData }));
+    replaceUser(user)
   };
+
+  const handleDeleteStat = (statNameToDelete) => {
+    console.log(statNameToDelete);
+    const updatedParticipants = participants.map((participant) => {
+      const updatedStats = participant.stats.filter((stat) => {
+        // Check if the stat object contains the statNameToDelete property
+        return !stat[statNameToDelete];
+      });
+      return {
+        ...participant,
+        stats: updatedStats,
+      };
+    });
+
+
+    //************************REMOVE ALL STATS EXCEPT RELEVANCE********************************* */
+    // const statNameToKeep = "relevance"; // StatName to keep
+
+  //   // Remove all stats except for the specified statName from participants' stats arrays
+  //   const updatedParticipants = participants.map((participant) => {
+  //     const updatedStats = participant.stats.filter((stat) => {
+  //       // Keep only the specified statName and remove others
+  //       return stat[statNameToKeep];
+  //     });
+  //     return {
+  //       ...participant,
+  //       stats: updatedStats,
+  //     };
+  //   });
+  //  // Remove all stats except for the specified statName from the global stats array
+  //  const updatedGlobalStats = stats.filter((stat) => stat[statNameToKeep]);
+  // const updatedStatPerception = statPerception.filter((statPercept) => statPercept.statName === statNameToKeep);
+
+  // *****************************************************************************************************///
+   
+  // Update state and dispatch the new data
+    dispatch(setStats({ participants: updatedParticipants }));
+
+     
+ // Remove matching statNames from the global stats array
+ const updatedGlobalStats = stats.filter((stat) => !stat[statNameToDelete])
+ const updatedStatPerception = statPerception.filter((statPercept) => statPercept.statName !== statNameToDelete);
+ setDataSource(updatedGlobalStats);
+ 
+ dispatch(setStats({ stats: updatedGlobalStats, statPerception:updatedStatPerception }));
+    console.log(updatedParticipants);
+    replaceUser(user)
+  };
+  
+  
+  
+  
 
   const defaultColumns = [
     {
@@ -134,12 +295,12 @@ const StatsEditor = () => {
     {
       title: "Stat Change",
       dataIndex: "change",
-      width: "30%",
+      width: "5%",
       editable: true,
     },
 
     {
-      title: "Operation",
+      title: "Delete Stat Change",
       dataIndex: "operation",
       render: (_, record) =>
         dataSource.length >= 1 ? (
@@ -151,6 +312,22 @@ const StatsEditor = () => {
           </Popconfirm>
         ) : null,
     },
+    {
+      title: 'Delete Stat From All',
+      dataIndex: 'statName',
+      width: "5%",
+
+      render: (statName, record) => (
+        <Popconfirm
+          title={`Are you sure you want to delete all ${statName} stats for this participant?`}
+          onConfirm={() => handleDeleteStat( record.statName)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button className="button-24" type="danger"> {statName}</Button>
+        </Popconfirm>
+      ),
+    },
   ];
 
   const handleAdd = () => {
@@ -159,7 +336,7 @@ const StatsEditor = () => {
       statName: `overness`,
       isActive: true, // Set the initial value to true
       bio: "What does it mean?",
-      labed: "Minor Increase",
+      label: "Minor Increase",
       change: 5,
     };
     setDataSource([...dataSource, newData]);

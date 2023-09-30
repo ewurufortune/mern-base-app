@@ -7,6 +7,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { message } from "antd";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -19,19 +20,19 @@ import FlexBetween from "components/FlexBetween";
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
-  email: yup.string()
-  // .email("invalid email")
-  .required("required"),
+  email: yup
+    .string()
+    // .email("invalid email")
+    .required("required"),
   password: yup.string().required("required"),
   location: yup.string().required("required"),
-
-  
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string()
-  // .email("invalid email")
-  .required("required"),
+  email: yup
+    .string()
+    // .email("invalid email")
+    .required("required"),
   password: yup.string().required("required"),
 });
 
@@ -65,7 +66,7 @@ const Form = () => {
     for (let value in values) {
       formData.append(value, values[value]);
     }
-    formData.append("picturePath", 'mark.jpg');
+    formData.append("picturePath", "mark.jpg");
 
     const savedUserResponse = await fetch(
       "http://localhost:3001/auth/register",
@@ -81,24 +82,51 @@ const Form = () => {
       setPageType("login");
     }
   };
+  const [messageApi, contextHolder] = message.useMessage();
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    console.log(loggedIn);
-    onSubmitProps.resetForm();
-    if (loggedIn) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
-      );
-      navigate("/home");
+    // Show loading message
+    // Display loading message
+    messageApi.loading({ content: "Logging in...", key: "LoginMessage" });
+    try {
+      const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (loggedInResponse.ok) {
+        const loggedIn = await loggedInResponse.json();
+        console.log(loggedIn);
+        onSubmitProps.resetForm();
+        if (loggedIn) {
+          dispatch(
+            setLogin({
+              user: loggedIn.user,
+              token: loggedIn.token,
+            })
+          );
+          navigate("/home");
+          // Display success message
+          messageApi.success({
+            content: "Logged In successfully!",
+            key: "LoginMessage",
+          });
+        }
+        // Display success message
+        messageApi.success({
+          content: "Logged In successfully!",
+          key: "LoginMessage",
+        });
+      } else {
+        // Error message
+        message.error("Login failed. Please check your credentials.", 2); // Close the message after 2 seconds
+      }
+    } catch (error) {
+      console.error(error);
+      // Error message for unexpected errors
+      messageApi.error({ content: "Login Error", key: "LoginMessage" });
+    } finally {
     }
   };
 
@@ -138,7 +166,7 @@ const Form = () => {
                   label="First Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.firstName|| ""}
+                  value={values.firstName || ""}
                   name="firstName"
                   error={
                     Boolean(touched.firstName) && Boolean(errors.firstName)
@@ -150,33 +178,30 @@ const Form = () => {
                   label="Last Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.lastName|| ""}
+                  value={values.lastName || ""}
                   name="lastName"
                   error={Boolean(touched.lastName) && Boolean(errors.lastName)}
                   helperText={touched.lastName && errors.lastName}
                   sx={{ gridColumn: "span 2" }}
                 />
 
-                
                 <TextField
                   label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.location|| ""}
+                  value={values.location || ""}
                   name="location"
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
                   sx={{ gridColumn: "span 4" }}
                 />
-                
+
                 <Box
                   gridColumn="span 4"
                   border={`1px solid ${palette.neutral.medium}`}
                   borderRadius="5px"
                   p="1rem"
-                >
-           
-                </Box>
+                ></Box>
               </>
             )}
 
@@ -184,7 +209,7 @@ const Form = () => {
               label="Username"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.email|| ""}
+              value={values.email || ""}
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
@@ -195,7 +220,7 @@ const Form = () => {
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.password|| ""}
+              value={values.password || ""}
               name="password"
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
@@ -205,6 +230,8 @@ const Form = () => {
 
           {/* BUTTONS */}
           <Box>
+            {contextHolder}
+
             <Button
               fullWidth
               type="submit"

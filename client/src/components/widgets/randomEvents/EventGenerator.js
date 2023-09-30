@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   Divider,
+  message,
   ConfigProvider,
 } from "antd";
 import { useSelector, useDispatch } from "react-redux";
@@ -147,6 +148,52 @@ function EventGenerator() {
     // For simplicity, here's a basic example using a timestamp
     return Date.now().toString();
   }
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Saving...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
+
+  const user = useSelector((state) => state.user);
 
   const generateEvent = () => {
     if (!eventTitle) {
@@ -188,6 +235,7 @@ function EventGenerator() {
     console.log("New Random Events:", newRandomEvents);
 
     dispatch(setStats({ randomEvents: newRandomEvents }));
+replaceUser(user)
     console.log("Updated Random Events:", randomEvents);
     resetState();
     setEventTitle("");
@@ -199,6 +247,7 @@ function EventGenerator() {
     padding: "16px",
     borderRadius: "4px",
   };
+  
 
   return (
     <ConfigProvider
@@ -211,83 +260,90 @@ function EventGenerator() {
         },
       }}
     >
-      <div style={{ padding: "20px" }}>
+    {contextHolder}
+      <div style={{ paddingLeft: "10%", paddingRight:'10%' }}>
         <h1>Event Generator</h1>
 
-        <Form>
-          <Row gutter={24}>
-            <Col span={8}>
-              <div style={{ width: "100%" }}>
-                <span>Event Title</span>
-                <Input
-                  placeholder="Enter event title"
-                  value={eventTitle}
-                  onChange={(e) => {
-                    const inputText = e.target.value;
-                    if (inputText.length <= 50) {
-                      setEventTitle(inputText);
-                      setTitleCharCount(inputText.length);
-                    }
-                  }}
-                />
+     <Form>
+  <Row gutter={24}>
+    <Col span={8}>
+      <div style={{ width: "100%", border: "1px solid #ccc", padding: "10px" }}>
+        <span>Event Title</span>
+        <Input
+          placeholder="Enter event title"
+          value={eventTitle}
+          onChange={(e) => {
+            const inputText = e.target.value;
+            if (inputText.length <= 50) {
+              setEventTitle(inputText);
+              setTitleCharCount(inputText.length);
+            }
+          }}
+        />
 
-                <p>
-                  Character Limit: {titleCharCount}/{50}
-                </p>
-              </div>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Event Frequency"
-                style={{ width: "100%" }}
-              >
-                <Select
-                  placeholder="Select event rarity"
-                  value={eventRarity}
-                  onChange={setEventRarity}
-                  suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
-                >
-                  <Option value="random">Random</Option>
-                  <Option value="weekly">Weekly</Option>
-                  <Option value="monthly">Monthly</Option>
-                  <Option value="yearly">Yearly</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="People Involved">
-                <Radio.Group
-                  value={selectedSelectionMode}
-                  onChange={(e) => {
-                    setSelectedSelectionMode(e.target.value);
-                    setSelectedPercentile(null); // Reset percentile selection
-                  }}
-                >
-                  <Radio value="single">Single</Radio>
-                  <Radio value="multiple">Multiple</Radio>
-                </Radio.Group>
-              </Form.Item>
-              {selectedSelectionMode === "multiple" && (
-                <div>
-                  <p>Select Percentile:</p>
-                  <Radio.Group
-                    value={selectedPercentile}
-                    onChange={(e) => setSelectedPercentile(e.target.value)}
-                  >
-                    <Radio value="top5">Top 5%</Radio>
-                    <Radio value="top40">Top 40%</Radio>
-                    <Radio value="bottom50">Bottom 50%</Radio>
-                    <Radio value="random">Random</Radio>
-                  </Radio.Group>
-                </div>
-              )}
-            </Col>
-          </Row>
+        <p>
+          Character Limit: {titleCharCount}/{50}
+        </p>
+      </div>
+    </Col>
+    <Col span={8}>
+      <div style={{ width: "100%", border: "1px solid #ccc", padding: "10px" }}>
+        <Form.Item
+          label="Event Frequency"
+          style={{ width: "100%" }}
+        >
+          <Select
+            placeholder="Select event rarity"
+            value={eventRarity}
+            onChange={setEventRarity}
+            suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
+          >
+            <Option value="random">Random</Option>
+            <Option value="weekly">Weekly</Option>
+            <Option value="monthly">Monthly</Option>
+            <Option value="yearly">Yearly</Option>
+          </Select>
+        </Form.Item>
+      </div>
+    </Col>
+    <Col span={8}>
+      <div style={{ width: "100%", border: "1px solid #ccc", padding: "10px" }}>
+        <Form.Item label="People Involved">
+          <Radio.Group
+            value={selectedSelectionMode}
+            onChange={(e) => {
+              setSelectedSelectionMode(e.target.value);
+              setSelectedPercentile(null); // Reset percentile selection
+            }}
+          >
+            <Radio value="single">Single</Radio>
+            <Radio value="multiple">Multiple</Radio>
+          </Radio.Group>
+        </Form.Item>
+        {selectedSelectionMode === "multiple" && (
+          <div>
+            <p>Select Percentile:</p>
+            <Radio.Group
+              value={selectedPercentile}
+              onChange={(e) => setSelectedPercentile(e.target.value)}
+            >
+              <Radio value="top5">Top 5%</Radio>
+              <Radio value="top40">Top 40%</Radio>
+              <Radio value="bottom50">Bottom 50%</Radio>
+              <Radio value="random">Random</Radio>
+            </Radio.Group>
+          </div>
+        )}
+      </div>
+    </Col>
+  </Row>
 
-          <Form.Item label="Select Event Components" style={{ width: "50%" }}>
+
+
+          <Form.Item label="Select Event Requiements" style={{ width: "50%", marginTop:'2%' }}>
             <Select
               mode="multiple"
-              placeholder="Select event components"
+              placeholder="Select a requirement"
               onChange={handleEventComponentChange}
               suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
               style={{ width: "100%" }}
@@ -446,7 +502,7 @@ function EventGenerator() {
           <div>
             <p>Event Description:</p>
             <Input
-              placeholder="Enter event description"
+              placeholder="Write event description"
               value={eventDescription}
               onChange={(e) => setEventDescription(e.target.value)}
             />
@@ -668,7 +724,7 @@ function EventGenerator() {
             />
           </div>
 
-          <Button type="primary" onClick={generateEvent}>
+          <Button type="primary" onClick={generateEvent} style={{marginTop:'1%'}}>
             Generate Event
           </Button>
         </Form>

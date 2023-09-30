@@ -332,7 +332,7 @@ console.log(modifiedStrength);
                   foundParticipant.stats.push({
                     [selectedStat.statName]: selectedStat.change,
                   });
-                  title += foundParticipant.name + ",";
+                  title += foundParticipant.name + ", and others";
                   description +=
                     foundParticipant.name +
                     " experienced a " +
@@ -689,7 +689,8 @@ console.log(modifiedStrength);
                             ] += selectedStatForIncrease.change;
                             console.log(
                               `Increased stat ${selectedStatForIncrease.statName} for participant (ID: ${participantId})`
-                            );
+        
+                              );
             
                             // Set the title and description for other participants
                             const otherParticipantName = foundParticipant.name;
@@ -747,12 +748,18 @@ console.log(modifiedStrength);
                   console.log(`Randomly selected participant 1 ID: ${participant1}`);
                   console.log(`Randomly selected participant 2 ID: ${participant2}`);
               
-                  // Find a category that includes participant1 but not participant2
-                  const category = categories.find(
+                  const filteredCategories = categories.filter((cat) => {
+                    const lowercaseType = cat.type.toLowerCase();
+                    return !lowercaseType.includes('gender') && !lowercaseType.includes('sex');
+                  });
+                  
+                  // Now, you can find a category that includes participant1 but not participant2
+                  const category = filteredCategories.find(
                     (cat) =>
                       cat.participants.includes(participant1) &&
                       !cat.participants.includes(participant2)
                   );
+                  
               
                   if (category) {
                     console.log(
@@ -784,8 +791,8 @@ console.log(modifiedStrength);
                     });
               
                     // Set the title and description for the action
-                    title = `Category Joined: ${categoryType}`;
-                    description = `${participant2Name} has joined the ${categoryType} category, and ${participant1Name} helped make it happen.`;
+                    title = `${categoryType} Welcomes New Participant.`;
+                    description = `${participant2Name} has entered this ${categoryType},\n ${participant1Name} is rumored to have a strong influence in making it happen.`;
                   } else {
                     console.log(
                       "No category found with participant 1 but not participant 2."
@@ -1015,8 +1022,8 @@ console.log(modifiedStrength);
             participants.push(newParticipant);
         
             // Set the title and description for the action
-            title = `New Participant Created: ${newParticipant.name}`;
-            description = `A new participant named ${newParticipant.name} has been created.`;
+            title = `${newParticipant.name} To Debuts`;
+            description = `${newParticipant.name} a prodigy of ${participant1.name}, is debuting soon.  `;
           } else if (nameComponents.length >= 2) {
             // Participant1 has at least two names, extract the surname
             const surname = nameComponents.slice(1).join(' '); // Join the remaining components as the surname

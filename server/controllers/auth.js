@@ -254,6 +254,16 @@ export const replaceUser = async (req, res) => {
       email,
       location,
       impressions,
+      mainLogs,
+      participants,
+      items,
+      stats,
+      relationships,
+      recentEvents,
+      statPerception,
+      arcs,
+      date,
+      randomEvents,
     } = req.body;
 
     // Validate if the user with the provided ID exists in the database
@@ -262,11 +272,22 @@ export const replaceUser = async (req, res) => {
     if (!user) return res.status(400).json({ msg: "User does not exist." });
 
     // Update the user properties if they are provided in the request body
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (email) user.email = email;
-    if (location) user.location = location;
-    if (impressions) user.impressions = impressions;
+if (firstName) user.firstName = firstName;
+if (lastName) user.lastName = lastName;
+if (email) user.email = email;
+if (location) user.location = location;
+if (impressions) user.impressions = impressions;
+if (mainLogs) user.mainLogs = mainLogs;
+if (participants) user.participants = participants;
+if (items) user.items = items;
+if (stats) user.stats = stats;
+if (relationships) user.relationships = relationships;
+if (recentEvents) user.recentEvents = recentEvents;
+if (statPerception) user.statPerception = statPerception;
+if (arcs) user.arcs = arcs;
+if (date) user.date = date;
+if (randomEvents) user.randomEvents = randomEvents;
+
 
     console.log(user);
     // Save the updated user data to the database

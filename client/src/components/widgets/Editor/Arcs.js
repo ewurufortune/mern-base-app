@@ -132,11 +132,19 @@ const Arcs = () => {
       width: '30%',
       editable: true,
     },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: '30%',
+      editable: true,
+    },
 
 
     {
       title: 'Operation',
       dataIndex: 'operation',
+      width: '20%',
+
       render: (_, record) =>
         dataSource.length >= 1 ? (
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
@@ -203,7 +211,7 @@ const handleSave = (row) => {
           marginBottom: 16,
         }}
       >
-       Add A Stat
+       Add An Arc
       </Button>
       <Table
         components={components}

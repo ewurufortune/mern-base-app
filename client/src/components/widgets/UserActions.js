@@ -14,8 +14,9 @@ import {
   Input,
   ConfigProvider,
   theme,
+  message,
 } from "antd";
-import { CaretDownFilled, FileDoneOutlined  } from "@ant-design/icons";
+import { CaretDownFilled, FileDoneOutlined, PlusOutlined, DeleteTwoTone } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
@@ -27,49 +28,14 @@ const { TextArea } = Input;
 
 export default function UserActions({ clientId }) {
   const user = useSelector((state) => state.user);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+
+
 
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
 
-  const replaceUser = async (user) => {
-    const bodyData = {
-      id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      location: user.location,
-      viewedProfile: user.viewedProfile,
-      impressions: user.impressions,
-    };
 
-    try {
-      const response = await fetch("http://localhost:3001/auth/replace", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData),
-      });
-
-      const data = await response.json();
-      // Show the Snackbar when the API call succeeds
-      setErrorMessage("");
-      setSuccessMessage("Data replaced successfully!");
-      setSnackbarOpen(true);
-      console.log(data);
-    } catch (error) {
-      setSuccessMessage("");
-      setErrorMessage("Failed to replace data!");
-      setSnackbarOpen(true);
-      console.error("Error replacing user:", error);
-      // Show the Snackbar when the API call fails
-    }
-  };
 
   const [currentEvent, setCurrentEvent] = useState(null);
   const [showArcSelect, setShowArcSelect] = useState(null);
@@ -87,24 +53,6 @@ export default function UserActions({ clientId }) {
 
   return (
     <>
-      <div>
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          open={snackbarOpen}
-          autoHideDuration={4000}
-          onClose={handleSnackbarClose}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleSnackbarClose}
-            severity={errorMessage ? "error" : "success"}
-          >
-            {errorMessage || successMessage}
-          </MuiAlert>
-        </Snackbar>
-        {/* Your content here */}
-      </div>
 
       <Card
         bordered={false}
@@ -139,17 +87,56 @@ function NewSegment({ initialSegment }) {
   const { participants, categories } = user;
 
   const addSegment = () => {
-    setSegmentKeys((prevSegmentKeys) => [...prevSegmentKeys, Date.now()]);
+    if (segmentKeys.length < 10) {
+      setSegmentKeys((prevSegmentKeys) => [...prevSegmentKeys, Date.now()]);
+    } else {
+      // You can display an error message or take other actions when the limit is reached
+      console.log('Segment limit reached. Cannot add more segments.');
+    }
   };
+  
 
   const removeSegment = (index) => {
     const updatedSegmentKeys = segmentKeys.filter((_, i) => i !== index);
     setSegmentKeys(updatedSegmentKeys);
   };
 
+  
+    const [isAdded, setIsAdded] = useState(true);
+
+  const toggleSegment = () => {
+    setIsAdded(!isAdded);
+    // Add your logic to handle adding or removing the segment here
+  };
+
+  const buttonStyle = {
+    border: '2px solid limegreen', // Bright green outline
+    borderRadius: '5px', // Rounded corners
+    padding: '20px 40px', // Increase padding to make the button larger
+    cursor: 'pointer', // Change cursor to pointer on hover
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    maxWidth:50,
+    minHeight:300,
+    lineHeight: '1', // Set line-height to 1
+  };
+  
+  const iconStyle = {
+    fontSize: '24px', // Adjust the icon font size
+    marginTop: '0', // Add space between text and icon
+  };
+  
+
   return (
     <div style={{ display: "flex", overflowX: "auto" }}>
-      <button onClick={addSegment}>+</button>
+       <Button style={buttonStyle} onClick={addSegment} size="large">
+      Add Event
+      <div style={iconStyle}>
+        <PlusOutlined />
+      </div>
+    </Button>
       <div
         style={{
           display: "flex",
@@ -160,12 +147,24 @@ function NewSegment({ initialSegment }) {
         {segmentKeys.map((segmentKey, index) => (
           <div
             key={segmentKey}
-            style={{ marginRight: "100px", marginLeft: "10px" }}
+            style={{ marginRight: "0", marginLeft: "10px" }}
           >
             <div>
               <Segment removeSegment={() => removeSegment(index)} />
 
-              <button onClick={() => removeSegment(index)}>Remove</button>
+<div style={{marginLeft:70, marginTop:-40, marginBottom:50}}>
+<button
+  onClick={() => removeSegment(index)}
+  style={{
+    zIndex: 2, // Increase the z-index
+    padding: '10px 20px', // Increase padding to make it bigger
+    fontSize: '18px', // Increase font size
+  }}
+>
+  <DeleteTwoTone />
+</button>
+</div>
+              
             </div>
           </div>
         ))}
@@ -210,7 +209,6 @@ function Segment({ removeSegment }) {
   const [dateChangeValue, setDateChangeValue] = useState(0);
   const [dateChangeUnit, setDateChangeUnit] = useState("seconds"); // Default unit
 
-
   const [detailedAccount, setDetailedAccount] = useState({
     title: "",
     dateStart: "",
@@ -220,6 +218,51 @@ function Segment({ removeSegment }) {
     categories: [],
     segmentRating: "",
   });
+
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
 
   const handleEndSegment = () => {
     // Check for title and description
@@ -232,7 +275,7 @@ function Segment({ removeSegment }) {
       return;
     }
 
-    console.log('Deccription',description);
+    console.log("Deccription", description);
     const regexDescription = applySelectedStats();
 
     // Calculate the segment rating
@@ -293,7 +336,11 @@ function Segment({ removeSegment }) {
     handleShowSegmentRating();
     removeSegment();
     dispatch(setStats({ date: newDateEnd }));
-  };
+   
+    replaceUser(user)
+  
+  
+  console.log(user);};
   const handleDeselectAll = () => {
     setSelectedParticipants([]);
   };
@@ -356,9 +403,33 @@ function Segment({ removeSegment }) {
     }
   };
 
+ 
+  useEffect(() => {
+    const  clonedParticipants=_.cloneDeep(participants)
+
+    // Initialize the 'relevance' property for each participant
+    clonedParticipants.forEach((participant) => {
+      if (!Array.isArray(participant.stats)) {
+        participant.stats = [];
+      }
+
+      if (
+        !participant.stats.some((stat) =>
+          stat.hasOwnProperty('relevance')
+        )
+      ) {
+        // If 'relevance' is not present in the 'stats' array, initialize it with 0
+        participant.stats.push({ relevance: 0 });
+      }
+    });
+
+ dispatch(setStats({ participants: clonedParticipants }));
+  }, []);
+
+
   const applySelectedStats = () => {
     transferItem();
-    let regexDescription=description;
+    let regexDescription = description;
 
     setSelectedParticipants((prevSelectedParticipants) => {
       const updatedParticipants = prevSelectedParticipants.map(
@@ -727,13 +798,14 @@ function Segment({ removeSegment }) {
     <Card
       style={{
         minWidth: "920px",
-        marginTop:'-40px',
+        marginTop: "-40px",
         marginLeft: 190,
         // display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
       }}
     >
+
       <div>
         <p>Date: {new Date(date).toDateString()}</p>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -743,16 +815,20 @@ function Segment({ removeSegment }) {
               maxHeight: "50px",
               overflow: "auto",
               width: "70%",
-              // border: "1px solid red",
+              border: "0.5px solid red",
+              borderRadius: "10px",
+              margin: "10px",
               display: "flex",
               flexWrap: "wrap",
               padding: "10px",
             }}
           >
+                  {contextHolder}
+
             {categoryTypes.map((type) => (
               <div
                 key={type}
-                style={{ marginTop: "5px", marginBottom: "10px" }}
+                style={{ marginTop: "0", marginBottom: "10px" }}
               >
                 <Select
                   bordered={true}
@@ -796,7 +872,6 @@ function Segment({ removeSegment }) {
             </Select>
           </div>
         </div>
-
         <div style={{ display: "flex", alignItems: "center" }}>
           <input
             type="text"
@@ -815,182 +890,192 @@ function Segment({ removeSegment }) {
             Is Observer
           </Checkbox>
         </div>
-
         <div
           className=""
           style={{
-            maxHeight: "50px",
+            maxHeight: "90px",
             overflow: "auto",
             width: "90%",
-            // border: "1px solid red",
+            border: "0.5px solid red",
+            borderRadius: "10px",
+            margin: "10px",
+
             display: "flex",
             flexWrap: "wrap",
             padding: "10px",
           }}
         >
-          {filteredParticipants
-            .filter((participant) => participant.isActive) // Filter out inactive participants
-            .map((participant) => (
-              <button
-                key={participant.id}
-                className="participant-button"
-                onMouseEnter={() => setHoveredParticipant(participant)}
-                onClick={() => toggleParticipant(participant.id)}
-                style={{
-                  background: selectedParticipants.includes(participant.id)
-                    ? "lightblue"
-                    : observers.includes(participant.id)
-                    ? "green"
-                    : "white",
-                }}
-              >
-                {participant.name}
-              </button>
-            ))}
+         {filteredParticipants
+  .filter((participant) => participant.isActive)
+  .map((participant) => (
+    <button
+      key={participant.id}
+      onMouseEnter={() => setHoveredParticipant(participant)}
+      onMouseLeave={() => setHoveredParticipant(null)} // Reset the hover effect on mouse leave
+      onClick={() => toggleParticipant(participant.id)}
+      style={{
+        background: selectedParticipants.includes(participant.id)
+          ? "lightblue"
+          : observers.includes(participant.id)
+          ? "green"
+          : "white",
+        transition: "background-color 0.3s", // Add smooth transition
+        ":hover": { background: "red" }, // Define the hover effect
+      }}
+    >
+      {participant.name}
+    </button>
+  ))}
+
         </div>
+        {hoveredParticipant && (
+          <div
+            className="participant-tooltip"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              maxHeight: "150px",
+              overflow: "auto",
+            }}
+          >
+            <img
+              src={hoveredParticipant.image}
+              alt={`${hoveredParticipant.name}`}
+              width={120}
+              height={120}
+              style={{ verticalAlign: "middle", margin: "5px" }}
+            />
+            <span
+              style={{
+                marginTop: "20px", // Adjust the marginTop value to position the name higher
+                fontWeight: "bold",
+                fontSize: "18px",
+                verticalAlign: "middle",
+                fontFamily: "cursive, sans-serif", // Specify a stylish font family
+              }}
+            >
+              {`${hoveredParticipant.name}`}
+            </span>
 
-      {hoveredParticipant && (
-  <div
-    className="participant-tooltip"
-    style={{ display: "flex", alignItems: "center", maxHeight: "150px", overflow: "auto" }}
-  >
-<img
-  src={hoveredParticipant.image}
-  alt={`${hoveredParticipant.name}`}
-  width={120}
-  height={120}
-  style={{ verticalAlign: "middle", margin: "5px" }}
-/>
-<span
-  style={{
-    marginTop: "20px", // Adjust the marginTop value to position the name higher
-    fontWeight: "bold",
-    fontSize: "18px",
-    verticalAlign: "middle",
-    fontFamily: "cursive, sans-serif", // Specify a stylish font family
-  }}
->
-  {`${hoveredParticipant.name}`}
-</span>
+            <div style={{ marginLeft: "100px", marginTop: 100 }}>
+              {statPerception.map((perception) => (
+                <div key={perception.statName} style={{ marginBottom: "8px" }}>
+                  <Tag color="purple">
+                    {`${perception.statName
+                      .charAt(0)
+                      .toUpperCase()}${perception.statName.slice(1)} (${
+                      hoveredParticipant.stats.find((stat) =>
+                        stat.hasOwnProperty(perception.statName)
+                      )
+                        ? hoveredParticipant.stats.find((stat) =>
+                            stat.hasOwnProperty(perception.statName)
+                          )[perception.statName]
+                        : ""
+                    })`}
+                  </Tag>
 
-    <div style={{ marginLeft: "100px", marginTop:100 }}>
+                  <Typography.Text style={{ opacity: 0.8 }}>
+                    {calculatePercentileCategory(
+                      hoveredParticipant,
+                      participants,
+                      perception.statName,
+                      statPerception
+                    )}
+                  </Typography.Text>
+                </div>
+              ))}
+              {categoryTypes.map((type) => (
+                <div key={type} style={{ marginBottom: "8px" }}>
+                  <Tag color="blue">{`${type
+                    .charAt(0)
+                    .toUpperCase()}${type.slice(1)}s`}</Tag>
+                  <Typography.Text style={{ opacity: 0.8 }}>
+                    {categories
+                      .filter(
+                        (cat) =>
+                          cat.type === type &&
+                          cat.participants.includes(hoveredParticipant.id)
+                      )
+                      .map((cat) => cat.name)
+                      .join(", ")}
+                  </Typography.Text>
+                </div>
+              ))}
 
+              <div style={{ marginBottom: "8px" }}>
+                <Tag color="green">Items</Tag>
+                <Typography.Text style={{ opacity: 0.8 }}>
+                  {items
+                    .filter((item) =>
+                      item.holderId.includes(hoveredParticipant.id)
+                    )
+                    .map((item) => item.name)
+                    .join(", ")}
+                </Typography.Text>
+              </div>
 
-      {statPerception.map((perception) => (
-        <div key={perception.statName} style={{ marginBottom: "8px" }}>
-        <Tag color="purple">
-  {`${perception.statName.charAt(0).toUpperCase()}${perception.statName.slice(1)} (${
-    hoveredParticipant.stats.find((stat) =>
-      stat.hasOwnProperty(perception.statName)
-    )
-      ? hoveredParticipant.stats.find((stat) =>
-          stat.hasOwnProperty(perception.statName)
-        )[perception.statName]
-      : ""
-  })`}
-</Tag>
+              <div>
+                <Tag color="yellow">Biography</Tag>
 
-          <Typography.Text style={{ opacity: 0.8 }}>
-            {calculatePercentileCategory(
-              hoveredParticipant,
-              participants,
-              perception.statName,
-              statPerception
-            )}
-          </Typography.Text>
+                {hoveredParticipant.bio}
+              </div>
+            </div>
+          </div>
+        )}
+        <div
+          className=""
+          style={{
+            maxHeight: "300px",
+            overflow: "auto",
+            width: "90%",
+            // border: "0.5px solid red",
+            borderRadius: "10px",
+            margin: "10px",
+
+            // display: "flex",
+            flexWrap: "wrap",
+            padding: "10px",
+          }}
+        >
+          {selectedParticipants.length > 0 && (
+            <>
+              <h3>Selected Players:</h3>
+              <p>
+                {selectedParticipants.map((participantId, index) => {
+                  const participantName = participants.find(
+                    (p) => p.id === participantId
+                  )?.name;
+                  return (
+                    <React.Fragment key={participantId}>
+                      {participantName}
+                      {index < selectedParticipants.length - 1 ? ", " : ""}
+                      {index === selectedParticipants.length - 2 ? " and " : ""}
+                    </React.Fragment>
+                  );
+                })}
+              </p>
+            </>
+          )}
+          {observers.length > 0 && (
+            <>
+              <h3>Selected Observers:</h3>
+              <p>
+                {observers.map((participantId, index) => {
+                  const participantName = participants.find(
+                    (p) => p.id === participantId
+                  )?.name;
+                  return (
+                    <React.Fragment key={participantId}>
+                      {participantName}
+                      {index < observers.length - 1 ? ", " : ""}
+                      {index === observers.length - 2 ? " & " : ""}
+                    </React.Fragment>
+                  );
+                })}
+              </p>
+            </>
+          )}
         </div>
-      ))}
-      {categoryTypes.map((type) => (
-        <div key={type} style={{ marginBottom: "8px" }}>
-        <Tag color="blue">{`${type.charAt(0).toUpperCase()}${type.slice(1)}s`}</Tag>
-          <Typography.Text style={{ opacity: 0.8 }}>
-            {categories
-              .filter(
-                (cat) =>
-                  cat.type === type &&
-                  cat.participants.includes(hoveredParticipant.id)
-              )
-              .map((cat) => cat.name)
-              .join(", ")}
-          </Typography.Text>
-        </div>
-      ))}
-
-      <div style={{ marginBottom: "8px" }}>
-        <Tag color="green">Items</Tag>
-        <Typography.Text style={{ opacity: 0.8 }}>
-          {items
-            .filter((item) =>
-              item.holderId.includes(hoveredParticipant.id)
-            )
-            .map((item) => item.name)
-            .join(", ")}
-        </Typography.Text>
-      </div>
-
-      <div>
-      <Tag color="yellow">Biography</Tag>
-
-       { hoveredParticipant.bio}
-      </div>
-    </div>
-    
-  </div>
-)}
-
-
-<div
-  className=""
-  style={{
-    maxHeight: "300px",
-    overflow: "auto",
-    width: "90%",
-    // border: "1px solid red",
-    // display: "flex",
-    flexWrap: "wrap",
-    padding: "10px",
-  }}
->
-  {selectedParticipants.length > 0 && (
-    <>
-      <h3>Selected Players:</h3>
-      <p>
-        {selectedParticipants.map((participantId, index) => {
-          const participantName = participants.find(
-            (p) => p.id === participantId
-          )?.name;
-          return (
-            <React.Fragment key={participantId}>
-              {participantName}
-              {index < selectedParticipants.length - 1 ? ", " : ""}
-              {index === selectedParticipants.length - 2 ? " and " : ""}
-            </React.Fragment>
-          );
-        })}
-      </p>
-    </>
-  )}
-  {observers.length > 0 && (
-    <>
-      <h3>Selected Observers:</h3>
-      <p>
-        {observers.map((participantId, index) => {
-          const participantName = participants.find(
-            (p) => p.id === participantId
-          )?.name;
-          return (
-            <React.Fragment key={participantId}>
-              {participantName}
-              {index < observers.length - 1 ? ", " : ""}
-              {index === observers.length - 2 ? " & " : ""}
-            </React.Fragment>
-          );
-        })}
-      </p>
-    </>
-  )}
-</div>
-
         <div
           style={{
             display: "flex",
@@ -1029,7 +1114,6 @@ function Segment({ removeSegment }) {
                   color: "#CCCCCC",
                 }}
                 className="custom-input" // Add a custom class for styling
-
               />
 
               {titleError && (
@@ -1041,21 +1125,20 @@ function Segment({ removeSegment }) {
           </div>
           {/* Description textarea */}
           <div style={{ minWidth: 250, minHeight: 200 }}>
-          <TextArea
-  placeholder="Description"
-  showCount
-  maxLength={5000}
-  style={{ minWidth: 400, minHeight: 200, fontSize: '18px' }} // Adjust the fontSize value as needed
-  autoSize
-  value={description}
-  bordered={true}
-  onChange={(e) => {
-    setDescription(e.target.value);
-    setDescriptionError(""); // Clear the error when input changes
-  }}
-  className="custom-textarea" // Add a custom class for styling
-
-/>
+            <TextArea
+              placeholder="Tap here to add Description"
+              showCount
+              maxLength={5000}
+              style={{ minWidth: 400, minHeight: 200, fontSize: "18px" }} // Adjust the fontSize value as needed
+              autoSize
+              value={description}
+              bordered={true}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                setDescriptionError(""); // Clear the error when input changes
+              }}
+              className="custom-textarea" // Add a custom class for styling
+            />
 
             {descriptionError && (
               <p className="error-message" style={{ color: "red" }}>
@@ -1099,8 +1182,16 @@ function Segment({ removeSegment }) {
             );
           })}
         </div>
+        <div
+          style={{
+            marginTop: 50,
+            flexDirection: "column", // Stack child divs vertically
 
-        <div  style={{marginTop: 50}}>
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div>
             <Select
               placeholder={
@@ -1135,7 +1226,7 @@ function Segment({ removeSegment }) {
                   <Select
                     suffixIcon={
                       <CaretDownFilled style={customCaretIconStyle} />
-                    } // Use the suffixIcon prop to add the caret
+                    } 
                     placeholder="Transfer Item"
                     value={transferToParticipantId || undefined}
                     onChange={(value) => setTransferToParticipantId(value)}
@@ -1162,34 +1253,46 @@ function Segment({ removeSegment }) {
               </div>
             )}
           </div>
-      
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              maxWidth: "200px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: 40,
+                marginBottom: 30,
+              }}
+            >
+              <span style={{ marginRight: "10px" }}>Advance Date by:</span>
+              <InputNumber
+                min={-100000}
+                max={1000000}
+                size="small"
+                value={dateChangeValue}
+                onChange={(value) => setDateChangeValue(value)}
+              />
+              <Select
+                value={dateChangeUnit}
+                suffixIcon={<CaretDownFilled style={customCaretIconStyle} />}
+                onChange={(value) => setDateChangeUnit(value)}
+              >
+                <Select.Option value="seconds">Seconds</Select.Option>
+                <Select.Option value="minutes">Minutes</Select.Option>
+                <Select.Option value="hours">Hours</Select.Option>
+                <Select.Option value="days">Days</Select.Option>
+                <Select.Option value="weeks">Weeks</Select.Option>
+                <Select.Option value="months">Months</Select.Option>
+                <Select.Option value="years">Years</Select.Option>
+              </Select>
+            </div>
+          </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", maxWidth: "200px" }}>
-  <div style={{ display: "flex", alignItems: "center", marginTop:40, marginBottom:30 }}>
-    <span style={{ marginRight: "10px" }}>Advance Date by:</span>
-    <InputNumber
-      min={-100000}
-      max={1000000}
-      size="small"
-      value={dateChangeValue}
-      onChange={(value) => setDateChangeValue(value)}
-    />
-    <Select
-      value={dateChangeUnit}
-      suffixIcon={<CaretDownFilled style={customCaretIconStyle} />} // Use the suffixIcon prop to add the caret
-      onChange={(value) => setDateChangeUnit(value)}
-    >
-      <Select.Option value="seconds">Seconds</Select.Option>
-      <Select.Option value="minutes">Minutes</Select.Option>
-      <Select.Option value="hours">Hours</Select.Option>
-      <Select.Option value="days">Days</Select.Option>
-      <Select.Option value="weeks">Weeks</Select.Option>
-      <Select.Option value="months">Months</Select.Option>
-      <Select.Option value="years">Years</Select.Option>
-    </Select>
-  </div>
-</div>
-
         {showNumberRating && (
           <div>
             <h3>Number Rating: {calculateNumberRating()}</h3>
@@ -1197,13 +1300,14 @@ function Segment({ removeSegment }) {
         )}
         {/* End Segment Button */}
         <Button
-  type="primary"
-  size="large"
-  icon={<FileDoneOutlined  />}
-  onClick={() => handleEndSegment()}
->
-  End Segment
-</Button>      </div>
+          type="primary"
+          size="large"
+          icon={<FileDoneOutlined />}
+          onClick={() => handleEndSegment()}
+        >
+          End Event
+        </Button>{" "}
+      </div>
     </Card>
   );
 }

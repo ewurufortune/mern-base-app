@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setStats } from "state";
+import { message } from "antd";
 import _ from "lodash";
 import {
   Button,
@@ -52,6 +53,53 @@ const EditableCell = ({
     });
   };
 
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
+
+  const user = useSelector((state) => state.user);
+  
   const save = async () => {
     try {
       const values = await form.validateFields();
@@ -60,12 +108,13 @@ const EditableCell = ({
       if (dataIndex === "change" && isNaN(values[dataIndex])) {
         throw new Error(`${title} must be a number.`);
       }
-
+console.log(record);
       toggleEdit();
       handleSave({
         ...record,
         ...values,
       });
+      replaceUser(user)
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -120,34 +169,83 @@ const ItemsEditor = () => {
   const participants = useSelector((state) => state.user.participants);
   const dispatch = useDispatch();
   const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();         
 
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
   const [dataSource, setDataSource] = useState(items);
   const [count, setCount] = useState(items.length);
 
-  const handleParticipantChange = (record, filteredSelectedParticipants) => {
-    // Spread the filteredSelectedParticipants into the record.participants array
-    const updatedRecord = {
-      ...record,
-      holderId: [...filteredSelectedParticipants],
-    };
-
-    const clonedCategories = _.cloneDeep(items);
-    const categoryIndex = clonedCategories.findIndex(
-      (category) => category.id === updatedRecord.id
-    );
-
-    if (categoryIndex !== -1) {
-      clonedCategories[categoryIndex] = updatedRecord;
-    }
-    console.log(updatedRecord);
-    dispatch(setStats({ items: clonedCategories }));
-    setSelectedParticipants(updatedRecord);
+const handleParticipantChange = (record, selectedParticipantsArray) => {
+  // Ensure that selectedParticipantsArray is an array
+  const holderId = Array.isArray(selectedParticipantsArray) ? selectedParticipantsArray : [];
+  
+  // Create an updatedRecord with the new holderId
+  const updatedRecord = {
+    ...record,
+    holderId,
   };
+
+  // Update the dataSource with the updatedRecord
+  const newData = dataSource.map((item) => {
+    if (item.id === updatedRecord.id) {
+      return updatedRecord;
+    }
+    return item;
+  });
+
+  setDataSource(newData);
+  dispatch(setStats({ items: newData }));
+  setSelectedParticipants(updatedRecord);
+};
+
+  
 
   const handleDelete = (id) => {
     const newData = dataSource.filter((item) => item.id !== id);
     setDataSource(newData);
     dispatch(setStats({ items: newData }));
+    replaceUser(user)
   };
 
   const defaultColumns = [
@@ -164,7 +262,6 @@ const ItemsEditor = () => {
       editable: true,
     },
   
-
     {
       title: "Participants",
       dataIndex: "holderId",
@@ -185,7 +282,7 @@ const ItemsEditor = () => {
             filterOption={false} // Disable option filtering
             allowClear
             style={{ width: "300px" }}
-            value={record.holderId} // Use record.participants
+            value={record?.holderId} // Use record.participants
             onChange={(selectedParticipants) => {
               // Filter out the selected participants that don't have corresponding names
               
@@ -226,8 +323,8 @@ const ItemsEditor = () => {
       id: uuidv4(),
     
           name: "Championship",
-          style: " Champion",
-          holderId: [],
+          style: "Champion",
+          holderId: [1],
           holderStartDate: Date(2023, 6, 10, 15, 30),
           holderEndDate: "Present",
           pastHolders: [
@@ -236,6 +333,7 @@ const ItemsEditor = () => {
       
     };
     setDataSource([...dataSource, newData]);
+    console.log(dataSource);
     dispatch(setStats({ items: dataSource }));
     setCount(count + 1);
   };
@@ -276,6 +374,7 @@ const ItemsEditor = () => {
         render: col.render, // Keep the existing render function
         // Add an onChange function to update the dataSource directly
         onChange: (newSelectedParticipants) => {
+          console.log(newSelectedParticipants);
           // Update the record with the new selected participants
           const updatedRecord = { ...record, holderId: newSelectedParticipants };
           const newData = [...dataSource];
@@ -283,8 +382,7 @@ const ItemsEditor = () => {
           if (index > -1) {
             newData.splice(index, 1, updatedRecord);
           }
-          setDataSource(newData);
-
+          setDataSource(newData); 
           // Call handleParticipantChange to perform any additional logic if needed
           handleParticipantChange(updatedRecord, newSelectedParticipants);
         },
@@ -301,7 +399,7 @@ const ItemsEditor = () => {
           marginBottom: 16,
         }}
       >
-        Add A Relationship
+        Add An Item
       </Button>
       <Table
         components={components}

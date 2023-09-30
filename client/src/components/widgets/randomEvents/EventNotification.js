@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import './EventNotification.css';
 import { setStats } from 'state';
-import { Tag } from 'antd';
+import { Tag, message } from 'antd';
 
 const EventNotifications = () => {
   const dispatch = useDispatch();
@@ -12,6 +12,53 @@ const EventNotifications = () => {
   const recentEvents = _.cloneDeep(recentEventsReadOnly);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Saving...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("http://localhost:3001/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
+
+  const user = useSelector((state) => state.user);
+  
 
   useEffect(() => {
     // No need to set eventsList, use recentEvents directly
@@ -48,6 +95,7 @@ const EventNotifications = () => {
       });
       dispatch(setStats({ recentEvents: updatedEventsList }));
       setSelectedEvent({ ...selectedEvent, isRead: false });
+      replaceUser(user)
     }
   };
   
@@ -58,15 +106,18 @@ const EventNotifications = () => {
     }));
     dispatch(setStats({ recentEvents: updatedEventsList }));
     setSelectedEvent(null);
+    replaceUser(user)
   };
 
   const clearAll = () => {
     dispatch(setStats({ recentEvents: [] }));
+    replaceUser(user)
     setSelectedEvent(null);
   };
 
   return (
     <div className="event-container">
+    {contextHolder}
       <div className="event-list">
         <div className="action-buttons" style={{margin:30}}>
         <Tag>{recentEvents.length} Messages</Tag>
