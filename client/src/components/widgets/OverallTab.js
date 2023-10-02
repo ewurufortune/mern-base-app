@@ -13,6 +13,7 @@ import EventNotifications from "./randomEvents/EventNotification";
 import RelationshipEvents from "./randomEvents/RelationshipEvents";
 import CreatePost from "components/feed/CreatePost";
 import Feed from "components/feed/ViewPosts";
+import About from "./about/About";
 import './OverallTab.css'
 const onChange = (key) => {};
 
@@ -26,30 +27,31 @@ const playerInformation = [
   //     </>
   //   ),
   // },
-  {
-    key: "8",
-    label: `Feed`,
-    children: (
-      <>
-        <Feed />
-      </>
-    ),
-  },
+  // {
+  //   key: "8",
+  //   label: `Feed`,
+  //   children: (
+  //     <>
+  //       <Feed />
+  //     </>
+  //   ),
+  // },
   {
     key: "1",
-    label: `Tab 1`,
+    label: `Book Event`,
     children: (
       <>
+              <UserActions />
+
         <TriggerRandomEvent />
         <RelationshipEvents />
 
-        <UserActions />
       </>
     ),
   },
   {
     key: "2",
-    label: `Player`,
+    label: `Reader`,
     children: <MainLogs />,
   },
   {
@@ -71,6 +73,7 @@ const playerInformation = [
     key: "5",
     label: (
       <span>
+      Messages
       </span>
     ),
     children: (
@@ -82,9 +85,10 @@ const playerInformation = [
   },
   {
     key: "6",
-    label: `relationship  Events`,
+    label: `About`,
     children: (
       <>
+      <About />
         <RelationshipEvents />
       </>
     ),
@@ -120,13 +124,15 @@ export default function OverallTab({isDarkMode}) {
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
@@ -168,7 +174,7 @@ export default function OverallTab({isDarkMode}) {
     key: "5",
     label: (
       <span>
-        Events <Badge count={unreadCount} />
+        Notifications <Badge count={unreadCount} />
       </span>
     ),
     children: (
@@ -207,7 +213,7 @@ export default function OverallTab({isDarkMode}) {
   onChange={onChange}
   activeKey={activeTab}
   tabBarExtraContent={operations}
-  style={{ height: '100vw', overflow: 'auto' }}
+  style={{ height: '100vw', overflow: 'auto', }}
 />
 
 

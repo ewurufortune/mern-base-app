@@ -16,7 +16,7 @@ const Feed = () => {
   // Define the fetchPosts function
   const fetchPosts = () => {
     setIsLoading(true); // Set loading state to true
-    fetch('http://localhost:3001/auth/getPosts', {
+    fetch('https://bookboard-app.onrender.com/auth/getPosts', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const Feed = () => {
 
   const handleLike = (postId) => {
     // Send a request to your backend to like the post with the given postId
-    fetch(`http://localhost:3001/auth/${postId}/likePost`, {
+    fetch(`https://bookboard-app.onrender.com/auth/${postId}/likePost`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

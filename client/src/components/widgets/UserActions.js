@@ -58,7 +58,7 @@ export default function UserActions({ clientId }) {
         bordered={false}
         // theme={isDarkMode ? "Light" : "Dark"}
         style={{
-          width: "100%",
+          width: "100vw",
         }}
       >
         <div
@@ -152,7 +152,7 @@ function NewSegment({ initialSegment }) {
             <div>
               <Segment removeSegment={() => removeSegment(index)} />
 
-<div style={{marginLeft:70, marginTop:-40, marginBottom:50}}>
+<div style={{marginLeft:0, marginTop:0, marginBottom:50}}>
 <button
   onClick={() => removeSegment(index)}
   style={{
@@ -239,13 +239,15 @@ function Segment({ removeSegment }) {
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
@@ -797,9 +799,9 @@ function Segment({ removeSegment }) {
   return (
     <Card
       style={{
-        minWidth: "920px",
+        width: "90vw",
         marginTop: "-40px",
-        marginLeft: 190,
+        marginLeft: 0,
         // display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
@@ -890,138 +892,147 @@ function Segment({ removeSegment }) {
             Is Observer
           </Checkbox>
         </div>
-        <div
-          className=""
-          style={{
-            maxHeight: "90px",
-            overflow: "auto",
-            width: "90%",
-            border: "0.5px solid red",
-            borderRadius: "10px",
-            margin: "10px",
+        <Row gutter={16} style={{ marginTop: '20px' }}>
 
-            display: "flex",
-            flexWrap: "wrap",
-            padding: "10px",
-          }}
-        >
-         {filteredParticipants
-  .filter((participant) => participant.isActive)
-  .map((participant) => (
-    <button
-      key={participant.id}
-      onMouseEnter={() => setHoveredParticipant(participant)}
-      onMouseLeave={() => setHoveredParticipant(null)} // Reset the hover effect on mouse leave
-      onClick={() => toggleParticipant(participant.id)}
+  <Col span={8}>
+    <div
+      className=""
       style={{
-        background: selectedParticipants.includes(participant.id)
-          ? "lightblue"
-          : observers.includes(participant.id)
-          ? "green"
-          : "white",
-        transition: "background-color 0.3s", // Add smooth transition
-        ":hover": { background: "red" }, // Define the hover effect
+        maxHeight: "150px",
+        overflow: "auto",
+        width: "90%",
+        border: "0.5px solid red",
+        borderRadius: "10px",
+        margin: "10px",
+
+        display: "flex",
+        flexWrap: "wrap",
+        padding: "10px",
       }}
     >
-      {participant.name}
-    </button>
-  ))}
-
-        </div>
-        {hoveredParticipant && (
-          <div
-            className="participant-tooltip"
+      {/* Render filtered participants */}
+      {filteredParticipants
+        .filter((participant) => participant.isActive)
+        .map((participant) => (
+          <button
+            key={participant.id}
+            onMouseEnter={() => setHoveredParticipant(participant)}
+            // onMouseLeave={() => setHoveredParticipant(null)} // Reset the hover effect on mouse leave
+            onClick={() => toggleParticipant(participant.id)}
             style={{
-              display: "flex",
-              alignItems: "center",
-              maxHeight: "150px",
-              overflow: "auto",
+              background: selectedParticipants.includes(participant.id)
+                ? "lightblue"
+                : observers.includes(participant.id)
+                ? "green"
+                : "white",
+              transition: "background-color 0.3s", // Add a smooth transition
+              ":hover": { background: "red" }, // Define the hover effect
             }}
           >
-            <img
-              src={hoveredParticipant.image}
-              alt={`${hoveredParticipant.name}`}
-              width={120}
-              height={120}
-              style={{ verticalAlign: "middle", margin: "5px" }}
-            />
-            <span
-              style={{
-                marginTop: "20px", // Adjust the marginTop value to position the name higher
-                fontWeight: "bold",
-                fontSize: "18px",
-                verticalAlign: "middle",
-                fontFamily: "cursive, sans-serif", // Specify a stylish font family
-              }}
-            >
-              {`${hoveredParticipant.name}`}
-            </span>
+            {participant.name}
+          </button>
+        ))}
+    </div>
+  </Col>
+  <Col span={12}>
+    {hoveredParticipant && (
+      <div
+        className="participant-tooltip"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          maxHeight: "150px",
+          paddingTop:15,
+          
+          overflow: "auto",
+        }}
+      >
+        <img
+          src={hoveredParticipant.image}
+          alt={`${hoveredParticipant.name}`}
+          width={120}
+          height={120}
+          style={{ verticalAlign: "middle", margin: "5px" }}
+        />
+        <span
+          style={{
+            marginTop: "20px", // Adjust the marginTop value to position the name higher
+            fontWeight: "bold",
+            fontSize: "18px",
+            verticalAlign: "middle",
+            fontFamily: "cursive, sans-serif", // Specify a stylish font family
+          }}
+        >
+          {`${hoveredParticipant.name}`}
+        </span>
 
-            <div style={{ marginLeft: "100px", marginTop: 100 }}>
-              {statPerception.map((perception) => (
-                <div key={perception.statName} style={{ marginBottom: "8px" }}>
-                  <Tag color="purple">
-                    {`${perception.statName
-                      .charAt(0)
-                      .toUpperCase()}${perception.statName.slice(1)} (${
-                      hoveredParticipant.stats.find((stat) =>
+        <div style={{ marginLeft: "100px", marginTop: 100 }}>
+          {statPerception.map((perception) => (
+            <div key={perception.statName} style={{ marginBottom: "8px" }}>
+              <Tag color="purple">
+                {`${perception.statName
+                  .charAt(0)
+                  .toUpperCase()}${perception.statName.slice(1)} (${
+                  hoveredParticipant.stats.find((stat) =>
+                    stat.hasOwnProperty(perception.statName)
+                  )
+                    ? hoveredParticipant.stats.find((stat) =>
                         stat.hasOwnProperty(perception.statName)
-                      )
-                        ? hoveredParticipant.stats.find((stat) =>
-                            stat.hasOwnProperty(perception.statName)
-                          )[perception.statName]
-                        : ""
-                    })`}
-                  </Tag>
+                      )[perception.statName]
+                    : ""
+                })`}
+              </Tag>
 
-                  <Typography.Text style={{ opacity: 0.8 }}>
-                    {calculatePercentileCategory(
-                      hoveredParticipant,
-                      participants,
-                      perception.statName,
-                      statPerception
-                    )}
-                  </Typography.Text>
-                </div>
-              ))}
-              {categoryTypes.map((type) => (
-                <div key={type} style={{ marginBottom: "8px" }}>
-                  <Tag color="blue">{`${type
-                    .charAt(0)
-                    .toUpperCase()}${type.slice(1)}s`}</Tag>
-                  <Typography.Text style={{ opacity: 0.8 }}>
-                    {categories
-                      .filter(
-                        (cat) =>
-                          cat.type === type &&
-                          cat.participants.includes(hoveredParticipant.id)
-                      )
-                      .map((cat) => cat.name)
-                      .join(", ")}
-                  </Typography.Text>
-                </div>
-              ))}
-
-              <div style={{ marginBottom: "8px" }}>
-                <Tag color="green">Items</Tag>
-                <Typography.Text style={{ opacity: 0.8 }}>
-                  {items
-                    .filter((item) =>
-                      item.holderId.includes(hoveredParticipant.id)
-                    )
-                    .map((item) => item.name)
-                    .join(", ")}
-                </Typography.Text>
-              </div>
-
-              <div>
-                <Tag color="yellow">Biography</Tag>
-
-                {hoveredParticipant.bio}
-              </div>
+              <Typography.Text style={{ opacity: 0.8 }}>
+                {calculatePercentileCategory(
+                  hoveredParticipant,
+                  participants,
+                  perception.statName,
+                  statPerception
+                )}
+              </Typography.Text>
             </div>
+          ))}
+          {categoryTypes.map((type) => (
+            <div key={type} style={{ marginBottom: "8px" }}>
+              <Tag color="blue">{`${type
+                .charAt(0)
+                .toUpperCase()}${type.slice(1)}s`}</Tag>
+              <Typography.Text style={{ opacity: 0.8 }}>
+                {categories
+                  .filter(
+                    (cat) =>
+                      cat.type === type &&
+                      cat.participants.includes(hoveredParticipant.id)
+                  )
+                  .map((cat) => cat.name)
+                  .join(", ")}
+              </Typography.Text>
+            </div>
+          ))}
+
+          <div style={{ marginBottom: "8px" }}>
+            <Tag color="green">Items</Tag>
+            <Typography.Text style={{ opacity: 0.8 }}>
+              {items
+                .filter((item) =>
+                  item.holderId.includes(hoveredParticipant.id)
+                )
+                .map((item) => item.name)
+                .join(", ")}
+            </Typography.Text>
           </div>
-        )}
+
+          <div>
+            <Tag color="yellow">Biography</Tag>
+
+            {hoveredParticipant.bio}
+          </div>
+        </div>
+      </div>
+    )}
+  </Col>
+</Row>
         <div
           className=""
           style={{
@@ -1124,12 +1135,12 @@ function Segment({ removeSegment }) {
             </div>
           </div>
           {/* Description textarea */}
-          <div style={{ minWidth: 250, minHeight: 200 }}>
+          <div style={{ minWidth: '70%', minHeight: 200 }}>
             <TextArea
-              placeholder="Tap here to add Description"
+              placeholder="Tap here to start writing"
               showCount
               maxLength={5000}
-              style={{ minWidth: 400, minHeight: 200, fontSize: "18px" }} // Adjust the fontSize value as needed
+              style={{ minWidth: '100%', minHeight: 200, fontSize: "18px" }} // Adjust the fontSize value as needed
               autoSize
               value={description}
               bordered={true}

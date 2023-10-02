@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Form, Input, Popconfirm, Table, Switch, Collapse } from "antd";
+import { Button, Form, Input, Popconfirm, Table, Switch, Collapse, message } from "antd";
 import { setStats } from "state";
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
@@ -47,6 +47,55 @@ const EditableCell = ({
     });
   };
 
+  const [messageApi, contextHolder] = message.useMessage();         
+
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    categories:user.categories,
+
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      console.error("Error replacing user:", error);
+    }
+  };
+
+  const user = useSelector((state) => state.user);
+
   const save = async () => {
     try {
       const values = await form.validateFields();
@@ -61,6 +110,8 @@ const EditableCell = ({
         ...record,
         ...values,
       });
+
+      replaceUser(user)
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }

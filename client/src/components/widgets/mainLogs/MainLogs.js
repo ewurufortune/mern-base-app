@@ -88,7 +88,7 @@ export default function MainLogs() {
   const fetchPosts = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/auth/getPosts`, {
+      const response = await fetch(`https://bookboard-app.onrender.com/auth/getPosts`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +119,7 @@ export default function MainLogs() {
     const isLiked = likedPosts.includes(postId);
 
     // Send a request to your backend to like or unlike the post with the given postId
-    fetch(`http://localhost:3001/auth/${postId}/likePost`, {
+    fetch(`https://bookboard-app.onrender.com/auth/${postId}/likePost`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -296,7 +296,7 @@ export default function MainLogs() {
     };
 
     try {
-      const response = await fetch(`http://localhost:3001/auth/publishPost`, {
+      const response = await fetch(`https://bookboard-app.onrender.com/auth/publishPost`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -712,136 +712,140 @@ export default function MainLogs() {
             </Select>
           </div>
 
-          <div
-            className=""
-            style={{
-              maxHeight: "90px",
-              overflow: "auto",
-              width: "90%",
-              border: "1px solid red",
-              display: "flex",
-              flexWrap: "wrap",
-              padding: "10px",
-            }}
-          >
-            {/* Render filtered participants */}
-            {filteredParticipants.map((participant) => (
-              <button
-  key={participant.id}
-  // onMouseEnter={() => }
-  onClick={() => {
-        setHoveredParticipant(participant); // Set the hovered participant
-        setSelectedParticipants((prevSelected) =>
-          prevSelected.includes(participant.id)
-            ? prevSelected.filter((id) => id !== participant.id)
-            : [...prevSelected, participant.id]
-        );
+          
+        </div>
+        <Row gutter={16}>
+  <Col span={9}>
+    <div
+      className=""
+      style={{
+        maxHeight: "200px",
+        overflow: "auto",
+        width: "90%",
+        border: "1px solid red",
+        display: "flex",
+        flexWrap: "wrap",
+        padding: "10px",
       }}
-  style={{
-    background: selectedParticipants.includes(participant.id)
-      ? "lightblue"
-      : "white",
-    borderLeft: "2px solid black", // Add a black border on the left
-    borderBottom: "2px solid black", // Add a black border on the bottom
-    borderRadius: "0", // Make the button rectangular by removing border-radius
-    transition: "border-color 0.3s", // Add a smooth transition for border color change
-  }}
-  className="rectangular-button" // Add a class for additional styling if needed
->
-  {participant.name}
-</button>
+    >
+      {/* Render filtered participants */}
+      {filteredParticipants.map((participant) => (
+        <button
+          key={participant.id}
+          onClick={() => {
+            setHoveredParticipant(participant); // Set the hovered participant
+            setSelectedParticipants((prevSelected) =>
+              prevSelected.includes(participant.id)
+                ? prevSelected.filter((id) => id !== participant.id)
+                : [...prevSelected, participant.id]
+            );
+          }}
+          style={{
+            background: selectedParticipants.includes(participant.id)
+              ? "lightblue"
+              : "white",
+            borderLeft: "2px solid black",
+            borderBottom: "2px solid black",
+            borderRadius: "0",
+            transition: "border-color 0.3s",
+          }}
+          className="rectangular-button"
+        >
+          {participant.name}
+        </button>
+      ))}
+    </div>
+  </Col>
+  <Col span={12}>
+    {hoveredParticipant && (
+      <div
+        className="participant-tooltip"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          maxHeight: "200px",
+          overflow: "auto",
+        }}
+      >
+        <img
+          src={hoveredParticipant.image}
+          alt={`${hoveredParticipant.name}`}
+          width={120}
+          height={120}
+          style={{ verticalAlign: "middle", margin: "5px" }}
+        />
+        <span
+          style={{
+            marginTop: "20px",
+            fontWeight: "bold",
+            fontSize: "18px",
+            verticalAlign: "middle",
+            fontFamily: "cursive, sans-serif",
+          }}
+        >
+          {`${hoveredParticipant.name}`}
+        </span>
 
-            ))}
+        <div style={{ marginLeft: "100px", marginTop: 100 }}>
+          {statPerception.map((perception) => (
+            <div key={perception.statName} style={{ marginBottom: "8px" }}>
+              <Tag color="purple">
+                {`${perception.statName} (${
+                  hoveredParticipant.stats.find((stat) =>
+                    stat.hasOwnProperty(perception.statName)
+                  )
+                    ? hoveredParticipant.stats.find((stat) =>
+                        stat.hasOwnProperty(perception.statName)
+                      )[perception.statName]
+                    : ""
+                })`}
+              </Tag>
+              <Typography.Text style={{ opacity: 0.8 }}>
+                {calculatePercentileCategory(
+                  hoveredParticipant,
+                  participants,
+                  perception.statName,
+                  statPerception
+                )}
+              </Typography.Text>
+            </div>
+          ))}
+          {categoryTypes.map((type) => (
+            <div key={type} style={{ marginBottom: "8px" }}>
+              <Tag color="blue">{`${type}s`}</Tag>
+              <Typography.Text style={{ opacity: 0.8 }}>
+                {categories
+                  .filter(
+                    (cat) =>
+                      cat.type === type &&
+                      cat.participants.includes(hoveredParticipant.id)
+                  )
+                  .map((cat) => cat.name)
+                  .join(", ")}
+              </Typography.Text>
+            </div>
+          ))}
+
+          <div style={{ marginBottom: "8px" }}>
+            <Tag color="green">Items</Tag>
+            <Typography.Text style={{ opacity: 0.8 }}>
+              {items
+                .filter((item) =>
+                  item.holderId.includes(hoveredParticipant.id)
+                )
+                .map((item) => item.name)
+                .join(", ")}
+            </Typography.Text>
+          </div>
+          <div>
+            <Tag color="yellow">About</Tag>
+            {hoveredParticipant.bio}
           </div>
         </div>
-        {hoveredParticipant && (
-          <div
-            className="participant-tooltip"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              maxHeight: "150px",
-              overflow: "auto",
-            }}
-          >
-            <img
-              src={hoveredParticipant.image}
-              alt={`${hoveredParticipant.name}`}
-              width={120}
-              height={120}
-              style={{ verticalAlign: "middle", margin: "5px" }}
-            />
-            <span
-              style={{
-                marginTop: "20px", // Adjust the marginTop value to position the name higher
-                fontWeight: "bold",
-                fontSize: "18px",
-                verticalAlign: "middle",
-                fontFamily: "cursive, sans-serif", // Specify a stylish font family
-              }}
-            >
-              {`${hoveredParticipant.name}`}
-            </span>
-
-            <div style={{ marginLeft: "100px", marginTop: 100 }}>
-              {statPerception.map((perception) => (
-                <div key={perception.statName} style={{ marginBottom: "8px" }}>
-                  <Tag color="purple">
-                    {`${perception.statName} (${
-                      hoveredParticipant.stats.find((stat) =>
-                        stat.hasOwnProperty(perception.statName)
-                      )
-                        ? hoveredParticipant.stats.find((stat) =>
-                            stat.hasOwnProperty(perception.statName)
-                          )[perception.statName]
-                        : ""
-                    })`}
-                  </Tag>
-                  <Typography.Text style={{ opacity: 0.8 }}>
-                    {calculatePercentileCategory(
-                      hoveredParticipant,
-                      participants,
-                      perception.statName,
-                      statPerception
-                    )}
-                  </Typography.Text>
-                </div>
-              ))}
-              {categoryTypes.map((type) => (
-                <div key={type} style={{ marginBottom: "8px" }}>
-                  <Tag color="blue">{`${type}s`}</Tag>
-                  <Typography.Text style={{ opacity: 0.8 }}>
-                    {categories
-                      .filter(
-                        (cat) =>
-                          cat.type === type &&
-                          cat.participants.includes(hoveredParticipant.id)
-                      )
-                      .map((cat) => cat.name)
-                      .join(", ")}
-                  </Typography.Text>
-                </div>
-              ))}
-
-              <div style={{ marginBottom: "8px" }}>
-                <Tag color="green">Items</Tag>
-                <Typography.Text style={{ opacity: 0.8 }}>
-                  {items
-                    .filter((item) =>
-                      item.holderId.includes(hoveredParticipant.id)
-                    )
-                    .map((item) => item.name)
-                    .join(", ")}
-                </Typography.Text>
-              </div>
-              <div>
-                <Tag color="yellow">About</Tag>
-
-                {hoveredParticipant.bio}
-              </div>
-            </div>
-          </div>
-        )}
+      </div>
+    )}
+  </Col>
+</Row>
         <div
           className=""
           style={{

@@ -63,13 +63,15 @@ const EditableCell = ({
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
@@ -192,13 +194,15 @@ const StatsEditor = () => {
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
@@ -324,7 +328,10 @@ const StatsEditor = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button className="button-24" type="danger"> {statName}</Button>
+          <Button  style={{
+    padding: "5px 10px", // Adjust the padding to reduce button size
+    fontSize: "9px",   // Adjust the font size to make text smaller
+  }} className="button-24" type="danger"> {statName}</Button>
         </Popconfirm>
       ),
     },

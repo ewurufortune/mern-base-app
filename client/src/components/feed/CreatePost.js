@@ -26,7 +26,7 @@ const CreatePost = () => {
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch("http://localhost:3001/auth/createPost", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/createPost", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

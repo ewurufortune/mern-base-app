@@ -60,13 +60,15 @@ const EditableCell = ({
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
@@ -176,19 +178,21 @@ console.log(updatedData);
     {
       title: "Name",
       dataIndex: "name",
-      width: "30%",
+      width: "20%",
       editable: true,
     },
     {
       title: "Profile Image",
       dataIndex: "image",
-      width: "10%",
+      width: "5%",
       editable: true,
       ellipsis: true,
     },
     {
       title: "Active",
       dataIndex: "isActive",
+      width: "8%",
+
       render: (_, record) => (
         <Switch
           checked={record.isActive}
@@ -286,13 +290,15 @@ console.log(updatedData);
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories,
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),

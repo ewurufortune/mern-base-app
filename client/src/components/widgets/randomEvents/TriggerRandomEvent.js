@@ -420,15 +420,25 @@ export default function TriggerRandomEvent() {
       executeEventConsequences(event);
     }
 
-    const executedEvent = {
-      id: uuidv4(), // Generate a unique ID for the executed event
-      eventTypeId: event.eventId, // Use the ID of the generatedEvent or a suitable identifier
-      title: event.eventTitle,
-      isRead: false,
-      description: `${event.eventDescription}\n ${filteredParticipants[0].name} ${event.consequenceDescription}`,
-    };
+    if (filteredParticipants[0].name !== undefined) {
+      const executedEvent = {
+        id: uuidv4(), // Generate a unique ID for the executed event
+        eventTypeId: event.eventId, // Use the ID of the generatedEvent or a suitable identifier
+        title: event.eventTitle,
+        isRead: false,
+        description: `${event.eventDescription}\n\n ${filteredParticipants[0].name} ${event.consequenceDescription}`,
+      };
+      
+      executedEvents.push(executedEvent);
 
-    executedEvents.push(executedEvent);
+      // Now you can use the 'executedEvent' object within this block.
+      // ...
+    } else {
+      // Handle the case where 'filteredParticipants[0].name' is undefined or do nothing.
+    }
+    
+
+  
   };
   return (
     <div>

@@ -264,6 +264,7 @@ export const replaceUser = async (req, res) => {
       arcs,
       date,
       randomEvents,
+      categories,
     } = req.body;
 
     // Validate if the user with the provided ID exists in the database
@@ -287,6 +288,7 @@ if (statPerception) user.statPerception = statPerception;
 if (arcs) user.arcs = arcs;
 if (date) user.date = date;
 if (randomEvents) user.randomEvents = randomEvents;
+if (categories) user.categories = categories;
 
 
     console.log(user);

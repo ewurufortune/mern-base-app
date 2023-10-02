@@ -32,13 +32,15 @@ const EventNotifications = () => {
     arcs: user.arcs,
     date: user.date,
     randomEvents: user.randomEvents,
+    categories:user.categories
+
     };
   
     try {
       // Display loading message
       messageApi.loading({ content: 'Saving...', key: 'replaceUserMessage' });
   
-      const response = await fetch("http://localhost:3001/auth/replace", {
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),

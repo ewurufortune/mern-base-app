@@ -61,7 +61,7 @@ const LoginPage = () => {
                 marginTop: "20px",
               }}
             >
-              Book<span style={{ color: "limegreen" }}>Board</span>
+              World<span style={{ color: "limegreen" }}>Booker</span>
             </Typography.Title>
 
             <div style={{ display: "flex" }}>
