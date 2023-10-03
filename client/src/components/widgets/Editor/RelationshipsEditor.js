@@ -91,11 +91,15 @@ const EditableCell = ({
   
       // Display success message
       messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };
@@ -212,11 +216,15 @@ const RelationshipsEditor = () => {
   
       // Display success message
       messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };
@@ -262,7 +270,7 @@ const RelationshipsEditor = () => {
     },
  
     {
-      title: "relationshipStrength",
+      title: "Relationship Strength",
       dataIndex: "relationshipStrength",
       width: "30%",
       editable: false,

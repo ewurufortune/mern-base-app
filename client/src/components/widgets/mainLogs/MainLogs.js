@@ -338,6 +338,10 @@ export default function MainLogs() {
   const [sortedParticipants, setSortedParticipants] = useState([
     ...participants,
   ]);
+    // Use useEffect to update sortedParticipants when participants changes
+    useEffect(() => {
+      setSortedParticipants([...participants]);
+    }, [participants]);
   const [hoveredParticipant, setHoveredParticipant] = useState(null);
   // Extract all unique stats from participants
   const allStats = participants.reduce((stats, participant) => {
@@ -364,11 +368,75 @@ export default function MainLogs() {
     setSortedParticipants(sorted);
   };
 
-  const copyAndDispatch = (arrayName, arrayToCopy) => {
-    const copiedArray = [...arrayToCopy]; // Create a shallow copy of the array
 
+  const replaceUser = async (user) => {
+    const bodyData = {
+      id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    location: user.location,
+    impressions: user.impressions,
+    mainLogs: user.mainLogs,
+    participants: user.participants,
+    items: user.items,
+    stats: user.stats,
+    relationships: user.relationships,
+    recentEvents: user.recentEvents,
+    statPerception: user.statPerception,
+    arcs: user.arcs,
+    date: user.date,
+    randomEvents: user.randomEvents,
+    categories:user.categories,
+
+    };
+  
+    try {
+      // Display loading message
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+  
+      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await response.json();
+  
+      // Display success message
+      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
+  
+      console.log(data);
+    } catch (error) {
+      // Display error message
+      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
+      console.error("Error replacing user:", error);
+    }
+  };
+
+
+  const copyAndDispatch = (arrayName, arrayToCopy) => {
+
+    if (arrayName === 'items') {
+      // Iterate over the Items array and update holderId for each item
+      const updatedItems = items.map((item) => ({
+        ...item,
+        holderId: [],
+      }));
+      dispatch(setStats({ items: updatedItems }));
+
+      // Now updatedItems contains the modified items with empty holderId arrays
+    }
+    
+    const copiedArray = [...arrayToCopy]; // Create a shallow copy of the array
+console.log(copiedArray);
     // Dispatch the copied array to the Redux store
     dispatch(setStats({ [arrayName]: copiedArray }));
+    replaceUser(user)
   };
 
   const [filterIsActive, setFilterIsActive] = useState(true);
@@ -757,93 +825,99 @@ export default function MainLogs() {
     </div>
   </Col>
   <Col span={12}>
-    {hoveredParticipant && (
-      <div
-        className="participant-tooltip"
+  <div
+  className="participant-tooltip"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    maxHeight: "200px",
+    overflow: "auto",
+  }}
+>
+  {hoveredParticipant ? (
+    <>
+      <img
+        src={hoveredParticipant.image}
+        alt={`${hoveredParticipant.name}`}
+        width={120}
+        height={120}
+        style={{ verticalAlign: "middle", margin: "5px" }}
+      />
+      <span
         style={{
-          display: "flex",
-          alignItems: "center",
-          maxHeight: "200px",
-          overflow: "auto",
+          marginTop: "20px",
+          fontWeight: "bold",
+          fontSize: "18px",
+          verticalAlign: "middle",
+          fontFamily: "cursive, sans-serif",
         }}
       >
-        <img
-          src={hoveredParticipant.image}
-          alt={`${hoveredParticipant.name}`}
-          width={120}
-          height={120}
-          style={{ verticalAlign: "middle", margin: "5px" }}
-        />
-        <span
-          style={{
-            marginTop: "20px",
-            fontWeight: "bold",
-            fontSize: "18px",
-            verticalAlign: "middle",
-            fontFamily: "cursive, sans-serif",
-          }}
-        >
-          {`${hoveredParticipant.name}`}
-        </span>
+        {`${hoveredParticipant.name}`}
+      </span>
 
-        <div style={{ marginLeft: "100px", marginTop: 100 }}>
-          {statPerception.map((perception) => (
-            <div key={perception.statName} style={{ marginBottom: "8px" }}>
-              <Tag color="purple">
-                {`${perception.statName} (${
-                  hoveredParticipant.stats.find((stat) =>
-                    stat.hasOwnProperty(perception.statName)
-                  )
-                    ? hoveredParticipant.stats.find((stat) =>
-                        stat.hasOwnProperty(perception.statName)
-                      )[perception.statName]
-                    : ""
-                })`}
-              </Tag>
-              <Typography.Text style={{ opacity: 0.8 }}>
-                {calculatePercentileCategory(
-                  hoveredParticipant,
-                  participants,
-                  perception.statName,
-                  statPerception
-                )}
-              </Typography.Text>
-            </div>
-          ))}
-          {categoryTypes.map((type) => (
-            <div key={type} style={{ marginBottom: "8px" }}>
-              <Tag color="blue">{`${type}s`}</Tag>
-              <Typography.Text style={{ opacity: 0.8 }}>
-                {categories
-                  .filter(
-                    (cat) =>
-                      cat.type === type &&
-                      cat.participants.includes(hoveredParticipant.id)
-                  )
-                  .map((cat) => cat.name)
-                  .join(", ")}
-              </Typography.Text>
-            </div>
-          ))}
-
-          <div style={{ marginBottom: "8px" }}>
-            <Tag color="green">Items</Tag>
-            <Typography.Text style={{ opacity: 0.8 }}>
-              {items
-                .filter((item) =>
-                  item.holderId.includes(hoveredParticipant.id)
+      <div style={{ marginLeft: "100px", marginTop: 100 }}>
+        {statPerception.map((perception) => (
+          <div key={perception.statName} style={{ marginBottom: "8px" }}>
+            <Tag color="purple">
+              {`${perception.statName} (${
+                hoveredParticipant.stats.find((stat) =>
+                  stat.hasOwnProperty(perception.statName)
                 )
-                .map((item) => item.name)
+                  ? hoveredParticipant.stats.find((stat) =>
+                      stat.hasOwnProperty(perception.statName)
+                    )[perception.statName]
+                  : ""
+              })`}
+            </Tag>
+            <Typography.Text style={{ opacity: 0.8 }}>
+              {calculatePercentileCategory(
+                hoveredParticipant,
+                participants,
+                perception.statName,
+                statPerception
+              )}
+            </Typography.Text>
+          </div>
+        ))}
+        {categoryTypes.map((type) => (
+          <div key={type} style={{ marginBottom: "8px" }}>
+            <Tag color="blue">{`${type}s`}</Tag>
+            <Typography.Text style={{ opacity: 0.8 }}>
+              {categories
+                .filter(
+                  (cat) =>
+                    cat.type === type &&
+                    cat.participants.includes(hoveredParticipant.id)
+                )
+                .map((cat) => cat.name)
                 .join(", ")}
             </Typography.Text>
           </div>
-          <div>
-            <Tag color="yellow">About</Tag>
-            {hoveredParticipant.bio}
-          </div>
+        ))}
+
+        <div style={{ marginBottom: "8px" }}>
+          <Tag color="green">Items</Tag>
+          {console.log(items)}
+          <Typography.Text style={{ opacity: 0.8 }}>
+            {items
+              .filter((item) =>
+                item.holderId.includes(hoveredParticipant.id)
+              )
+              .map((item) => item.name)
+              .join(", ")}
+          </Typography.Text>
+        </div>
+        <div>
+          <Tag color="yellow">About</Tag>
+          {hoveredParticipant.bio}
         </div>
       </div>
-    )}
+    </>
+  ) : (
+    "Click on a participant to view their details"
+  )}
+</div>
+
   </Col>
 </Row>
         <div

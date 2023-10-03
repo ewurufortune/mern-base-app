@@ -277,7 +277,7 @@ const participants = [
   },
   {
     id: "9/1/2104",
-    name: "Myrtie Santiago",
+    name: "Santiago El` Zoro",
     isActive: true,
     image: "https://i.redd.it/bwciyi6pd4rb1.png",
     bio: "A talented wrestler",
@@ -570,10 +570,26 @@ const randomEvents = [];
 const relationships = [
   {
     id: 1,
-    name: "Master Student",
+    name: "Master - Student",
     participants: ["3/7/2109", "12/1/2113"],
     frequency: "week",
-    relationshipStrength: 0,
+    relationshipStrength: 2,
+    relationshipStrengthText: "Neutral",
+  },
+  {
+    id: 1,
+    name: "Rival",
+    participants: ["10/15/2049", "3/24/2044"],
+    frequency: "week",
+    relationshipStrength: -3,
+    relationshipStrengthText: "Neutral",
+  },
+  {
+    id: 1,
+    name: "Huband - Wife",
+    participants: ["2/24/2040", "10/31/2049"],
+    frequency: "week",
+    relationshipStrength: -3,
     relationshipStrengthText: "Neutral",
   },
 ];
@@ -584,7 +600,7 @@ const recentEvents = [
     eventTypeId: "1694197990275",
     title: "Welcome",
     description:
-      "Welcome To WorldBooker\n\n This is where you will racieve notifivations of events happening in your world.",
+      "Welcome To WorldBooker\n\n This is where you will recieve notifications of events happening in your world.",
   },
 ];
 const items = [
@@ -605,7 +621,7 @@ const items = [
   },
 
   {
-    id: 3,
+    id: 2,
     name: "SWE World Championship",
     style: "SWE World Champion",
     holderId: ["8/21/2052"],
@@ -643,28 +659,77 @@ const stats = [
     statName: "overness",
     label: "Major Overness Success",
     change: 5,
-    bio: "Astat that changes",
+    bio: "A Measure of Overness",
   },
   {
     id: 2,
     statName: "overness",
     label: "Major Overness Loss",
     change: -5,
-    bio: "Astat that changes",
+    bio: "A Measure of Overness",
   },
   {
     id: 3,
     statName: "reputation",
     label: "Major Reputation Gain",
     change: 5,
-    bio: "Astat that changes",
+    bio: "A Measure of Overness",
   },
   {
     id: 4,
     statName: "reputation",
     label: "Major Reputation Loss",
     change: -5,
-    bio: "Astat that changes",
+    bio: "A Measure of Reputation",
+  },
+  {
+    id: 5,
+    statName: "morale",
+    label: "Low Morale Impact",
+    change: -3,
+    bio: "A stat that reflects a wrestler's decreased morale due to disappointing events or setbacks.",
+  },
+  {
+    id: 6,
+    statName: "win",
+    label: "Winning Streak",
+    change: 1,
+    bio: "A stat that increases when a wrestler achieves a series of consecutive victories, showcasing their skill and dominance.",
+  },
+  {
+    id: 7,
+    statName: "win",
+    label: "Win",
+    change: 5,
+    bio: "A stat that increases when a wrestler achieves a series of consecutive victories, showcasing their skill and dominance.",
+  },
+  {
+    id: 8,
+    statName: "loss",
+    label: "Losing Streak",
+    change: -5,
+    bio: "A stat that accumulates when a wrestler experiences a series of consecutive losses, indicating a decline in performance.",
+  },
+  {
+    id: 9,
+    statName: "loss",
+    label: "Loss",
+    change: -1,
+    bio: "A stat that accumulates when a wrestler experiences a series of consecutive losses, indicating a decline in performance.",
+  },
+  {
+    id: 10,
+    statName: "skill",
+    label: "Skill Enhancement",
+    change: 3,
+    bio: "A stat that represents the improvement in a wrestler's technical abilities and in-ring skills after focused training.",
+  },
+  {
+    id: 11,
+    statName: "skill",
+    label: "Skill Regression",
+    change: -3,
+    bio: "A stat that decreases when a wrestler's in-ring performance deteriorates, signaling a need for improvement.",
   },
 ];
 
@@ -893,6 +958,111 @@ The retirement announcement marked the end of an era and left a lasting legacy i
     description: `Tears flowed in the ring as {farewellWrestler} bid an emotional farewell to professional wrestling. Their retirement match was filled with heartfelt moments, and both fans and fellow wrestlers joined in showing appreciation for the contributions of this beloved figure.`,
     numberOfParticipants: 1,
   },
+  {
+    id: 30,
+    title: "Record-Breaking Pay-Per-View",
+    type: ["individual"],
+    description: `History was made at the {promotionName} pay-per-view event as it shattered attendance and buyrate records. The electric atmosphere in the arena and the overwhelming demand from fans at home marked this event as a historic moment in professional wrestling.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 31,
+    title: "Wrestler Turned Backstage Role",
+    type: ["individual"],
+    description: `A wrestling icon, {wrestlerTurnedBackstage}, decided to hang up their boots and transition to a backstage role within {promotionName}. Fans and wrestlers alike looked forward to seeing how this legendary figure would contribute to the promotion in their new capacity.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 32,
+    title: "Launch of New Championship Title",
+    type: ["individual"],
+    description: `The anticipation was palpable as {promotionName} unveiled a brand-new championship title. Wrestling enthusiasts speculated about the inaugural champion and the exciting rivalries that would center around this prestigious championship.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 33,
+    title: "Debut of a New Wrestling Promotion",
+    type: ["individual"],
+    description: `A new era in professional wrestling began as {newPromotionName}, founded by a former wrestling legend or celebrity, held its inaugural event. Wrestling fans and industry insiders watched closely to see how this upstart promotion would carve its niche in the wrestling world.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 34,
+    title: "Major Controversy Rocks Wrestling",
+    type: ["individual"],
+    description: `Scandal and controversy engulfed the wrestling world as {controversyDetails} involving a prominent wrestler or wrestling promotion came to light. Fans, wrestlers, and pundits debated the fallout and potential consequences of this explosive revelation.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 35,
+    title: "Wrestler Opens Up About Mental Health",
+    type: ["individual"],
+    description: `In a candid and brave move, {wrestlerMentalHealth} opened up about their struggles with mental health in a heartfelt interview. Their willingness to share their journey resonated with fans and shed light on the importance of mental health awareness in wrestling.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 36,
+    title: "Wrestler Ventures into Politics",
+    type: ["individual"],
+    description: `A wrestling superstar, {wrestlerPolitics}, announced their candidacy for a political office or embarked on a career in another field outside of wrestling. This surprising career shift garnered attention and sparked discussions about their future endeavors.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 37,
+    title: "Wrestling Convention Extravaganza",
+    type: ["individual"],
+    description: `Wrestling fans rejoiced as the annual {conventionName} convention or fan event rolled into town, featuring appearances by top wrestling stars and legends. Attendees had the opportunity to meet their idols and immerse themselves in all things wrestling.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 38,
+    title: "Tell-All Autobiography Released",
+    type: ["individual"],
+    description: `A wrestling legend, {autobiographyAuthor}, released a highly anticipated tell-all autobiography, providing fans with an intimate look into their storied career and the behind-the-scenes drama of professional wrestling.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 39,
+    title: "Wrestlers Unite for Charity",
+    type: ["individual"],
+    description: `Wrestling's biggest hearts were on display as a group of wrestlers organized a charity event to support a worthy cause. This heartwarming gesture showcased the compassion and generosity within the wrestling community.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 40,
+    title: "New Wrestling-Themed Reality TV Show",
+    type: ["individual"],
+    description: `Television screens lit up with the premiere of a new wrestling-themed reality TV show, {realityShowName}. Wrestling fans tuned in to watch their favorite stars navigate challenges both in and out of the ring.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 41,
+    title: "Wrestling Promotion's Unique Partnership",
+    type: ["individual"],
+    description: `In an unexpected twist, {promotionName} formed a groundbreaking partnership with a mainstream brand or celebrity. This collaboration promised to bring wrestling to new audiences and create exciting opportunities for cross-promotion.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 42,
+    title: "Wrestler's Philanthropic Recognition",
+    type: ["individual"],
+    description: `A wrestler, {philanthropicWrestler}, received well-deserved recognition for their philanthropic efforts. Their contributions to charitable causes outside of wrestling were celebrated, highlighting the positive impact wrestlers can have on their communities.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 43,
+    title: "Wrestler Honored with Sports Award",
+    type: ["individual"],
+    description: `A wrestler, {awardWinner}, achieved a significant milestone by winning a major sports award or accolade unrelated to wrestling. This recognition underscored the athleticism and versatility of wrestling superstars.`,
+    numberOfParticipants: 1,
+  },
+  {
+    id: 44,
+    title: "Revisiting a Legendary Rivalry",
+    type: ["individual"],
+    description: `The wrestling world buzzed with excitement as a legendary rivalry or feud from the past was revisited for a special one-off event. Fans relished the opportunity to see iconic rivals square off once more, creating an unforgettable spectacle.`,
+    numberOfParticipants: 1,
+  },
 ];
 const statPerception = [
   {
@@ -913,7 +1083,7 @@ const statPerception = [
     top20Percentile: "Fan Favorite",
     top40Percentile: "Respected",
     top80Percentile: "Known",
-  },  
+  },
   {
     statName: "relevance",
     top1: "Legend",
@@ -922,6 +1092,15 @@ const statPerception = [
     top20Percentile: "Significant",
     top40Percentile: "Relevant",
     top80Percentile: "Marginal",
+  },
+  {
+    statName: "morale",
+    top1: "Euphoric",
+    top5Percentile: "Very Happy",
+    top10Percentile: "Happy",
+    top20Percentile: "Content",
+    top40Percentile: "Neutral",
+    top80Percentile: "Frustrated",
   },
   {
     statName: "wins",
@@ -933,7 +1112,7 @@ const statPerception = [
     top80Percentile: "Average",
   },
   {
-    statName: "losses",
+    statName: "loss",
     top1: "Invulnerable",
     top5Percentile: "Resilient",
     top10Percentile: "Tough Competitor",
@@ -941,11 +1120,9 @@ const statPerception = [
     top40Percentile: "Competent",
     top80Percentile: "Average",
   },
-  
-  
-  
 ];
-const date = new Date(2023, 6, 10, 15, 30);
+// const date = new Date(2023, 6, 10, 15, 30);
+const date = new Date();
 
 export {
   mainLogs,

@@ -78,11 +78,15 @@ const EditableCell = ({
   
       // Display success message
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };
@@ -308,11 +312,15 @@ console.log(updatedData);
   
       // Display success message
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };

@@ -420,7 +420,7 @@ export default function TriggerRandomEvent() {
       executeEventConsequences(event);
     }
 
-    if (filteredParticipants[0].name !== undefined) {
+    if (filteredParticipants[0] && filteredParticipants[0].name !== undefined) {
       const executedEvent = {
         id: uuidv4(), // Generate a unique ID for the executed event
         eventTypeId: event.eventId, // Use the ID of the generatedEvent or a suitable identifier
@@ -430,12 +430,14 @@ export default function TriggerRandomEvent() {
       };
       
       executedEvents.push(executedEvent);
-
+    
       // Now you can use the 'executedEvent' object within this block.
       // ...
     } else {
-      // Handle the case where 'filteredParticipants[0].name' is undefined or do nothing.
+      // Handle the case where 'filteredParticipants[0]' is undefined or doesn't have a 'name' property.
+      // You can log an error, display a message, or take appropriate action.
     }
+    
     
 
   

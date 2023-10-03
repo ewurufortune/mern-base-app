@@ -46,6 +46,8 @@ const EditableCell = ({
   const [messageApi, contextHolder] = message.useMessage();         
 
   const replaceUser = async (user) => {
+          setTimeout(messageApi.destroy,2000);
+
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
@@ -81,11 +83,15 @@ const EditableCell = ({
   
       // Display success message
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+            setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };
@@ -212,11 +218,15 @@ const StatsEditor = () => {
   
       // Display success message
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
+              setTimeout(messageApi.destroy,2000);
+
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+              setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };

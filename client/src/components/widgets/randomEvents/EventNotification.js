@@ -50,11 +50,14 @@ const EventNotifications = () => {
   
       // Display success message
       messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
+      
   
       console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
+      setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };

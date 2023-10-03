@@ -59,8 +59,12 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
+  const [messageApi, contextHolder] = message.useMessage();
+
 
   const register = async (values, onSubmitProps) => {
+    messageApi.loading({ content: "Creating A New Save... this might take a minute", key: "registerMessage", duration:20000 });
+
     // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
@@ -79,15 +83,18 @@ const Form = () => {
     onSubmitProps.resetForm();
 
     if (savedUser) {
+      messageApi.success({ content: 'Save Created successfully! log in.', key: 'registerMessage' });
+
+      setTimeout(messageApi.destroy,2000);
+
       setPageType("login");
     }
   };
-  const [messageApi, contextHolder] = message.useMessage();
 
   const login = async (values, onSubmitProps) => {
     // Show loading message
     // Display loading message
-    messageApi.loading({ content: "Logging in...", key: "LoginMessage" });
+    messageApi.loading({ content: "Logging in...", key: "LoginMessage", duration:0 });
     try {
       const loggedInResponse = await fetch("https://bookboard-app.onrender.com/auth/login", {
         method: "POST",
@@ -118,14 +125,19 @@ const Form = () => {
           content: "Logged In successfully!",
           key: "LoginMessage",
         });
+        setTimeout(messageApi.destroy,2000);
+
       } else {
         // Error message
-        message.error("Login failed. Please check your credentials.", 2); // Close the message after 2 seconds
+        message.error("Login failed. Please check your credentials."); // Close the message after 2 seconds
+        setTimeout(messageApi.destroy,2000);
       }
     } catch (error) {
       console.error(error);
       // Error message for unexpected errors
       messageApi.error({ content: "Login Error", key: "LoginMessage" });
+      setTimeout(messageApi.destroy,2000);
+
     } finally {
     }
   };

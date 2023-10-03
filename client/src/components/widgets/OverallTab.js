@@ -1,5 +1,13 @@
-import React, {useState, useEffect} from "react";
-import { Tabs, Badge, Button, message, theme, ConfigProvider, Card } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Tabs,
+  Badge,
+  Button,
+  message,
+  theme,
+  ConfigProvider,
+  Card,
+} from "antd";
 import TabComponent from "./tabsComponent/TabsComponent";
 import { setStats } from "state";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,7 +22,7 @@ import RelationshipEvents from "./randomEvents/RelationshipEvents";
 import CreatePost from "components/feed/CreatePost";
 import Feed from "components/feed/ViewPosts";
 import About from "./about/About";
-import './OverallTab.css'
+import "./OverallTab.css";
 const onChange = (key) => {};
 
 const playerInformation = [
@@ -41,11 +49,10 @@ const playerInformation = [
     label: `Book Event`,
     children: (
       <>
-              <UserActions />
+        <UserActions />
 
         <TriggerRandomEvent />
         <RelationshipEvents />
-
       </>
     ),
   },
@@ -57,7 +64,11 @@ const playerInformation = [
   {
     key: "3",
     label: `Editor`,
-    children: <Editor />,
+    children: (
+      <div style={{ width: "95%" }}>
+        <Editor />
+      </div>
+    ),
   },
   {
     key: "4",
@@ -71,11 +82,7 @@ const playerInformation = [
   },
   {
     key: "5",
-    label: (
-      <span>
-      Messages
-      </span>
-    ),
+    label: <span>Messages</span>,
     children: (
       <>
         <TriggerRandomEvent />
@@ -88,74 +95,90 @@ const playerInformation = [
     label: `About`,
     children: (
       <>
-      <About />
+        <About />
         <RelationshipEvents />
       </>
     ),
   },
 ];
 
-
-export default function OverallTab({isDarkMode}) {
+export default function OverallTab({ isDarkMode }) {
   const activeTab = useSelector((state) => state.activeTab);
   const recentEvents = useSelector((state) => state.user.recentEvents);
   const user = useSelector((state) => state.user);
 
-
-
   const [unreadCount, setUnreadCount] = useState(0);
-  const [messageApi, contextHolder] = message.useMessage();         
+  const [messageApi, contextHolder] = message.useMessage();
 
   const replaceUser = async (user) => {
     const bodyData = {
       id: user._id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    location: user.location,
-    impressions: user.impressions,
-    mainLogs: user.mainLogs,
-    participants: user.participants,
-    items: user.items,
-    stats: user.stats,
-    relationships: user.relationships,
-    recentEvents: user.recentEvents,
-    statPerception: user.statPerception,
-    arcs: user.arcs,
-    date: user.date,
-    randomEvents: user.randomEvents,
-    categories:user.categories,
-
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      location: user.location,
+      impressions: user.impressions,
+      mainLogs: user.mainLogs,
+      participants: user.participants,
+      items: user.items,
+      stats: user.stats,
+      relationships: user.relationships,
+      recentEvents: user.recentEvents,
+      statPerception: user.statPerception,
+      arcs: user.arcs,
+      date: user.date,
+      randomEvents: user.randomEvents,
+      categories: user.categories,
     };
-  
+
     try {
       // Display loading message
-      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
-  
-      const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData),
+      messageApi.loading({
+        content: "Replacing data...",
+        key: "replaceUserMessage", duration:0,
       });
-  
+
+      const response = await fetch(
+        "https://bookboard-app.onrender.com/auth/replace",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
       const data = await response.json();
-  
+
+
       // Display success message
-      messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
-  
+      messageApi.success({
+        content: "Data replaced successfully!",
+        key: "replaceUserMessage",
+      });
+      setTimeout(messageApi.destroy,2000);
+
       console.log(data);
     } catch (error) {
+    
+
       // Display error message
-      messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      messageApi.error({
+        content: "Failed to replace data!",
+        key: "replaceUserMessage",
+      });
+      setTimeout(messageApi.destroy,2000);
       console.error("Error replacing user:", error);
     }
   };
-  
+
   const operations = {
-    right: <Button className="save-game-button" onClick={() => replaceUser(user)}>SAVE GAME</Button>,
+    right: (
+      <Button className="save-game-button" onClick={() => replaceUser(user)}>
+        SAVE GAME
+      </Button>
+    ),
   };
-  
-  
+
   useEffect(() => {
     // Calculate the number of unread events
     const countUnread = recentEvents.reduce((count, event) => {
@@ -194,34 +217,25 @@ export default function OverallTab({isDarkMode}) {
   });
 
   return (
-<ConfigProvider
-      
-    >
-     <Card
+    <ConfigProvider>
+      <Card
         bordered={false}
         theme={isDarkMode ? "Light" : "Dark"}
         style={{
           width: "100vw",
-          height:'100vw'
+          height: "100vw",
         }}
       >
-  
-    {contextHolder}
-    <Tabs
-  defaultActiveKey="1"
-  items={updatedPlayerInformation}
-  onChange={onChange}
-  activeKey={activeTab}
-  tabBarExtraContent={operations}
-  style={{ height: '100vw', overflow: 'auto', }}
-/>
-
-
-    </Card>
-    </ConfigProvider >
-    
+        {contextHolder}
+        <Tabs
+          defaultActiveKey="1"
+          items={updatedPlayerInformation}
+          onChange={onChange}
+          activeKey={activeTab}
+          tabBarExtraContent={operations}
+          style={{ height: "100vw", overflow: "auto" }}
+        />
+      </Card>
+    </ConfigProvider>
   );
 }
-
-
-

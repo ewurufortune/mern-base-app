@@ -245,7 +245,7 @@ function Segment({ removeSegment }) {
   
     try {
       // Display loading message
-      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage' });
+      messageApi.loading({ content: 'Replacing data...', key: 'replaceUserMessage',  duration: 0, });
   
       const response = await fetch("https://bookboard-app.onrender.com/auth/replace", {
         method: "POST",
@@ -256,12 +256,17 @@ function Segment({ removeSegment }) {
       const data = await response.json();
   
       // Display success message
+
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
-  
+      setTimeout(messageApi.destroy,2000);
+
       console.log(data);
     } catch (error) {
-      // Display error message
+      // Display error message   
+
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
+      setTimeout(messageApi.destroy,2000);
+
       console.error("Error replacing user:", error);
     }
   };
@@ -942,7 +947,7 @@ function Segment({ removeSegment }) {
           display: "flex",
           alignItems: "center",
           maxHeight: "150px",
-          paddingTop:15,
+          paddingTop:'5%',
           
           overflow: "auto",
         }}
