@@ -2,6 +2,7 @@ body {
   background-color: grey; /* Set your desired grey color here */
   margin: 0; /* Reset default body margin */
   padding: 0; /* Reset default body padding */
+  width: 100vw; /* Make the body element 100% of the viewport width */
 }
 
 .save-game-button{
@@ -143,6 +144,9 @@ p {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    width: 80%;
+    margin-left: 5%;
+    border: 1px solid #ccc;
     gap: 20px; /* Adjust the gap between elements as needed */
   }
   
@@ -312,4 +316,41 @@ p {
 
 .button-24:active {
   opacity: .5;
+}
+
+
+/* Media Queries */
+
+/* Media query for mobile screens */
+@media (max-width: 768px) {
+  .ant-btn {
+    font-size: 50%; /* Reduce the font size by 50% on mobile screens */
+    padding: 4px 8px; /* Adjust padding as needed */
+  }
+}
+
+/* Media query for mobile screens */
+@media (max-width: 768px) {
+  .ant-select {
+    width: 50%; /* Reduce the width by 50% on mobile screens */
+  }
+}
+
+/* Media query for small screens */
+@media (max-width: 768px) {
+  .tabHeader {
+    font-size: 50%; /* Reduce the font size for small screens */
+  }
+}
+
+@media (max-width: 768px) {
+  /* Reduce the padding for content on smaller screens */
+  .tabHeader {
+    font-size: 8px;
+  }
+
+  /* Reduce the overall padding for guide and aim */
+  .tabContent {
+    font-size: 8px; /* Reduce the font size for text content on smaller screens */
+  }
 }

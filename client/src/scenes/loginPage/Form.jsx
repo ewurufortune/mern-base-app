@@ -38,12 +38,12 @@ const loginSchema = yup.object().shape({
 
 const initialValuesRegister = {
   firstName: "",
-  lastName: "",
+  lastName: "a",
   email: "",
   password: "",
-  location: "",
+  location: "a",
 
-  picture: "",
+  picture: "a",
 };
 
 const initialValuesLogin = {
@@ -94,7 +94,7 @@ const Form = () => {
   const login = async (values, onSubmitProps) => {
     // Show loading message
     // Display loading message
-    messageApi.loading({ content: "Logging in...", key: "LoginMessage", duration:0 });
+    messageApi.loading({ content: "Logging in... might take a minute", key: "LoginMessage", duration:0 });
     try {
       const loggedInResponse = await fetch("https://bookboard-app.onrender.com/auth/login", {
         method: "POST",
@@ -175,7 +175,7 @@ const Form = () => {
             {isRegister && (
               <>
                 <TextField
-                  label="First Name"
+                  label="World Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.firstName || ""}
@@ -184,36 +184,9 @@ const Form = () => {
                     Boolean(touched.firstName) && Boolean(errors.firstName)
                   }
                   helperText={touched.firstName && errors.firstName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-                <TextField
-                  label="Last Name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.lastName || ""}
-                  name="lastName"
-                  error={Boolean(touched.lastName) && Boolean(errors.lastName)}
-                  helperText={touched.lastName && errors.lastName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-
-                <TextField
-                  label="Location"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.location || ""}
-                  name="location"
-                  error={Boolean(touched.location) && Boolean(errors.location)}
-                  helperText={touched.location && errors.location}
                   sx={{ gridColumn: "span 4" }}
                 />
-
-                <Box
-                  gridColumn="span 4"
-                  border={`1px solid ${palette.neutral.medium}`}
-                  borderRadius="5px"
-                  p="1rem"
-                ></Box>
+             
               </>
             )}
 
@@ -272,8 +245,8 @@ const Form = () => {
               }}
             >
               {isLogin
-                ? "Don't have an account? Sign Up here."
-                : "Already have an account? Login here."}
+                ? "Don't have a save? Create one here."
+                : "Already have a save? Login here."}
             </Typography>
           </Box>
         </form>

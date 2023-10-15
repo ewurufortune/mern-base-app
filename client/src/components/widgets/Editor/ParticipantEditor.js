@@ -184,11 +184,12 @@ console.log(updatedData);
       dataIndex: "name",
       width: "20%",
       editable: true,
+      fixed: 'left',
     },
     {
       title: "Profile Image",
       dataIndex: "image",
-      width: "5%",
+      width: "10%",
       editable: true,
       ellipsis: true,
     },
@@ -381,6 +382,9 @@ console.log(updatedData);
         dataSource={dataSource}
         columns={columns}
         rowKey="id"
+        scroll={{
+      x: 1300,
+    }}
         expandable={{
           expandedRowRender: (record) => (
             <EditableBio

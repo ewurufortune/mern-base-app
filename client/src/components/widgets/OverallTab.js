@@ -26,31 +26,12 @@ import "./OverallTab.css";
 const onChange = (key) => {};
 
 const playerInformation = [
-  // {
-  //   key: "7",
-  //   label: `CREATE Posts`,
-  //   children: (
-  //     <>
-  //       <CreatePost />
-  //     </>
-  //   ),
-  // },
-  // {
-  //   key: "8",
-  //   label: `Feed`,
-  //   children: (
-  //     <>
-  //       <Feed />
-  //     </>
-  //   ),
-  // },
   {
     key: "1",
-    label: `Book Event`,
+    label: <span className="tabHeader">Book Event</span>,
     children: (
       <>
         <UserActions />
-
         <TriggerRandomEvent />
         <RelationshipEvents />
       </>
@@ -58,12 +39,12 @@ const playerInformation = [
   },
   {
     key: "2",
-    label: `Reader`,
+    label: <span className="tabHeader">Reader</span>,
     children: <MainLogs />,
   },
   {
     key: "3",
-    label: `Editor`,
+    label: <span className="tabHeader">Editor</span>,
     children: (
       <div style={{ width: "95%" }}>
         <Editor />
@@ -72,7 +53,7 @@ const playerInformation = [
   },
   {
     key: "4",
-    label: `Random Events`,
+    label: <span className="tabHeader">Random Events</span>,
     children: (
       <>
         <RandomEvents />
@@ -82,7 +63,7 @@ const playerInformation = [
   },
   {
     key: "5",
-    label: <span>Messages</span>,
+    label: <span className="tabHeader">Messages</span>,
     children: (
       <>
         <TriggerRandomEvent />
@@ -92,7 +73,7 @@ const playerInformation = [
   },
   {
     key: "6",
-    label: `About`,
+    label: <span className="tabHeader">About</span>,
     children: (
       <>
         <About />
@@ -101,6 +82,7 @@ const playerInformation = [
     ),
   },
 ];
+
 
 export default function OverallTab({ isDarkMode }) {
   const activeTab = useSelector((state) => state.activeTab);
@@ -196,7 +178,7 @@ export default function OverallTab({ isDarkMode }) {
   const eventsEntry = {
     key: "5",
     label: (
-      <span>
+      <span className="tabHeader">
         Notifications <Badge count={unreadCount} />
       </span>
     ),

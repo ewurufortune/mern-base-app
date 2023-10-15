@@ -165,14 +165,14 @@ console.log(modifiedStrength);
                   selectedStat.statName
                 ] += selectedStat.change;
                 title = `${selectedStatLabel} for ${participant2Name}`;
-                description = `the ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
+                description = `The ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
                 console.log(
                   `Increased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
                 );
                 console.log(foundParticipant2);
               } else {
                 title = `${selectedStatLabel} for ${participant1Name}`;
-                description = `the ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
+                description = `The ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
 
                 // Initialize the stat with the change value if not found
                 foundParticipant2.stats.push({
@@ -189,7 +189,7 @@ console.log(modifiedStrength);
             }
           } else {
             console.log(
-              `Participant 2 (ID: ${participant2}) not found in participants array.`
+              `Participant 2 (ID: ${participant2}) not found in participants array. `
             );
           }
         } else {
@@ -250,7 +250,7 @@ console.log(modifiedStrength);
                   selectedStat.statName
                 ] += selectedStat.change;
                 title = `${selectedStatLabel} for ${participant2Name}`;
-                description = `the ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
+                description = `The ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
 
                 console.log(
                   `Decreased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
@@ -261,7 +261,7 @@ console.log(modifiedStrength);
                   [selectedStat.statName]: selectedStat.change,
                 });
                 title = `${selectedStatLabel} for ${participant2Name}`;
-                description = `the ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
+                description = `The ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
 
                 console.log(
                   `Initialized stat ${selectedStat.statName} for participant 2 (ID: ${participant2}) with a value of ${selectedStat.change}`
@@ -274,7 +274,7 @@ console.log(modifiedStrength);
             }
           } else {
             console.log(
-              `Participant 2 (ID: ${participant2}) not found in participants array.`
+              `Participant 2 (ID: ${participant2}) not found in participants array. `
             );
           }
         } else {
@@ -345,7 +345,7 @@ console.log(modifiedStrength);
                 }
               } else {
                 console.log(
-                  `Participant (ID: ${participantId}) not found in participants array.`
+                  `Participant (ID: ${participantId}) not found in participants array. `
                 );
               }
             });
@@ -419,7 +419,7 @@ console.log(modifiedStrength);
                 }
               } else {
                 console.log(
-                  `Participant (ID: ${participantId}) not found in participants array.`
+                  `Participant (ID: ${participantId}) not found in participants array. `
                 );
               }
             });
@@ -469,7 +469,7 @@ console.log(modifiedStrength);
               title = `Activity Change for ${participant2Name}`;
               description = `Due to the ${relationship.name} relationship between  ${participant2Name} and  ${participant1Name},  ${participant2Name} has been rendered ${
                 foundParticipant2.isActive ? "active" : "inactive"
-              }.`;
+              }. `;
         
               // Iterate through the other participants in the relationship
               const otherParticipants = relationship.participants.filter(
@@ -495,7 +495,7 @@ console.log(modifiedStrength);
               );
             } else {
               console.log(
-                `Participant 2 (ID: ${participant2}) not found in participants array.`
+                `Participant 2 (ID: ${participant2}) not found in participants array. `
               );
             }
           } else {
@@ -550,7 +550,7 @@ console.log(modifiedStrength);
           
                     // Set the title and description for participant 1
                     title = ` ${participant1.name} ${selectedStatLabel}`;
-                    description = `Due to the ${relationship.name} relationship, ${participant1.name} experienced an increase in ${selectedStatLabel}.`;
+                    description = `Due to the ${relationship.name} relationship, ${participant1.name} experienced an increase in ${selectedStatLabel}. `;
                   } else {
                     // Initialize the stat with the change value if not found
                     participant1.stats.push({
@@ -562,7 +562,7 @@ console.log(modifiedStrength);
           
                     // Set the title and description for participant 1
                     title = `Stat Initialization for ${participant1.name}`;
-                    description = `Due to the ${relationship.name} relationship, ${participant1.name} gained a ${selectedStatLabel}.`;
+                    description = `Due to the ${relationship.name} relationship, ${participant1.name} gained a ${selectedStatLabel}. `;
                   }
           
                   // Iterate through all other participants in the relationship and decrease their stats
@@ -600,7 +600,7 @@ console.log(modifiedStrength);
                         }
                       } else {
                         console.log(
-                          `Participant (ID: ${participantId}) not found in participants array.`
+                          `Participant (ID: ${participantId}) not found in participants array. `
                         );
                       }
                     }
@@ -660,7 +660,7 @@ console.log(modifiedStrength);
             
                       // Set the title and description for participant 1
                       title = `${selectedStatLabel} Decrease for ${participant1.name}`;
-                      description = `Due to the ${relationship.name} relationship, ${participant1.name} experienced a decrease in ${selectedStatLabel}.`;
+                      description = `Due to the ${relationship.name} relationship, ${participant1.name} experienced a decrease in ${selectedStatLabel}. `;
                     } else {
                       console.log(
                         `Stat ${selectedStat.statName} not found for participant 1 (ID: 1)`
@@ -707,7 +707,7 @@ console.log(modifiedStrength);
                           }
                         } else {
                           console.log(
-                            `Participant (ID: ${participantId}) not found in participants array.`
+                            `Participant (ID: ${participantId}) not found in participants array. `
                           );
                         }
                       }
@@ -763,7 +763,7 @@ console.log(modifiedStrength);
               
                   if (category) {
                     console.log(
-                      `Found a category (ID: ${category.id}) with participant 1 but not participant 2.`
+                      `Found a category (ID: ${category.id}) with participant 1 but not participant 2. `
                     );
               
                     // Get the type of the new category
@@ -772,7 +772,7 @@ console.log(modifiedStrength);
                     // Add participant2 to the category
                     category.participants.push(participant2);
                     console.log(
-                      `Added participant 2 (ID: ${participant2}) to the category.`
+                      `Added participant 2 (ID: ${participant2}) to the category. `
                     );
               
                     // Remove participant2 from other categories with the same type
@@ -785,14 +785,14 @@ console.log(modifiedStrength);
                           (participantId) => participantId !== participant2
                         );
                         console.log(
-                          `Removed participant 2 (ID: ${participant2}) from category (ID: ${otherCategory.id}).`
+                          `Removed participant 2 (ID: ${participant2}) from category (ID: ${otherCategory.id}). `
                         );
                       }
                     });
               
                     // Set the title and description for the action
-                    title = `${categoryType} Welcomes New Participant.`;
-                    description = `${participant2Name} has entered this ${categoryType},\n ${participant1Name} is rumored to have a strong influence in making it happen.`;
+                    title = `${categoryType} Welcomes New Participant. `;
+                    description = `${participant2Name} has entered this ${categoryType},\n ${participant1Name} is rumored to have a strong influence in making it happen. `;
                   } else {
                     console.log(
                       "No category found with participant 1 but not participant 2."
@@ -838,7 +838,7 @@ console.log(modifiedStrength);
                 
                     if (category) {
                       console.log(
-                        `Found a category (ID: ${category.id}) with both participants.`
+                        `Found a category (ID: ${category.id}) with both participants. `
                       );
                 
                       // Randomly select one of the participants to remove
@@ -852,12 +852,12 @@ console.log(modifiedStrength);
                       category.participants = participantsInCategory;
                 
                       console.log(
-                        `Removed participant ID ${randomParticipantId} from the category.`
+                        `Removed participant ID ${randomParticipantId} from the category. `
                       );
                 
                       // Set the title and description for the action
                       title = `Category Left: ${category.type}`;
-                      description = `${participant1Name} and ${participant2Name} have both left ${category.name}.`;
+                      description = `${participant1Name} and ${participant2Name} have both left ${category.name}. `;
                     } else {
                       console.log("No category found with both participants.");
                     }
@@ -929,7 +929,7 @@ console.log(modifiedStrength);
                   
                         // Set the title and description for the action
                         title = ` ${itemToTransfer.name}, To New Owner`;
-                        description = `The ${itemToTransfer.name} has been ${randomEventStrengthText}ly transferred from ${participant1Name} to ${participant2Name}.`;
+                        description = `The ${itemToTransfer.name} has been ${randomEventStrengthText}ly transferred from ${participant1Name} to ${participant2Name}. `;
                   
                         // Log the item transfer
                         console.log(
@@ -960,7 +960,7 @@ console.log(modifiedStrength);
           const participant1 = participants.find((participant) => participant.id === participant1Id);
         
           if (!participant1) {
-            console.log(`Participant 1 not found.`);
+            console.log(`Participant 1 not found. `);
             break;
           }
         
@@ -1051,7 +1051,7 @@ console.log(modifiedStrength);
         
             // Set the title and description for the action
             title = `New Participant Created: ${newParticipant.name}`;
-            description = `A new participant named ${newParticipant.name} has been created.`;
+            description = `A new participant named ${newParticipant.name} has been recognized. `;
           } else {
             console.log(`Invalid name format for participant 1: ${participant1.name}`);
           }

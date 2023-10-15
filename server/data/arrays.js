@@ -598,9 +598,17 @@ const recentEvents = [
   {
     id: "2bd6cb3d-c002-4717-b44f6-66c53ada8c74",
     eventTypeId: "1694197990275",
-    title: "Welcome",
+    title: "Welcome!",
     description:
       "Welcome To WorldBooker\n\n This is where you will recieve notifications of events happening in your world.",
+  },
+
+  {
+    id: "2bd6cb3d-c002-4717-b44f6-66c53ada8c74",
+    eventTypeId: "1694197990275",
+    title: "A Note on Participant Images",
+    description:
+      "Participant images are set by using image links from anywhere on the internet, \n this means that there is no limit to to what you can choose!\n You can change a participants image by clicking  the 'Profile-Image' property (next to the 'Name' property) of the participant you want to change, delete the existing link and paste the image link of youre selection.\n\n PS: If your out of inspiration you can view other saves in the 'See what others have published and even grab a copy!",
   },
 ];
 const items = [

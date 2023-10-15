@@ -24,13 +24,13 @@ export default function StatPerception() {
         // Initialize the missing stat perception entry
         const missingStatPerception = {
           statName: stat.statName,
-          top1: 'Legend',
-          top5Percentile: 'Maineventer',
-          top10Percentile: 'Upper MidCard',
-          top20Percentile: 'MidCard',
-          top40Percentile: 'Lower MidCard',
-          top80Percentile: 'Jobbers',
-          top100Percentile: 'Jabaronis', // Note: You had a duplicate 'top20Percentile' in your example, so I replaced it with 'Jobbers'
+          top1: "Elite",
+          top5Percentile: "Exceptional",
+          top10Percentile: "Outstanding",
+          top20Percentile: "Above Average",
+          top40Percentile: "Average",
+          top80Percentile: "Below Average",
+          top100Percentile: "Poor",
         };
 
         // Add the missing stat perception entry to the statPerception array

@@ -61,7 +61,7 @@ const LoginPage = () => {
                 marginTop: "20px",
               }}
             >
-              World<span style={{ color: "limegreen" }}>Booker</span>
+              World<span style={{ color: "blue" }}>Booker</span>
             </Typography.Title>
 
             <div style={{ display: "flex" }}>
@@ -131,10 +131,9 @@ const LoginPage = () => {
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                   <div className="feature-content">
-                    <h3 style={{ fontSize: "24px" }}>Feature 1</h3>
+                    <h3 style={{ fontSize: "24px", color:'blue'  }}>Craft Your Customized Statistics</h3>
                     <p style={{ fontSize: "16px" }}>
-                      Description of Feature 1 goes here. Lorem ipsum dolor sit
-                      amet, consectetur adipiscing elit.
+                    Elevate your booking experience by meticulously tracking essential data. With World Booker, you have the power to create, monitor, and update the statistics that hold significance for you. Our intuitive interface ensures that stat-related information is presented in an easily digestible format for seamless readability.
                     </p>
                   </div>
                 </Col>
@@ -142,10 +141,9 @@ const LoginPage = () => {
                 {/* Second Row */}
                 <Col xs={24} sm={24} md={12}>
                   <div className="feature-content">
-                    <h3 style={{ fontSize: "24px" }}>Feature 2</h3>
+                    <h3 style={{ fontSize: "24px", color:'blue' }}>Boundless Sandbox Possibilities</h3>
                     <p style={{ fontSize: "16px" }}>
-                      Description of Feature 2 goes here. Lorem ipsum dolor sit
-                      amet, consectetur adipiscing elit.
+                    WorldBooking is meticulously designed with an unwavering commitment to the limitless potential of sandbox creativity. Immerse yourself in storytelling while preserving the foundational structure of your unique world, providing a fertile ground for your next epic narrative.
                     </p>
                   </div>
                 </Col>
@@ -159,10 +157,9 @@ const LoginPage = () => {
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                   <div className="feature-content">
-                    <h3 style={{ fontSize: "24px" }}>Feature 3</h3>
+                    <h3 style={{ fontSize: "24px", color:'blue'  }}>Ignite and Share Inspiration!</h3>
                     <p style={{ fontSize: "16px" }}>
-                      Description of Feature 3 goes here. Lorem ipsum dolor sit
-                      amet, consectetur adipiscing elit.
+                    Browse and appreciate the imaginative worlds crafted by fellow enthusiasts, just like you. Moreover, you can publish your own creations to spark inspiration in others. Your creations can serve as a beacon of creativity for the entire community, fostering a culture of shared inspiration.
                     </p>
                   </div>
                 </Col>
@@ -183,7 +180,7 @@ const LoginPage = () => {
               level={5}
               style={{ fontWeight: "500", marginBottom: "1.5rem" }}
             >
-              Login to BookBoard
+              Login to a WorldBooker save
             </Typography.Title>
             <Form />
           </div>

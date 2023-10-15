@@ -971,7 +971,7 @@ function Segment({ removeSegment }) {
           {`${hoveredParticipant.name}`}
         </span>
 
-        <div style={{ marginLeft: "100px", marginTop: 100 }}>
+        <div style={{ marginLeft: "100px", marginTop:'60% '}}>
           {statPerception.map((perception) => (
             <div key={perception.statName} style={{ marginBottom: "8px" }}>
               <Tag color="purple">
@@ -1055,7 +1055,7 @@ function Segment({ removeSegment }) {
         >
           {selectedParticipants.length > 0 && (
             <>
-              <h3>Selected Players:</h3>
+              <h3>Selected Participants:</h3>
               <p>
                 {selectedParticipants.map((participantId, index) => {
                   const participantName = participants.find(

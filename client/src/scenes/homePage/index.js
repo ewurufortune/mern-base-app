@@ -26,7 +26,7 @@ const HomePage = () => {
 >
       <>
         <Button onClick={handleClick}>
-          Change Theme to {isDarkMode ? "Light" : "Dark"}
+          {isDarkMode ? "Light" : "Dark"} Theme
         </Button>
         <OverallTab isDarkMode={isDarkMode} />
         <StatPerception isDarkMode={isDarkMode } />
