@@ -19,13 +19,11 @@ import FlexBetween from "components/FlexBetween";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
   email: yup
     .string()
     // .email("invalid email")
     .required("required"),
   password: yup.string().required("required"),
-  location: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
@@ -38,10 +36,8 @@ const loginSchema = yup.object().shape({
 
 const initialValuesRegister = {
   firstName: "",
-  lastName: "a",
   email: "",
   password: "",
-  location: "a",
 
   picture: "a",
 };
@@ -184,9 +180,11 @@ const Form = () => {
                     Boolean(touched.firstName) && Boolean(errors.firstName)
                   }
                   helperText={touched.firstName && errors.firstName}
-                  sx={{ gridColumn: "span 4" }}
+                  sx={{ gridColumn: "span 2" }}
                 />
-             
+              
+
+           
               </>
             )}
 
@@ -245,8 +243,8 @@ const Form = () => {
               }}
             >
               {isLogin
-                ? "Don't have a save? Create one here."
-                : "Already have a save? Login here."}
+                ? "Don't have an account? Sign Up here."
+                : "Already have an account? Login here."}
             </Typography>
           </Box>
         </form>
