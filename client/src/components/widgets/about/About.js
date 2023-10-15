@@ -101,7 +101,6 @@ const aim = (
     <p><strong>Solution:</strong> Explore the worlds crafted by others, and in turn, share your creations to inspire fellow enthusiasts. WorldBooker serves as a wellspring of creativity, ensuring you're never short on imaginative ideas.</p>
   </li>
 
- 
 </ul>
 
 <p>
@@ -112,6 +111,13 @@ const aim = (
     <p>
       As a solo indie dev, I'm constantly tinkering under the hood. I'm listening to your feedback, adding cool new features, and fine-tuning everything. But, I'll keep this ship sailing only if you see potential in what I'm doing. If you do think I'm onto something and wish to contribute to its growth, consider buying me a coffee. Your support ensures that we can keep making WorldBooker the best it can be.
     </p>
+    <a href="https://www.buymeacoffee.com/ewurufortune">
+  <img
+    src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=ewurufortune&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
+    width="150"
+    height="30"
+  />
+</a>
 
     <p>Thanks for being part of this indie adventure. Buckle up, my friend, because we're about to embark on some incredible storytelling journeys together.</p>
   </div>

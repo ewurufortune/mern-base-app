@@ -84,88 +84,91 @@ const LoginPage = () => {
                 }}
               />
             </div>
+            <p style={{ color: "red", display: window.innerWidth <= 768 ? "block" : "none" }}>
+  WorldBooker is currently not compatible with mobile screens
+</p>
           </div>
         </div>
         {!showLoginForm ? (
-          <div>
-            <div
-              style={{
-                width: "50%",
-                margin: "2rem auto",
-                padding: "2rem",
-                borderRadius: "1.5rem",
-                backgroundColor: "#f0f2f5",
-                textAlign: "center",
-              }}
-            >
-              <Typography.Title
-                level={5}
-                style={{
-                  fontWeight: "500",
-                  marginTop: "-10px",
-                  marginBottom: "1.5rem",
-                  fontSize: "20px",
-                }}
-              >
-                Welcome to BookBoard, a place to write and share
-                fantasy-bookings!
-              </Typography.Title>
-              <button
-                icon={<ArrowRightOutlined />}
-                onClick={handleShowLoginForm}
-                style={{
-                  fontSize: "30px",
-                  padding: "10px 20px",
-                  marginBottom: "5rem",
-                }}
-                className="button-85"
-              >
-                Play{" "}
-              </button>
-            </div>
-            <div style={{ paddingLeft: "10%", paddingRight: "10%" }}>
-              <Row gutter={[16, 16]}>
-                {/* First Row */}
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-image">Placeholder Image</div>
-                </Col>
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-content">
-                    <h3 style={{ fontSize: "24px", color:'blue'  }}>Craft Your Customized Statistics</h3>
-                    <p style={{ fontSize: "16px" }}>
-                    Elevate your booking experience by meticulously tracking essential data. With World Booker, you have the power to create, monitor, and update the statistics that hold significance for you. Our intuitive interface ensures that stat-related information is presented in an easily digestible format for seamless readability.
-                    </p>
-                  </div>
-                </Col>
+         <div>
+  <div
+    style={{
+      width: "50%",
+      margin: "2rem auto",
+      padding: "2rem",
+      borderRadius: "1.5rem",
+      backgroundColor: "#f0f2f5",
+      textAlign: "center",
+    }}
+  >
+    <Typography.Title
+      level={5}
+      style={{
+        fontWeight: "500",
+        marginTop: "-10px",
+        marginBottom: "1.5rem",
+        fontSize: "20px",
+      }}
+    >
+      Welcome to BookBoard, a place to write and share fantasy-bookings!
+    </Typography.Title>
+    <button
+      icon={<ArrowRightOutlined />}
+      onClick={handleShowLoginForm}
+      style={{
+        fontSize: "30px",
+        padding: "10px 20px",
+        marginBottom: "5rem",
+      }}
+      className="button-85"
+    >
+      Play
+    </button>
+  </div>
+  <div style={{ paddingLeft: "10%", paddingRight: "10%" }}>
+    <Row gutter={[16, 16]}>
+      {/* First Row */}
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-image"></div>
+      </Col>
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-content" style={{ fontSize: "16px" }}>
+          <h3 style={{ fontSize: "24px", color: 'blue' }}>Craft Your Customized Statistics</h3>
+          <p>
+            Elevate your booking experience by meticulously tracking essential data. With World Booker, you have the power to create, monitor, and update the statistics that hold significance for you. Our intuitive interface ensures that stat-related information is presented in an easily digestible format for seamless readability.
+          </p>
+        </div>
+      </Col>
 
-                {/* Second Row */}
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-content">
-                    <h3 style={{ fontSize: "24px", color:'blue' }}>Boundless Sandbox Possibilities</h3>
-                    <p style={{ fontSize: "16px" }}>
-                    WorldBooking is meticulously designed with an unwavering commitment to the limitless potential of sandbox creativity. Immerse yourself in storytelling while preserving the foundational structure of your unique world, providing a fertile ground for your next epic narrative.
-                    </p>
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-image">Placeholder Image</div>
-                </Col>
+      {/* Second Row */}
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-content" style={{ fontSize: "16px" }}>
+          <h3 style={{ fontSize: "24px", color: 'blue' }}>Boundless Sandbox Possibilities</h3>
+          <p>
+            WorldBooking is meticulously designed with an unwavering commitment to the limitless potential of sandbox creativity. Immerse yourself in storytelling while preserving the foundational structure of your unique world, providing a fertile ground for your next epic narrative.
+          </p>
+        </div>
+      </Col>
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-image"></div>
+      </Col>
 
-                {/* Third Row */}
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-image">Placeholder Image</div>
-                </Col>
-                <Col xs={24} sm={24} md={12}>
-                  <div className="feature-content">
-                    <h3 style={{ fontSize: "24px", color:'blue'  }}>Ignite and Share Inspiration!</h3>
-                    <p style={{ fontSize: "16px" }}>
-                    Browse and appreciate the imaginative worlds crafted by fellow enthusiasts, just like you. Moreover, you can publish your own creations to spark inspiration in others. Your creations can serve as a beacon of creativity for the entire community, fostering a culture of shared inspiration.
-                    </p>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          </div>
+      {/* Third Row */}
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-image"></div>
+      </Col>
+      <Col xs={24} sm={24} md={12}>
+        <div className="feature-content" style={{ fontSize: "16px" }}>
+          <h3 style={{ fontSize: "24px", color: 'blue' }}>Ignite and Share Inspiration!</h3>
+          <p>
+            Browse and appreciate the imaginative worlds crafted by fellow enthusiasts, just like you. Moreover, you can publish your own creations to spark inspiration in others. Your creations can serve as a beacon of creativity for the entire community, fostering a culture of shared inspiration.
+          </p>
+        </div>
+      </Col>
+    </Row>
+  </div>
+</div>
+
         ) : (
           <div
             style={{

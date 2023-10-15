@@ -354,3 +354,23 @@ p {
     font-size: 8px; /* Reduce the font size for text content on smaller screens */
   }
 }
+
+@media (max-width: 768px) {
+  /* Adjust the width and height for smaller screens */
+  img {
+    width: 30%; /* Adjust the desired width for smaller screens */
+    height: auto; /* Set height to 'auto' for responsive scaling */
+  }
+}
+
+/* Media query for smaller screens (e.g., mobile) */
+@media (max-width: 768px) {
+  .content-container {
+    width: 50%; /* Content takes up 100% of the available width on smaller screens */
+    padding: 1rem; /* Adjust padding as needed for smaller screens */
+  }
+
+  .feature-content {
+    font-size: 5px; /* 50% smaller font size for feature content on smaller screens */
+  }
+}
