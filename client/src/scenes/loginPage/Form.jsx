@@ -36,10 +36,11 @@ const loginSchema = yup.object().shape({
 
 const initialValuesRegister = {
   firstName: "",
+  lastName: "",
   email: "",
   password: "",
 
-  picture: "a",
+  picture: "",
 };
 
 const initialValuesLogin = {
@@ -79,7 +80,7 @@ const Form = () => {
     onSubmitProps.resetForm();
 
     if (savedUser) {
-      messageApi.success({ content: 'Save Created successfully! log in.', key: 'registerMessage' });
+      messageApi.success({ content: 'Save Created successfully! log in', key: 'registerMessage' });
 
       setTimeout(messageApi.destroy,2000);
 
@@ -90,7 +91,7 @@ const Form = () => {
   const login = async (values, onSubmitProps) => {
     // Show loading message
     // Display loading message
-    messageApi.loading({ content: "Logging in... might take a minute", key: "LoginMessage", duration:0 });
+    messageApi.loading({ content: "Logging in...", key: "LoginMessage", duration:0 });
     try {
       const loggedInResponse = await fetch("https://bookboard-app.onrender.com/auth/login", {
         method: "POST",
@@ -100,7 +101,7 @@ const Form = () => {
 
       if (loggedInResponse.ok) {
         const loggedIn = await loggedInResponse.json();
-        // console.log(loggedIn);
+        console.log(loggedIn);
         onSubmitProps.resetForm();
         if (loggedIn) {
           dispatch(
@@ -182,9 +183,7 @@ const Form = () => {
                   helperText={touched.firstName && errors.firstName}
                   sx={{ gridColumn: "span 2" }}
                 />
-              
 
-           
               </>
             )}
 

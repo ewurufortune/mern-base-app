@@ -75,6 +75,8 @@ const EventNotifications = () => {
         ev.id === event.id ? { ...ev, isRead: true } : ev
       );
       dispatch(setStats({ recentEvents: updatedEventsList }));
+      replaceUser(user)
+
     }
     setSelectedEvent(event);
   };

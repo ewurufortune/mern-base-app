@@ -181,7 +181,7 @@ const ParticipantEditor = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "20%",
+      width: "15%",
       editable: true,
       fixed: 'left',
     },
@@ -234,7 +234,8 @@ const ParticipantEditor = () => {
     })),
 
     {
-      title: "Operation",
+      title: "Delete",
+      fixed: 'right',
       dataIndex: "operation",
       render: (_, record) =>
         dataSource.length >= 1 ? (
@@ -254,7 +255,7 @@ const ParticipantEditor = () => {
       name: `Agent ${count + 1}`,
       isActive: true, // Set the initial value to true
       bio: "",
-      image:'https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png',
+      image:'https://i.redd.it/bwciyi6pd4rb1.png',
       stats: [{ relevance: 0 }],
     };
     setDataSource([...dataSource, newData]);
@@ -381,7 +382,7 @@ const ParticipantEditor = () => {
         columns={columns}
         rowKey="id"
         scroll={{
-      x: 1300,
+      x: 700,
     }}
         expandable={{
           expandedRowRender: (record) => (
