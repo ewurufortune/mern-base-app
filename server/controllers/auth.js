@@ -9,12 +9,10 @@ export const register = async (req, res) => {
   try {
     const {
       firstName,
-      lastName,
       email,
       password,
       picturePath,
       friends,
-      location,
     } = req.body;
 
     const salt = await bcrypt.genSalt();
@@ -22,12 +20,10 @@ export const register = async (req, res) => {
 
     const newUser = new User({
       firstName,
-      lastName,
       email,
       password: passwordHash,
       picturePath,
       friends,
-      location,
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
       // Append the generated wrestler array to the user's savegame.wrestlers
@@ -48,7 +44,7 @@ export const register = async (req, res) => {
 
 export const createPost = async (req, res) => {
   try {
-    const { id, firstName, lastName, description, picturePath } = req.body;
+    const { id, firstName, description, picturePath } = req.body;
 
     if (!id) {
       console.log(req.body);
@@ -60,7 +56,6 @@ export const createPost = async (req, res) => {
     const newPost = new Post({
       userId: id,
       firstName: firstName,
-      lastName: lastName,
       description: description,
       picturePath: picturePath,
       likes: new Map([[id, true]]), // Initialize likes with the user's ID as a key
@@ -250,9 +245,7 @@ export const replaceUser = async (req, res) => {
     const {
       id,
       firstName,
-      lastName,
       email,
-      location,
       impressions,
       mainLogs,
       participants,
@@ -274,9 +267,7 @@ export const replaceUser = async (req, res) => {
 
     // Update the user properties if they are provided in the request body
 if (firstName) user.firstName = firstName;
-if (lastName) user.lastName = lastName;
 if (email) user.email = email;
-if (location) user.location = location;
 if (impressions) user.impressions = impressions;
 if (mainLogs) user.mainLogs = mainLogs;
 if (participants) user.participants = participants;

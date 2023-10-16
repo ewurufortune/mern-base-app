@@ -18,9 +18,8 @@ const EventNotifications = () => {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -52,7 +51,7 @@ const EventNotifications = () => {
       messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
       
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });

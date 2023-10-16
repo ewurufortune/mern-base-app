@@ -29,7 +29,7 @@ export default function TriggerRandomEvent() {
     let filteredParticipants = participants;
 
     // Convert lastDate and currentDate to JavaScript Date objects
-    console.log(lastDate);
+    // console.log(lastDate);
     const lastDateObj = new Date(lastDate);
     const currentDateObj = new Date(date);
     function formatDateToYYYYMMDD(dateObj) {
@@ -78,7 +78,7 @@ export default function TriggerRandomEvent() {
       // Convert date objects to 'yyyy-MM-dd' format
       const lastDateStr = formatDateToYYYYMMDD(lastDateObj);
       const currentDateStr = formatDateToYYYYMMDD(currentDateObj);
-      console.log(lastDateStr, currentDateStr);
+      // console.log(lastDateStr, currentDateStr);
       const _MS_PER_DAY = 1000 * 60 * 60 * 24;
       // Discard the time and time-zone information.
       const utc1 = Date.parse(lastDateStr);
@@ -94,7 +94,7 @@ export default function TriggerRandomEvent() {
     const elapsedMonths = dateDiffInMonths(lastDateObj, currentDateObj);
     const elapsedYears = dateDiffInYears(lastDateObj, currentDateObj);
 
-    console.log(elapsedDays);
+    // console.log(elapsedDays);
     randomEvents.forEach((event) => {
       if (event.eventRarity === "weekly") {
         // Execute the event as many times as days have passed
@@ -122,7 +122,7 @@ export default function TriggerRandomEvent() {
     dispatch(setStats({ categories: categories }));
     const updatedRecentEvents = [...recentEvents, ...executedEvents];
     dispatch(setStats({ recentEvents: updatedRecentEvents }));
-    console.log(recentEvents);
+    // console.log(recentEvents);
     // Dispatch the updated participants array if needed
   };
 
@@ -143,7 +143,7 @@ export default function TriggerRandomEvent() {
       const selectedStat = stats.find((stat) => stat.id === selectedStatId);
 
       if (!selectedStat) {
-        console.log("Selected stat not found");
+        // console.log("Selected stat not found");
         return; // Exit if the selected stat is not found
       }
 
@@ -164,7 +164,7 @@ export default function TriggerRandomEvent() {
       };
 
       filteredParticipants = participants.filter(statFilter);
-      console.log(filteredParticipants);
+      // console.log(filteredParticipants);
     }
 
     if (event.selectedEventComponents.includes("activity")) {
@@ -177,7 +177,7 @@ export default function TriggerRandomEvent() {
       };
 
       filteredParticipants = filteredParticipants.filter(activityFilter);
-      console.log(filteredParticipants);
+      // console.log(filteredParticipants);
     }
 
     if (event.selectedEventComponents.includes("item")) {
@@ -191,7 +191,7 @@ export default function TriggerRandomEvent() {
       };
 
       filteredParticipants = filteredParticipants.filter(itemFilter);
-      console.log(filteredParticipants);
+      // console.log(filteredParticipants);
     }
 
     if (event.selectedEventComponents.includes("category")) {
@@ -215,7 +215,7 @@ export default function TriggerRandomEvent() {
         return false;
       };
       filteredParticipants = filteredParticipants.filter(categoryFilter);
-      console.log(filteredParticipants);
+      // console.log(filteredParticipants);
     }
 
     //EXECUTIONS
@@ -299,7 +299,7 @@ export default function TriggerRandomEvent() {
               });
             }
           );
-          console.log(categories);
+          // console.log(categories);
         });
       }
 
@@ -308,19 +308,19 @@ export default function TriggerRandomEvent() {
 
       if (event.selectedConsequenceComponents.includes("itemChange")) {
         const selectedItemChangeId = event.selectedItemChange;
-        console.log(selectedItemChangeId);
+        // console.log(selectedItemChangeId);
         // Find the selected item by id
         const selectedItem = items.find(
           (item) => item.id === selectedItemChangeId
         );
 
         if (!selectedItem) {
-          console.log("Selected item not found");
+          // console.log("Selected item not found");
           return; // Exit if the selected item is not found
         }
 
         const selectedItemPercentile = event.selectedItemPercentile;
-        console.log("item part chevk", participants);
+        // console.log("item part chevk", participants);
         // Calculate percentiles based on the 'relevance' stat
         participants.sort(
           (a, b) => b.stats[0].relevance - a.stats[0].relevance
@@ -382,11 +382,11 @@ export default function TriggerRandomEvent() {
           const selectedIndex = items.findIndex(
             (item) => item.id === selectedItem.id
           );
-          console.log(selectedIndex);
+          // console.log(selectedIndex);
           items[selectedIndex] = selectedItem;
-          console.log("after change:", items);
+          // console.log("after change:", items);
         } else {
-          console.log("Selected participant is already the holder");
+          // console.log("Selected participant is already the holder");
         }
       }
     };
@@ -399,11 +399,11 @@ export default function TriggerRandomEvent() {
       const endDate = new Date(selectedDateRange[1]);
 
       if (currentDate >= startDate && currentDate <= endDate) {
-        console.log("Date range found");
+        // console.log("Date range found");
         // Date range is valid, set executeEvent to true
         setExecuteEvent(true);
       } else {
-        console.log("Date range NOT found");
+        // console.log("Date range NOT found");
         // Date range is not valid, set executeEvent to false to skip this event
         setExecuteEvent(false);
       }
@@ -415,7 +415,7 @@ export default function TriggerRandomEvent() {
 
     // Now, execute the event's consequences based on the value of executeEvent
     if (executeEvent) {
-      console.log("Event Executed");
+      // console.log("Event Executed");
       // Execute the event's consequences
       executeEventConsequences(event);
     }

@@ -59,9 +59,8 @@ const EditableCell = ({
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -94,7 +93,7 @@ const EditableCell = ({
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
@@ -121,7 +120,7 @@ const user = useSelector((state) => state.user);
         ...values,
       });
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
     replaceUser(user)
   };
@@ -184,9 +183,8 @@ const RelationshipsEditor = () => {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -219,7 +217,7 @@ const RelationshipsEditor = () => {
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
@@ -249,7 +247,7 @@ const RelationshipsEditor = () => {
     if (categoryIndex !== -1) {
       clonedCategories[categoryIndex] = updatedRecord;
     }
-    console.log(updatedRecord);
+    // console.log(updatedRecord);
     dispatch(setStats({ relationships: clonedCategories }));
     setSelectedParticipants(updatedRecord);
   };
@@ -356,7 +354,7 @@ const RelationshipsEditor = () => {
       return item;
     });
     setDataSource(newData);
-    console.log(newData);
+    // console.log(newData);
     dispatch(setStats({ relationships: newData }));
   };
 

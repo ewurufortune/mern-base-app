@@ -154,9 +154,8 @@ function EventGenerator() {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -186,7 +185,7 @@ function EventGenerator() {
       // Display success message
       messageApi.success({ content: 'Data saved successfully!', key: 'replaceUserMessage' });
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to save data!', key: 'replaceUserMessage' });
@@ -229,15 +228,15 @@ function EventGenerator() {
     };
 
     const updatedRandomEvents = _.cloneDeep(randomEvents);
-    console.log(updatedRandomEvents);
+    // console.log(updatedRandomEvents);
 
     // Add the generatedEvent to the cloned array
     const newRandomEvents = [...updatedRandomEvents, generatedEvent];
-    console.log("New Random Events:", newRandomEvents);
+    // console.log("New Random Events:", newRandomEvents);
 
     dispatch(setStats({ randomEvents: newRandomEvents }));
 replaceUser(user)
-    console.log("Updated Random Events:", randomEvents);
+    // console.log("Updated Random Events:", randomEvents);
     resetState();
     setEventTitle("");
     setTitleCharCount(0);

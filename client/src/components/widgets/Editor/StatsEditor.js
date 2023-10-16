@@ -51,9 +51,8 @@ const EditableCell = ({
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -86,7 +85,7 @@ const EditableCell = ({
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -123,7 +122,7 @@ const EditableCell = ({
       });
       replaceUser(user)
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
   };
 
@@ -186,9 +185,8 @@ const StatsEditor = () => {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -221,7 +219,7 @@ const StatsEditor = () => {
               setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -242,7 +240,7 @@ const StatsEditor = () => {
   };
 
   const handleDeleteStat = (statNameToDelete) => {
-    console.log(statNameToDelete);
+    // console.log(statNameToDelete);
     const updatedParticipants = participants.map((participant) => {
       const updatedStats = participant.stats.filter((stat) => {
         // Check if the stat object contains the statNameToDelete property
@@ -285,7 +283,7 @@ const StatsEditor = () => {
  setDataSource(updatedGlobalStats);
  
  dispatch(setStats({ stats: updatedGlobalStats, statPerception:updatedStatPerception }));
-    console.log(updatedParticipants);
+    // console.log(updatedParticipants);
     replaceUser(user)
   };
   
@@ -372,7 +370,7 @@ const StatsEditor = () => {
     });
     setDataSource(newData);
     dispatch(setStats({ stats: newData }));
-    console.log(newData);
+    // console.log(newData);
   };
 
   const components = {

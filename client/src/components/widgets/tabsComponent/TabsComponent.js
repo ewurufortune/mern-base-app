@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 
 
 const onChange = (key) => {
-  console.log(key);
+  // console.log(key);
 };
 const playerInformation = [
   {

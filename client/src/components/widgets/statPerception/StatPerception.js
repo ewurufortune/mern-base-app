@@ -47,14 +47,14 @@ export default function StatPerception() {
   useEffect(() => {
     // This code will run when the component is first loaded
     const updatedStatPerception = initializeMissingStatPerception(stats, statPerception);
-    console.log(updatedStatPerception);
+    // console.log(updatedStatPerception);
     dispatch(setStats({ statPerception: updatedStatPerception }));
   }, []); // The empty dependency array ensures this runs only once, like componentDidMount
 
   const handlRefreshPerceptions = () => {
     const updatedStatPerception = initializeMissingStatPerception(stats, statPerception);
     dispatch(setStats({ statPerception: updatedStatPerception }));
-    console.log(updatedStatPerception);
+    // console.log(updatedStatPerception);
   };
 
   return (

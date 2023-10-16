@@ -57,7 +57,7 @@ const EditableCell = ({
           ...values,
         });
       } catch (errInfo) {
-        console.log('Save failed:', errInfo);
+        // console.log('Save failed:', errInfo);
       }
     };
   
@@ -178,7 +178,7 @@ const handleSave = (row) => {
     });
     setDataSource(newData);
      dispatch(setStats({ arcs: newData }));
-    console.log(newData);
+    // console.log(newData);
   };
   
   const components = {

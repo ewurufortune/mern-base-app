@@ -165,6 +165,19 @@ const LoginPage = () => {
           </p>
         </div>
       </Col>
+      {/* Third Row */}
+    
+      <Col xs={24} sm={24} md={12}>
+  <div className="feature-content" style={{ fontSize: "16px" }}>
+    <h3 style={{ fontSize: "24px", color: 'blue' }}>Plan Stories for Your Favorite Booking Games</h3>
+    <p>
+      Use WorldBooker app to plan and organize your stories and bookings for your favorite games. Whether it's wrestling or role-playing, you can create, manage, and share your booking ideas with ease. World Booker provides you with the tools you need to bring your creative storytelling to life.
+    </p>
+  </div>
+</Col>
+  <Col xs={24} sm={24} md={12}>
+        <div className="feature-image"></div>
+      </Col>
     </Row>
   </div>
 </div>

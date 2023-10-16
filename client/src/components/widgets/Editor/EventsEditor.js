@@ -24,9 +24,9 @@ const EventsEditor = () => {
   
  
       const handleDelete = (eventId) => {
-        console.log(eventId);
-        console.log(randomEvents);
-        console.log(dataSource);
+        // console.log(eventId);
+        // console.log(randomEvents);
+        // console.log(dataSource);
         // Filter out the item with the specified id
         const newData = dataSource.filter((item) => item.eventId !== eventId);
       

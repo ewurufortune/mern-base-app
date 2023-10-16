@@ -59,9 +59,7 @@ const EditableCell = ({
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -94,7 +92,7 @@ const EditableCell = ({
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -114,7 +112,7 @@ const EditableCell = ({
       if (dataIndex === "change" && isNaN(values[dataIndex])) {
         throw new Error(`${title} must be a number.`);
       }
-console.log(record);
+// console.log(record);
       toggleEdit();
       handleSave({
         ...record,
@@ -122,7 +120,7 @@ console.log(record);
       });
       replaceUser(user)
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
   };
 
@@ -181,9 +179,7 @@ const ItemsEditor = () => {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -216,7 +212,7 @@ const ItemsEditor = () => {
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -345,7 +341,7 @@ const handleParticipantChange = (record, selectedParticipantsArray) => {
       
     };
     setDataSource([...dataSource, newData]);
-    console.log(dataSource);
+    // console.log(dataSource);
     dispatch(setStats({ items: dataSource }));
     setCount(count + 1);
   };
@@ -361,7 +357,7 @@ const handleParticipantChange = (record, selectedParticipantsArray) => {
       return item;
     });
     setDataSource(newData);
-    console.log(newData);
+    // console.log(newData);
     dispatch(setStats({ items: newData }));
   };
 
@@ -386,7 +382,7 @@ const handleParticipantChange = (record, selectedParticipantsArray) => {
         render: col.render, // Keep the existing render function
         // Add an onChange function to update the dataSource directly
         onChange: (newSelectedParticipants) => {
-          console.log(newSelectedParticipants);
+          // console.log(newSelectedParticipants);
           // Update the record with the new selected participants
           const updatedRecord = { ...record, holderId: newSelectedParticipants };
           const newData = [...dataSource];

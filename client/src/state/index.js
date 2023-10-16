@@ -50,11 +50,11 @@ export const authSlice = createSlice({
     ,
     setLastDate: (state, action) => {
       state.lastDate = action.payload;
-      console.log(action.payload);
+      // console.log(action.payload);
     },
 
     setStats: (state, action) => {
-      console.log(action.payload);
+      // console.log(action.payload);
       if (state.user) {
         state.user = {
           ...state.user,

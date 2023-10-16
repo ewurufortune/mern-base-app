@@ -38,7 +38,6 @@ export default function MainLogs() {
 
   const user = useSelector((state) => state.user);
   const firstName = viewMode ? selectedPost.firstName : user.firstName;
-  const lastName = viewMode ? selectedPost.lastName : user.lastName;
   const mainLogs = viewMode ? selectedPost.mainLogs : user.mainLogs;
   const participants = viewMode ? selectedPost.participants : user.participants;
   const categories = viewMode ? selectedPost.categories : user.categories;
@@ -373,9 +372,8 @@ export default function MainLogs() {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -897,7 +895,7 @@ console.log(copiedArray);
 
         <div style={{ marginBottom: "8px" }}>
           <Tag color="green">Items</Tag>
-          {console.log(items)}
+          {/* {console.log(items)} */}
           <Typography.Text style={{ opacity: 0.8 }}>
             {items
               .filter((item) =>

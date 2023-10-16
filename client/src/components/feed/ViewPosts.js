@@ -25,7 +25,7 @@ const Feed = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setPosts(data.mostLikedPosts);
         setIsLoading(false); // Set loading state to false when done
       })
@@ -72,7 +72,7 @@ const Feed = () => {
             return post;
           });
         });
-        console.log(posts);
+        // console.log(posts);
       })
       .catch((error) => {
         console.error('Error liking post:', error);

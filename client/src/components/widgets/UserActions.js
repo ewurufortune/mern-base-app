@@ -91,7 +91,7 @@ function NewSegment({ initialSegment }) {
       setSegmentKeys((prevSegmentKeys) => [...prevSegmentKeys, Date.now()]);
     } else {
       // You can display an error message or take other actions when the limit is reached
-      console.log('Segment limit reached. Cannot add more segments.');
+     // console.log('Segment limit reached. Cannot add more segments.');
     }
   };
   
@@ -225,9 +225,7 @@ function Segment({ removeSegment }) {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -260,7 +258,7 @@ function Segment({ removeSegment }) {
       messageApi.success({ content: 'Data replaced successfully!', key: 'replaceUserMessage' });
       setTimeout(messageApi.destroy,2000);
 
-      console.log(data);
+     // console.log(data);
     } catch (error) {
       // Display error message   
 
@@ -282,7 +280,7 @@ function Segment({ removeSegment }) {
       return;
     }
 
-    console.log("Deccription", description);
+   // console.log("Deccription", description);
     const regexDescription = applySelectedStats();
 
     // Calculate the segment rating
@@ -311,7 +309,7 @@ function Segment({ removeSegment }) {
 
     // Append the accountInfo to mainLogs
     const updatedMainLogs = [...mainLogs, accountInfo];
-    console.log(updatedMainLogs);
+   // console.log(updatedMainLogs);
     dispatch(setStats({ mainLogs: updatedMainLogs }));
     const updatedCategories = _.cloneDeep(categories);
 
@@ -335,7 +333,7 @@ function Segment({ removeSegment }) {
     dispatch(setStats({ categories: updatedCategories }));
 
     // Update the local state with the new mainLogs array
-    console.log(accountInfo);
+    // console.log(accountInfo);
     // Apply selected stats and show segment rating
     // setTimeout(() => {
     // }, 0);
@@ -347,7 +345,8 @@ function Segment({ removeSegment }) {
     replaceUser(user)
   
   
-  console.log(user);};
+  // console.log(user);
+};
   const handleDeselectAll = () => {
     setSelectedParticipants([]);
   };
@@ -441,7 +440,7 @@ function Segment({ removeSegment }) {
     setSelectedParticipants((prevSelectedParticipants) => {
       const updatedParticipants = prevSelectedParticipants.map(
         (participantId) => {
-          console.log(tempSelectedStats);
+         // console.log(tempSelectedStats);
           const matchingEntries = tempSelectedStats.filter(
             (entry) => entry.participantId === participantId
           );
@@ -501,10 +500,7 @@ function Segment({ removeSegment }) {
       // Update the participants array with the modified participants
       const updatedParticipantsArray = updatedParticipants.map(
         (updatedParticipant, participantIndex) => {
-          console.log(
-            `Updated participant at index ${participantIndex}:`,
-            updatedParticipant
-          );
+         
           return updatedParticipant;
         }
       );
@@ -680,7 +676,7 @@ function Segment({ removeSegment }) {
       );
     }
     setDescription(replacedDescription);
-    console.log("Replaced Description:", replacedDescription);
+   //// console.log("Replaced Description:", replacedDescription);
     return replacedDescription;
   };
 

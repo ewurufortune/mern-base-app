@@ -12,7 +12,6 @@ console.log(req.body);
     const newPost = new Post({
       userId,
       firstName: req.user.firstName, // Assuming you have user data stored in req.user
-      lastName: req.user.lastName,   // Adjust this according to your authentication setup
       description,
       picturePath,
       likes: new Map(),             // Initialize likes as an empty Map

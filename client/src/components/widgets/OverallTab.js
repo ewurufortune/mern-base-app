@@ -96,9 +96,7 @@ export default function OverallTab({ isDarkMode }) {
     const bodyData = {
       id: user._id,
       firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      location: user.location,
+        email: user.email,
       impressions: user.impressions,
       mainLogs: user.mainLogs,
       participants: user.participants,
@@ -139,7 +137,7 @@ export default function OverallTab({ isDarkMode }) {
       });
       setTimeout(messageApi.destroy,2000);
 
-      console.log(data);
+      // console.log(data);
     } catch (error) {
     
 

@@ -75,9 +75,8 @@ const EditableCell = ({
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -110,7 +109,7 @@ const EditableCell = ({
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -138,7 +137,7 @@ const EditableCell = ({
       });
       replaceUser(user)
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
   };
 
@@ -200,9 +199,7 @@ const CategoryEditor = () => {
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -234,7 +231,7 @@ const CategoryEditor = () => {
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -263,7 +260,7 @@ const CategoryEditor = () => {
     if (categoryIndex !== -1) {
       clonedCategories[categoryIndex] = updatedRecord;
     }
-    console.log(updatedRecord);
+    // console.log(updatedRecord);
     dispatch(setStats({ categories: clonedCategories }));
     setSelectedParticipants(updatedRecord);
   };
@@ -401,7 +398,7 @@ const CategoryEditor = () => {
       ],
     };
     setDataSource([...dataSource, newData]);
-    console.log('here');
+    // console.log('here');
     dispatch(setStats({ categories: [...dataSource, newData] }));
     setCount(count + 1);
   };
@@ -417,7 +414,7 @@ const CategoryEditor = () => {
       return item;
     });
     setDataSource(newData);
-    console.log(newData);
+    // console.log(newData);
     dispatch(setStats({ categories: newData }));
   };
 

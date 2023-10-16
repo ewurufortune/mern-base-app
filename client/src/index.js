@@ -32,9 +32,9 @@ const store = configureStore({
     }),
 });
 const persistor = persistStore(store);
-// persistor.purge().then(() => {
-//   console.log('Persisted state has been cleared.');
-// });
+persistor.purge().then(() => {
+  // console.log('Persisted state has been cleared.');
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   

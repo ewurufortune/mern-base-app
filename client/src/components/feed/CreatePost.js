@@ -5,13 +5,11 @@ const CreatePost = () => {
   const user = useSelector((state) => state.user);
   const userId = useSelector((state) => state.user._id);
   const firstName = useSelector((state) => state.user.firstName);
-  const lastName = useSelector((state) => state.user.lastName);
   const mainLogs= useSelector((state) => state.user.mainLogs);
 
   const [postContent, setPostContent] = useState({
     id: userId,
     firstName: firstName,
-    lastName: lastName,
     description: "",
     picturePath: "",
   });
@@ -39,7 +37,6 @@ const CreatePost = () => {
         setPostContent({
           id: userId,
           firstName: firstName,
-          lastName: lastName,
           description: "",
           picturePath: "",
         });

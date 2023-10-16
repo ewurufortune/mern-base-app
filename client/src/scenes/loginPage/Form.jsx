@@ -100,7 +100,7 @@ const Form = () => {
 
       if (loggedInResponse.ok) {
         const loggedIn = await loggedInResponse.json();
-        console.log(loggedIn);
+        // console.log(loggedIn);
         onSubmitProps.resetForm();
         if (loggedIn) {
           dispatch(

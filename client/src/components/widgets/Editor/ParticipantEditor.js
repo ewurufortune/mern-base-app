@@ -46,9 +46,8 @@ const EditableCell = ({
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -81,7 +80,7 @@ const EditableCell = ({
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -102,7 +101,7 @@ const user = useSelector((state) => state.user);
       });
       replaceUser(user)
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
   };
   let childNode = children;
@@ -172,7 +171,7 @@ const ParticipantEditor = () => {
       }
       return item;
     });
-console.log(updatedData);
+// console.log(updatedData);
     setDataSource(updatedData);
     dispatch(setStats({ participants: updatedData }));
 
@@ -281,9 +280,8 @@ console.log(updatedData);
     const bodyData = {
       id: user._id,
     firstName: user.firstName,
-    lastName: user.lastName,
     email: user.email,
-    location: user.location,
+    
     impressions: user.impressions,
     mainLogs: user.mainLogs,
     participants: user.participants,
@@ -316,7 +314,7 @@ console.log(updatedData);
             setTimeout(messageApi.destroy,2000);
 
   
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // Display error message
       messageApi.error({ content: 'Failed to replace data!', key: 'replaceUserMessage' });
@@ -339,7 +337,7 @@ console.log(updatedData);
     setDataSource(newData);
     dispatch(setStats({ participants: newData }));
     replaceUser(user)
-    console.log(newData);
+    // console.log(newData);
   };
 
   const components = {
@@ -425,7 +423,7 @@ const EditableBio = ({ initialBio, onSave, editedBio, setEditedBio, toggleEdit }
 
   const handleSaveBio = () => {
     onSave(editedBio);
-    console.log(editedBio);
+    // console.log(editedBio);
     toggleEditMode();
   };
 

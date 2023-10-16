@@ -59,10 +59,10 @@ export default function RelationshipEvents() {
     if (participant1 && participant2) {
       const p1Name = participant1.name;
       const p2Name = participant2.name;
-      console.log(`Participant 1: ${p1Name}`);
-      console.log(`Participant 2: ${p2Name}`);
+      // console.log(`Participant 1: ${p1Name}`);
+      // console.log(`Participant 2: ${p2Name}`);
     } else {
-      console.log("One or both participants not found in participants array.");
+      // console.log("One or both participants not found in participants array.");
     }
     
 
@@ -99,14 +99,14 @@ if (relationship) {
     reclone.relationshipStrengthText = "Perfect";
   }
 } else {
-  console.log("Relationship not found.");
+  // console.log("Relationship not found.");
 }
     reclone.relationshipStrength=modifiedStrength    
 relationships[relationshipIndex]= reclone
-console.log(modifiedStrength);
+// console.log(modifiedStrength);
  dispatch(setStats({ relationships: relationships }));
     if (!relationship) {
-      console.log("Relationship not found");
+      // console.log("Relationship not found");
       return;
     }
     let title = "";
@@ -137,8 +137,8 @@ console.log(modifiedStrength);
           )?.name;
 
           let selectedStatLabel;
-          console.log(`Randomly selected participant 1 ID: ${participant1}`);
-          console.log(`Randomly selected participant 2 ID: ${participant2}`);
+          // console.log(`Randomly selected participant 1 ID: ${participant1}`);
+          // console.log(`Randomly selected participant 2 ID: ${participant2}`);
 
           // Find participant2 in the participants array by id
           const foundParticipant2 = participants.find(
@@ -166,10 +166,10 @@ console.log(modifiedStrength);
                 ] += selectedStat.change;
                 title = `${selectedStatLabel} for ${participant2Name}`;
                 description = `The ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
-                console.log(
-                  `Increased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
-                );
-                console.log(foundParticipant2);
+                //  console.log(
+              //  `Increased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
+            // );
+                // console.log(foundParticipant2);
               } else {
                 title = `${selectedStatLabel} for ${participant1Name}`;
                 description = `The ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
@@ -178,24 +178,24 @@ console.log(modifiedStrength);
                 foundParticipant2.stats.push({
                   [selectedStat.statName]: selectedStat.change,
                 });
-                console.log(
-                  `Initialized stat ${selectedStat.statName} for participant 2 (ID: ${participant2}) with a value of ${selectedStat.change}`
-                );
+              //  console.log(
+              //  `Initialized stat ${selectedStat.statName} for participant 2 (ID: ${participant2}) with a value of ${selectedStat.change}`
+            // );
               }
             } else {
-              console.log(
-                "No eligible stats with change greater than 1 found."
-              );
+              //  console.log(
+            //  "No eligible stats with change greater than 1 found."
+          // );
             }
           } else {
-            console.log(
-              `Participant 2 (ID: ${participant2}) not found in participants array. `
-            );
+            // console.log(
+          //  `Participant 2 (ID: ${participant2}) not found in participants array. `
+        //  );
           }
         } else {
-          console.log(
-            "Not enough participants in the relationship to perform this action."
-          );
+          //  console.log(
+        //  "Not enough participants in the relationship to perform this action."
+      // );
         }
 
         break;
@@ -221,8 +221,8 @@ console.log(modifiedStrength);
           const participant2Name = participants.find(
             (participant) => participant.id === participant2
           )?.name;
-          console.log(`Randomly selected participant 1 ID: ${participant1}`);
-          console.log(`Randomly selected participant 2 ID: ${participant2}`);
+          // console.log(`Randomly selected participant 1 ID: ${participant1}`);
+          // console.log(`Randomly selected participant 2 ID: ${participant2}`);
 
           // Find participant2 in the participants array by id
           const foundParticipant2 = participants.find(
@@ -252,9 +252,9 @@ console.log(modifiedStrength);
                 title = `${selectedStatLabel} for ${participant2Name}`;
                 description = `The ${rName} between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
 
-                console.log(
-                  `Decreased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
-                );
+                // console.log(
+                //   `Decreased stat ${selectedStat.statName} for participant 2 (ID: ${participant2})`
+                // );
               } else {
                 // Initialize the stat with the change value if not found
                 foundParticipant2.stats.push({
@@ -263,24 +263,24 @@ console.log(modifiedStrength);
                 title = `${selectedStatLabel} for ${participant2Name}`;
                 description = `The ${rName} relationship between ${participant1Name} and ${participant2Name} has caused a ${selectedStatLabel} for ${participant1Name}`;
 
-                console.log(
-                  `Initialized stat ${selectedStat.statName} for participant 2 (ID: ${participant2}) with a value of ${selectedStat.change}`
-                );
+              //  console.log(
+              //     `Initialized stat ${selectedStat.statName} for participant 2 (ID: ${participant2}) with a value of ${selectedStat.change}`
+              //   );
               }
             } else {
-              console.log(
-                "No eligible stats with change greater than 1 found."
-              );
+              // console.log(
+              //   "No eligible stats with change greater than 1 found."
+              // );
             }
           } else {
-            console.log(
-              `Participant 2 (ID: ${participant2}) not found in participants array. `
-            );
+            //  console.log(
+            //   `Participant 2 (ID: ${participant2}) not found in participants array. `
+            // );
           }
         } else {
-          console.log(
-            "Not enough participants in the relationship to perform this action."
-          );
+        //  console.log(
+        //     "Not enough participants in the relationship to perform this action."
+        //   );
         }
         break;
 
@@ -324,9 +324,9 @@ console.log(modifiedStrength);
                     selectedStatLabel +
                     ". ";
 
-                  console.log(
-                    `Increased stat ${selectedStat.statName} for participant (ID: ${participantId})`
-                  );
+                  // console.log(
+                    // `Increased stat ${selectedStat.statName} for participant (ID: ${participantId})`
+                  // );
                 } else {
                   // Initialize the stat with the change value if not found
                   foundParticipant.stats.push({
@@ -339,21 +339,21 @@ console.log(modifiedStrength);
                     selectedStatLabel +
                     ". ";
 
-                  console.log(
-                    `Initialized stat ${selectedStat.statName} for participant (ID: ${participantId}) with a value of ${selectedStat.change}`
-                  );
+                  // console.log(
+                    // `Initialized stat ${selectedStat.statName} for participant (ID: ${participantId}) with a value of ${selectedStat.change}`
+                  // );
                 }
               } else {
-                console.log(
-                  `Participant (ID: ${participantId}) not found in participants array. `
-                );
+                // console.log(
+                  // `Participant (ID: ${participantId}) not found in participants array. `
+                // );
               }
             });
           } else {
-            console.log("No eligible stats with change greater than 1 found.");
+            // console.log("No eligible stats with change greater than 1 found.");
           }
         } else {
-          console.log("No participants in the relationship.");
+          // console.log("No participants in the relationship.");
         }
         break;
 
@@ -398,9 +398,9 @@ console.log(modifiedStrength);
                     selectedStatLabel +
                     ".";
 
-                  console.log(
-                    `Increased stat ${selectedStat.statName} for participant (ID: ${participantId})`
-                  );
+                  // console.log(
+                    // `Increased stat ${selectedStat.statName} for participant (ID: ${participantId})`
+                  // );
                 } else {
                   // Initialize the stat with the change value if not found
                   foundParticipant.stats.push({
@@ -413,21 +413,21 @@ console.log(modifiedStrength);
                     " experienced a " +
                     selectedStatLabel +
                     ".";
-                  console.log(
-                    `Initialized stat ${selectedStat.statName} for participant (ID: ${participantId}) with a value of ${selectedStat.change}`
-                  );
+                  // console.log(
+                    // `Initialized stat ${selectedStat.statName} for participant (ID: ${participantId}) with a value of ${selectedStat.change}`
+                  // );
                 }
               } else {
-                console.log(
-                  `Participant (ID: ${participantId}) not found in participants array. `
-                );
+                // console.log(
+                  // `Participant (ID: ${participantId}) not found in participants array. `
+                // );
               }
             });
           } else {
-            console.log("No eligible stats with change greater than 1 found.");
+            // console.log("No eligible stats with change greater than 1 found.");
           }
         } else {
-          console.log("No participants in the relationship.");
+          // console.log("No participants in the relationship.");
         }
         break;
 
@@ -453,8 +453,8 @@ console.log(modifiedStrength);
               (participant) => participant.id === participant2
             )?.name;
         
-            console.log(`Randomly selected participant 1 ID: ${participant1}`);
-            console.log(`Randomly selected participant 2 ID: ${participant2}`);
+            // console.log(`Randomly selected participant 1 ID: ${participant1}`);
+            // console.log(`Randomly selected participant 2 ID: ${participant2}`);
         
             // Find participant2 in the participants array and toggle their isActive status
             const foundParticipant2 = participants.find(
@@ -490,18 +490,16 @@ console.log(modifiedStrength);
                   .join(", ");
               }
         
-              console.log(
-                `Toggled activity status for participant 2 (ID: ${participant2})`
-              );
+              // console.log(
+                // `Toggled activity status for participant 2 (ID: ${participant2})`
+              // );
             } else {
-              console.log(
-                `Participant 2 (ID: ${participant2}) not found in participants array. `
-              );
+              // console.log( `Participant 2 (ID: ${participant2}) not found in participants array. ` );
             }
           } else {
-            console.log(
-              "Not enough participants in the relationship to perform this action."
-            );
+            // console.log(
+              // "Not enough participants in the relationship to perform this action."
+            // );
           }
           break;
         
@@ -544,9 +542,9 @@ console.log(modifiedStrength);
                     participant1.stats[participant1StatIndex][
                       selectedStat.statName
                     ] += selectedStat.change;
-                    console.log(
-                      `Increased stat ${selectedStat.statName} for participant 1 (ID: 1)`
-                    );
+                    // console.log(
+                      // `Increased stat ${selectedStat.statName} for participant 1 (ID: 1)`
+                    // );
           
                     // Set the title and description for participant 1
                     title = ` ${participant1.name} ${selectedStatLabel}`;
@@ -556,9 +554,9 @@ console.log(modifiedStrength);
                     participant1.stats.push({
                       [selectedStat.statName]: selectedStat.change,
                     });
-                    console.log(
-                      `Initialized stat ${selectedStat.statName} for participant 1 (ID: 1) with a value of ${selectedStat.change}`
-                    );
+                    // console.log(
+                      // `Initialized stat ${selectedStat.statName} for participant 1 (ID: 1) with a value of ${selectedStat.change}`
+                    // );
           
                     // Set the title and description for participant 1
                     title = `Stat Initialization for ${participant1.name}`;
@@ -585,34 +583,34 @@ console.log(modifiedStrength);
                           foundParticipant.stats[participantStatIndex][
                             selectedStatForDecrease.statName
                           ] -= selectedStatForDecrease.change;
-                          console.log(
-                            `Decreased stat ${selectedStatForDecrease.statName} for participant (ID: ${participantId})`
-                          );
+                          // console.log(
+                            // `Decreased stat ${selectedStatForDecrease.statName} for participant (ID: ${participantId})`
+                          // );
           
                           // Set the title and description for other participants
                           const otherParticipantName = foundParticipant.name;
                           title += ` Stat Decrease for ${otherParticipantName}. `;
                           description += `Due to the ${relationship.name} relationship, ${otherParticipantName} experienced a decrease in ${selectedStatLabelForDecrease}. `;
                         } else {
-                          console.log(
-                            `Stat ${selectedStatForDecrease.statName} not found for participant (ID: ${participantId})`
-                          );
+                          // console.log(
+                            // `Stat ${selectedStatForDecrease.statName} not found for participant (ID: ${participantId})`
+                          // );
                         }
                       } else {
-                        console.log(
-                          `Participant (ID: ${participantId}) not found in participants array. `
-                        );
+                        // console.log(
+                          // `Participant (ID: ${participantId}) not found in participants array. `
+                        // );
                       }
                     }
                   });
                 } else {
-                  console.log("Participant 1 not found in participants array.");
+                  // console.log("Participant 1 not found in participants array.");
                 }
               } else {
-                console.log("No eligible stats with change greater than 1 found.");
+                // console.log("No eligible stats with change greater than 1 found.");
               }
             } else {
-              console.log("No participants in the relationship.");
+              // console.log("No participants in the relationship.");
             }
             break;
           
@@ -654,17 +652,17 @@ console.log(modifiedStrength);
                       participant1.stats[participant1StatIndex][
                         selectedStat.statName
                       ] -= selectedStat.change;
-                      console.log(
-                        `Decreased stat ${selectedStat.statName} for participant 1 (ID: 1)`
-                      );
+                      // console.log(
+                        // `Decreased stat ${selectedStat.statName} for participant 1 (ID: 1)`
+                      // );
             
                       // Set the title and description for participant 1
                       title = `${selectedStatLabel} Decrease for ${participant1.name}`;
                       description = `Due to the ${relationship.name} relationship, ${participant1.name} experienced a decrease in ${selectedStatLabel}. `;
                     } else {
-                      console.log(
-                        `Stat ${selectedStat.statName} not found for participant 1 (ID: 1)`
-                      );
+                      // console.log(
+                        // `Stat ${selectedStat.statName} not found for participant 1 (ID: 1)`
+                      // );
                     }
             
                     // Iterate through all other participants in the relationship and increase their stats
@@ -687,10 +685,7 @@ console.log(modifiedStrength);
                             foundParticipant.stats[participantStatIndex][
                               selectedStatForIncrease.statName
                             ] += selectedStatForIncrease.change;
-                            console.log(
-                              `Increased stat ${selectedStatForIncrease.statName} for participant (ID: ${participantId})`
-        
-                              );
+                            // console.log( `Increased stat ${selectedStatForIncrease.statName} for participant (ID: ${participantId})` );
             
                             // Set the title and description for other participants
                             const otherParticipantName = foundParticipant.name;
@@ -701,25 +696,25 @@ console.log(modifiedStrength);
                             foundParticipant.stats.push({
                               [selectedStatForIncrease.statName]: selectedStatForIncrease.change,
                             });
-                            console.log(
-                              `Initialized stat ${selectedStatForIncrease.statName} for participant (ID: ${participantId}) with a value of ${selectedStatForIncrease.change}`
-                            );
+                            // console.log(
+                              // `Initialized stat ${selectedStatForIncrease.statName} for participant (ID: ${participantId}) with a value of ${selectedStatForIncrease.change}`
+                            // );
                           }
                         } else {
-                          console.log(
-                            `Participant (ID: ${participantId}) not found in participants array. `
-                          );
+                          // console.log(
+                            // `Participant (ID: ${participantId}) not found in participants array. `
+                          // );
                         }
                       }
                     });
                   } else {
-                    console.log("Participant 1 not found in participants array.");
+                    // console.log("Participant 1 not found in participants array.");
                   }
                 } else {
-                  console.log("No eligible stats with change greater than 1 found.");
+                  // console.log("No eligible stats with change greater than 1 found.");
                 }
               } else {
-                console.log("No participants in the relationship.");
+                // console.log("No participants in the relationship.");
               }
               break;
             
@@ -745,8 +740,8 @@ console.log(modifiedStrength);
                     (participant) => participant.id === participant2
                   )?.name;
               
-                  console.log(`Randomly selected participant 1 ID: ${participant1}`);
-                  console.log(`Randomly selected participant 2 ID: ${participant2}`);
+                  // console.log(`Randomly selected participant 1 ID: ${participant1}`);
+                  // console.log(`Randomly selected participant 2 ID: ${participant2}`);
               
                   const filteredCategories = categories.filter((cat) => {
                     const lowercaseType = cat.type.toLowerCase();
@@ -762,18 +757,14 @@ console.log(modifiedStrength);
                   
               
                   if (category) {
-                    console.log(
-                      `Found a category (ID: ${category.id}) with participant 1 but not participant 2. `
-                    );
+                    // console.log(`Found a category (ID: ${category.id}) with participant 1 but not participant 2. `);
               
                     // Get the type of the new category
                     const categoryType = category.type;
               
                     // Add participant2 to the category
                     category.participants.push(participant2);
-                    console.log(
-                      `Added participant 2 (ID: ${participant2}) to the category. `
-                    );
+                    // console.log(`Added participant 2 (ID: ${participant2}) to the category. `);
               
                     // Remove participant2 from other categories with the same type
                     categories.forEach((otherCategory) => {
@@ -784,9 +775,9 @@ console.log(modifiedStrength);
                         otherCategory.participants = otherCategory.participants.filter(
                           (participantId) => participantId !== participant2
                         );
-                        console.log(
-                          `Removed participant 2 (ID: ${participant2}) from category (ID: ${otherCategory.id}). `
-                        );
+                        // console.log(
+                          // `Removed participant 2 (ID: ${participant2}) from category (ID: ${otherCategory.id}). `
+                        // );
                       }
                     });
               
@@ -794,14 +785,14 @@ console.log(modifiedStrength);
                     title = `${categoryType} Welcomes New Participant. `;
                     description = `${participant2Name} has entered this ${categoryType},\n ${participant1Name} is rumored to have a strong influence in making it happen. `;
                   } else {
-                    console.log(
-                      "No category found with participant 1 but not participant 2."
-                    );
+                    // console.log(
+                      // "No category found with participant 1 but not participant 2."
+                    // );
                   }
                 } else {
-                  console.log(
-                    "Not enough participants in the relationship to perform this action."
-                  );
+                  // console.log(
+                    // "Not enough participants in the relationship to perform this action."
+                  // );
                 }
                 break;
               
@@ -826,8 +817,8 @@ console.log(modifiedStrength);
                       (participant) => participant.id === participant2
                     )?.name;
                 
-                    console.log(`Randomly selected participant 1 ID: ${participant1}`);
-                    console.log(`Randomly selected participant 2 ID: ${participant2}`);
+                    // console.log(`Randomly selected participant 1 ID: ${participant1}`);
+                    // console.log(`Randomly selected participant 2 ID: ${participant2}`);
                 
                     // Find a category that includes both participant1 and participant2
                     const category = categories.find(
@@ -837,9 +828,7 @@ console.log(modifiedStrength);
                     );
                 
                     if (category) {
-                      console.log(
-                        `Found a category (ID: ${category.id}) with both participants. `
-                      );
+                      // console.log(`Found a category (ID: ${category.id}) with both participants. `);
                 
                       // Randomly select one of the participants to remove
                       const participantsInCategory = category.participants;
@@ -851,20 +840,18 @@ console.log(modifiedStrength);
                       // Update the category's participants
                       category.participants = participantsInCategory;
                 
-                      console.log(
-                        `Removed participant ID ${randomParticipantId} from the category. `
-                      );
+                      // console.log(`Removed participant ID ${randomParticipantId} from the category. `);
                 
                       // Set the title and description for the action
                       title = `Category Left: ${category.type}`;
                       description = `${participant1Name} and ${participant2Name} have both left ${category.name}. `;
                     } else {
-                      console.log("No category found with both participants.");
+                      // console.log("No category found with both participants.");
                     }
                   } else {
-                    console.log(
-                      "Not enough participants in the relationship to perform this action."
-                    );
+                    // console.log(
+                      // "Not enough participants in the relationship to perform this action."
+                    // );
                   }
                   break;
                 
@@ -877,7 +864,7 @@ console.log(modifiedStrength);
                       const participant1Name = participants.find(
                         (participant) => participant.id === participant1
                       )?.name;
-                      console.log(`Randomly selected participant ID: ${participant1}`);
+                      // console.log(`Randomly selected participant ID: ${participant1}`);
                   
                       // Find an item whose holderId includes participant1
                       const itemToTransfer = items.find((item) =>
@@ -885,9 +872,7 @@ console.log(modifiedStrength);
                       );
                   
                       if (itemToTransfer) {
-                        console.log(
-                          `Found an item (ID: ${itemToTransfer.id}) held by participant ${participant1}`
-                        );
+                        // console.log(`Found an item (ID: ${itemToTransfer.id}) held by participant ${participant1}`);
                   
                         // Randomly select another participant who is not the same as participant1
                         let randomIndex2;
@@ -899,9 +884,9 @@ console.log(modifiedStrength);
                         const participant2Name = participants.find(
                           (participant) => participant.id === participant2
                         )?.name;
-                        console.log(
-                          `Randomly selected another participant ID: ${participant2}`
-                        );
+                        // console.log(
+                          // `Randomly selected another participant ID: ${participant2}`
+                        // );
                   
                         // Eject participant1 and add participant2 to the item's holderId
                         itemToTransfer.holderId = itemToTransfer.holderId.filter(
@@ -932,14 +917,14 @@ console.log(modifiedStrength);
                         description = `The ${itemToTransfer.name} has been ${randomEventStrengthText}ly transferred from ${participant1Name} to ${participant2Name}. `;
                   
                         // Log the item transfer
-                        console.log(
-                          `Item ${itemToTransfer.id} transferred from participant ${participant1} to participant ${participant2}`
-                        );
+                        // console.log(
+                          // `Item ${itemToTransfer.id} transferred from participant ${participant1} to participant ${participant2}`
+                        // );
                       } else {
-                        console.log(`No item found held by participant ${participant1}`);
+                        // console.log(`No item found held by participant ${participant1}`);
                       }
                     } else {
-                      console.log("No participants in the relationship.");
+                      // console.log("No participants in the relationship.");
                     }
                     break;
                   
@@ -954,13 +939,13 @@ console.log(modifiedStrength);
           const participantsCounting = relationship.participants.length;
         
           const participant1Id = relationship.participants[Math.floor(Math.random() * participantsCounting)];
-          console.log(participant1Id);
+          // console.log(participant1Id);
         
           // Find the participant in the participants array by ID
           const participant1 = participants.find((participant) => participant.id === participant1Id);
         
           if (!participant1) {
-            console.log(`Participant 1 not found. `);
+            // console.log(`Participant 1 not found. `);
             break;
           }
         
@@ -1053,7 +1038,7 @@ console.log(modifiedStrength);
             title = `New Participant Created: ${newParticipant.name}`;
             description = `A new participant named ${newParticipant.name} has been recognized. `;
           } else {
-            console.log(`Invalid name format for participant 1: ${participant1.name}`);
+            // console.log(`Invalid name format for participant 1: ${participant1.name}`);
           }
         
           break;
@@ -1069,7 +1054,7 @@ console.log(modifiedStrength);
         break;
 
       default:
-        console.log("Unsupported event type");
+        // console.log("Unsupported event type");
     }
    const relationshipLog = {
   id: uuidv4(), // Generate a unique ID
@@ -1088,7 +1073,7 @@ if (title.trim() !== '' || description.trim() !== '') {
     recentEvents.splice(0, recentEvents.length - 30);
   }
 } else {
-  console.log('Title or description is empty, relationship log not added.');
+  // console.log('Title or description is empty, relationship log not added.');
 }
 
 
@@ -1195,7 +1180,7 @@ if (relationshipStrength === -5) {
   );
 }
 
-console.log(eventStrings);
+// console.log(eventStrings);
 
 
       // Randomly select an event string from the available options
@@ -1216,13 +1201,11 @@ console.log(eventStrings);
   const handleRandomEventClick = () => {
     const randomEvent = getRandomEvent();
     if (randomEvent) {
-      console.log(
-        `Random Event: ${randomEvent.event}, Relationship ID: ${randomEvent.relationshipId}`
-      );
+      // console.log(`Random Event: ${randomEvent.event}, Relationship ID: ${randomEvent.relationshipId}` );
       // Call handleRelationshipEvent with the selected random event and relationship ID
       handleRelationshipEvent(randomEvent.relationshipId, randomEvent.event,randomEvent.chosenRelationship);
     } else {
-      console.log("No relationships available to generate an event.");
+      // console.log("No relationships available to generate an event.");
     }
   };
   const isInitialMount = useRef(true); // Create a ref to track the initial mount
